@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<!--文件上传-->
+	<bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">  
+			<value>55242880</value>  
+		</property>
+		<property name="defaultEncoding">  
+			<value>utf-8</value>  
+		</property>
+	</bean>
+	<!--
+	<bean id="excelAction" class="com.acmr.excel.action.ExcelAction">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver" />
+		</property>
+		<property name="handleExcelService">
+			<ref bean="handleExcelService" />
+		</property>
+		<property name="downLoadExcelService">
+			<ref bean="downLoadExcelService" />
+		</property>
+		<property name="excelService">
+			<ref bean="excelService" />
+		</property>
+		<property name="memcachedClient" ref="memcachedClient"/>
+	</bean>
+	<bean id="sheetAction" class="com.acmr.excel.action.SheetAction">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver" />
+		</property>
+	</bean>
+	<bean id="cellAction" class="com.acmr.excel.action.CellAction">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver" />
+		</property>
+		<property name="handleExcelService">
+			<ref bean="handleExcelService" />
+		</property>
+		<property name="memcachedClient" ref="memcachedClient" />
+	</bean>
+	<bean id="textAction" class="com.acmr.excel.action.TextAction">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver" />
+		</property>
+	</bean>
+	<bean id="plateAction" class="com.acmr.excel.action.PlateAction">
+		<property name="methodNameResolver">
+			<ref bean="methodNameResolver" />
+		</property>
+		<property name="memcachedClient" ref="memcachedClient" />
+		<property name="pasteService" ref="pasteService" />
+	</bean>
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<value>
+				/excel.htm=excelAction
+				/sheet.htm=sheetAction
+				/cells.htm=cellAction
+				/text.htm=textAction
+				/plate.htm=plateAction
+			</value>
+		</property>
+	</bean>
+	-->
+</beans>
