@@ -1,6 +1,7 @@
 .svn/
 .settings/
 src/main/webapp/
+!src/main/webap/WEB-INF
 tools/release/node_modules/
 npm-debug.log
 target/
