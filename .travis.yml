@@ -17,3 +17,6 @@ notifications:
 after_script:
 - git remote add deploy root@spreadsheet:/usr/local/codelib/table.git
 - git push deploy $TRAVIS_BRANCH
+cache:
+  directories:
+    - $HOME/.m2
