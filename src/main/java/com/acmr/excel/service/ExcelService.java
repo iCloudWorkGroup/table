@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelCellStyle;
@@ -47,8 +49,7 @@ import com.acmr.excel.util.StringUtil;
  * @author jinhr
  *
  */
-// @Service
-
+@Service
 public class ExcelService {
 	private ExcelDao excelDao;
 
