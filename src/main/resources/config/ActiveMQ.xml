@@ -13,12 +13,14 @@
 	http://activemq.apache.org/schema/core
 	http://activemq.apache.org/schema/core/activemq-core-5.8.0.xsd">
 	<!--<amq:broker id="activeMQBroker">
+
 		<amq:transportConnectors>
 			<amq:transportConnector uri="tcp://localhost:61616" />
 		</amq:transportConnectors>
 	</amq:broker>-->
+	<context:property-placeholder location="classpath:properties/param.properties" />
 	<amq:connectionFactory id="amqConnectionFactory"
-		brokerURL="tcp://192.168.1.229:61616" userName="admin" password="admin" />
+		brokerURL="${activemq.server}" userName="admin" password="admin" />
 
 	<bean id="connectionFactory"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
@@ -42,7 +44,7 @@
 	<!-- 定义Queue监听器 -->
 	<jms:listener-container destination-type="queue" container-type="simple" connection-factory="connectionFactory" 
 							acknowledge="auto" concurrency="2">
-		<jms:listener destination="eq2" ref="queueReceiver" method="onMessage"/>
+		<jms:listener destination="${activemq.queueName}" ref="queueReceiver" method="onMessage"/>
 	<!--	<jms:listener destination="test.queue" ref="queueReceiver2"/>-->
 	</jms:listener-container>
 	

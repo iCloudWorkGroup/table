@@ -3,12 +3,12 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-	<display-name>pubexcel</display-name>
+	<display-name>fn</display-name>
 	
 	<!-- WebAppRootKey -->
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>pubexcel</param-value>
+		<param-value>fn</param-value>
 	</context-param>
 	
 	<!-- Log4J Start -->

@@ -5,9 +5,9 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Spreadsheet Online Office</title>
-		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css"/>
-		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/toolbar.css"/>
-		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/widget.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/main.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/toolbar.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/widget.css"/>
 	</head>
 	<body>
 		<input type="hidden" id="build" value=${build}>
@@ -21,9 +21,9 @@
 				<ul class="fui-control-list">
 					<li><span id="homeTool" class="active">开始</span></li>
 					<li><span id="reviewTool">审阅</span></li>
-					<li><span><a id="download" href="<%=request.getContextPath() %>/download/${excelId}">下载</a></span></li>
-					<!--  <li><span><a href="<%=request.getContextPath() %>/excel.htm?m=save&excelId=${excelId}">保存</a></span></li> -->
-					<li><span><a href="<%=request.getContextPath() %>/reopen/${excelId}">重新打开</a></span></li>
+					<li><span><a id="download" href="/${frontName}/download/${excelId}">下载</a></span></li>
+					<!--  <li><span><a href="/${frontName}/excel.htm?m=save&excelId=${excelId}">保存</a></span></li> -->
+					<li><span><a href="/${frontName}/reopen/${excelId}">重新打开</a></span></li>
 					<!-- &excelId=${excelId} -->
 				</ul>
 			</div>
@@ -1523,7 +1523,7 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript" data-main='<%=request.getContextPath()%>/app' src="<%=request.getContextPath()%>/js/lib/require.js">
+		<script type="text/javascript" data-main='/${frontName}/app' src="/${frontName}/js/lib/require.js">
 		</script>
 	</body>
 </html>

@@ -94,98 +94,6 @@ public class ExcelController extends BaseController {
 		this.excelService = excelService;
 	}
 	
-	
-	// /**
-	// * EXCEL新建
-	// * @param name excel名称
-	// * @return excel主页面
-	// */
-	// public ModelAndView create(HttpServletRequest req,HttpServletResponse
-	// resp){
-	// Excel excel = null;
-	// try {
-	// excel = getJsonDataParameter(req,Excel.class);
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// String excelName = "";
-	// if(excel != null){
-	// excelName = excel.getName();
-	// }
-	// JSONReturnData data = new JSONReturnData("");
-	// //生成excel唯一性id
-	// String excelId = UUIDUtil.getUUID();
-	// //创建基础excel,获取excel
-	// CompleteExcel baseExcel = handleExcelService.createBasicExcel(excelId,
-	// excelName);
-	// String excelJson = JSON.toJSONString(baseExcel);
-	// //存储excel到session
-	// HttpSession session = req.getSession();
-	// session.setAttribute(excelId, baseExcel);
-	// //返回生成的excelId
-	// data.setReturndata(excelId);
-	// this.sendJson(resp, data);
-	// return new ModelAndView("/index");
-	// }
-	// /**
-	// * EXCEL名称修改
-	// * @param excelId excelid
-	// * @param name excel名称
-	// * @throws IOException
-	// */
-	// public void update(HttpServletRequest req,HttpServletResponse resp)
-	// throws IOException{
-	// Excel excel = getJsonDataParameter(req,Excel.class);
-	// //接收参数，定义返回
-	// String excelName = excel.getName();
-	// String excelId = excel.getExcelId();
-	// JSONReturnData data = new JSONReturnData("");
-	// //获取excel的完整对象
-	// HttpSession session = req.getSession();
-	// // String excelJson = "";
-	// CompleteExcel cexcel = (CompleteExcel) session.getAttribute(excelId);
-	// // if(!StringUtil.isEmpty(excelId)){
-	// // excelJson = handleExcelService.getExcelJsonFromSessionById(excelId,
-	// session);
-	// // }
-	// //
-	// if(cexcel==null){
-	// data.setReturncode(500);
-	// data.setReturndata("没有查找到相应的excel信息");
-	// }else{
-	// // CompleteExcel cexcel = JSON.parseObject(excelJson,
-	// CompleteExcel.class);
-	// cexcel.setName(excelName);
-	// // excelJson = JSON.toJSONString(cexcel);
-	// //存储excel到session
-	// session.setAttribute(excelId, cexcel);
-	// }
-	// //返回数据
-	// this.sendJson(resp, data);
-	// }
-	// /**
-	// * EXCEL 加载
-	// * @param excelId id
-	// * @param resp
-	// * @throws IOException
-	// */
-	// public void reload(HttpServletRequest req,HttpServletResponse resp)
-	// throws IOException{
-	// Excel excel = getJsonDataParameter(req,Excel.class);
-	// String excelId = req.getParameter("excelId");
-	// HttpSession session = req.getSession();
-	// String excelJson = "";
-	// CompleteExcel cexcel = (CompleteExcel) session.getAttribute(excelId);
-	// if(!StringUtil.isEmpty(excelId)){
-	// excelJson = JSON.toJSONString(cexcel);
-	// }
-	// ////system.out.println(excelJson);
-	// JSONReturnData data = new JSONReturnData("");
-	// data.setReturndata(cexcel);
-	// this.sendJson(resp, data);
-	// }
-
 
 	/**
 	 * excel下载
@@ -214,56 +122,7 @@ public class ExcelController extends BaseController {
 
 	}
 
-	/**
-	 * 初始化excel页面
-	 */
-//	@Override
-//	public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) {
-//		String excelId = "";
-//		String file = "f:/123.xlsx";
-//		ExcelBook book1 = new ExcelBook();
-//        try {
-//			book1.LoadExcel(file);
-//			for(int i = 0;i<1000;i++){
-//				excelId = UUIDUtil.getUUID();
-//				ExcelBook excelBook = book1.clone();
-//				memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excelBook);
-//				memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
-//				System.out.println("i============================================"+i);
-//			}
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		
-//		log.info("初始化excel");
-//		// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
-//		// } <input type="hidden" id="excelId" value="(.*)"/>
-//		return new ModelAndView("/index").addObject("sheetId", "1").addObject("build", true).addObject("excelId", excelId);
-//	}
-//	@Override
-//	public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) {
-//		String file = "f:/123.xlsx";
-//		ExcelBook book1 = new ExcelBook();
-//		String excelId = "";
-//		try {
-//			book1.LoadExcel(file);
-//			for(int i = 0;i<1000;i++){
-//				excelId = UUIDUtil.getUUID();
-//				ExcelBook e = book1.clone();
-//				MemoryUtil.getMap().put(excelId, e);
-//				System.out.println("i============================================"+i);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		log.info("初始化excel");
-//		// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
-//		// } <input type="hidden" id="excelId" value="(.*)"/>
-//		return new ModelAndView("/index").addObject("sheetId", "1").addObject("build", true).addObject("excelId", excelId);
-//	}
+	
 	/**
 	 * 初始化excel页面
 	 */
@@ -278,7 +137,8 @@ public class ExcelController extends BaseController {
 		log.info("初始化excel");
 		// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
 		// } <input type="hidden" id="excelId" value="(.*)"/>
-		return new ModelAndView("/index").addObject("sheetId", "1").addObject("build", true).addObject("excelId", excelId);
+		return new ModelAndView("/index").addObject("sheetId", "1").addObject("build", true).addObject("excelId", excelId).
+				addObject("frontName",Constant.frontName);
 	}
 	/**
 	 * 测试接口
