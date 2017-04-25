@@ -223,7 +223,7 @@ public class BaseController extends MultiActionController {
 		queueSender.send(Constant.queueName, model);
 		data.setReturncode(Constant.SUCCESS_CODE);
 		data.setReturndata(true);
-		this.sendJson(resp, data);
+		//this.sendJson(resp, data);
 	}
 	
 	
