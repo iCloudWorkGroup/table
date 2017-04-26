@@ -179,7 +179,7 @@ public class CellController extends BaseController {
 	 * 
 	 * @throws IOException
 	 */
-	@RequestMapping("/color")
+	@RequestMapping("/bg")
 	public void fill_bgcolor(HttpServletRequest req, HttpServletResponse resp)
 			throws Exception {
 		// 接收参数，定义返回
@@ -217,15 +217,18 @@ public class CellController extends BaseController {
 	 * @throws Exception
 	 */
     @RequestMapping("/comment-plus")
-	public void comment_set(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+	public void comment_plus(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		Comment comment = getJsonDataParameter(req, Comment.class);
 		this.assembleData(req, resp, comment, OperatorConstant.commentset);
 	}
 	
+    @RequestMapping("/comment-reduce")
+	public void comment_reduce(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	comment_plus(req, resp);
+	}
 	
 	
-	
-	
+    @RequestMapping("/bg-batch")
 	public void color_set(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		Cell cell = getJsonDataParameter(req, Cell.class);
 		this.assembleData(req, resp, cell, OperatorConstant.colorset);

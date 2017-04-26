@@ -82,9 +82,8 @@ public class RowController extends BaseController {
     /**
 	 * 增加行，用于初始化时向下滚动
 	 */
-
-	public void addrowline(HttpServletRequest req, HttpServletResponse resp)
-			throws Exception {
+    @RequestMapping("/plus-batch")
+	public void addrowline(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		RowLine rowLine = getJsonDataParameter(req, RowLine.class);
 		this.assembleData(req, resp,rowLine,OperatorConstant.addRowLine);
 	}

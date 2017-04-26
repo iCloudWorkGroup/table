@@ -657,9 +657,13 @@ public class ExcelService {
 		if (firstMergeCell == null) {
 			occupy.getX().add(glxList.get(j).getAliasX());
 			occupy.getY().add(glyList.get(i).getAliasY());
+			occupy.setRow(i);
+			occupy.setCol(j);
 		} else {
 			int firstRow = firstMergeCell[0];
 			int firstCol = firstMergeCell[1];
+			occupy.setRow(firstRow);
+			occupy.setCol(firstCol);
 			for (int m = firstRow; m < firstRow + rowspan; m++) {
 				occupy.getY().add(glyList.get(m).getAliasY());
 			}

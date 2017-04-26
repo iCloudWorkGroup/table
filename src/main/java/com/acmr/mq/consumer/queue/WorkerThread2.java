@@ -237,9 +237,8 @@ public class WorkerThread2 implements Runnable{
 			break;
 		case OperatorConstant.addRowLine:
 			RowLine rowLine = (RowLine) model.getObject();
-			String rowNum = rowLine.getRowNum();
-			int rn = Integer.valueOf(rowNum);
-			sheetService.addRowLine(excelBook.getSheets().get(0),rn);
+			int rowNum = rowLine.getNum();
+			sheetService.addRowLine(excelBook.getSheets().get(0),rowNum);
 			break;
 		case OperatorConstant.addColLine:
 			AddLine addLine = (AddLine) model.getObject();

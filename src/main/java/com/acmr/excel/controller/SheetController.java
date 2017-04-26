@@ -12,13 +12,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import acmr.excel.pojo.ExcelBook;
+import acmr.excel.pojo.ExcelSheet;
 
 import com.acmr.excel.controller.excelbase.BaseController;
+import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
+import com.acmr.excel.model.complete.CompleteExcel;
+import com.acmr.excel.model.complete.ReturnParam;
+import com.acmr.excel.model.complete.SpreadSheet;
 import com.acmr.excel.model.copy.Copy;
+import com.acmr.excel.model.position.OpenExcel;
+import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
+import com.acmr.excel.util.JsonReturn;
+import com.acmr.excel.util.StringUtil;
 
 /**
  * SHEET操作
@@ -33,6 +42,8 @@ public class SheetController extends BaseController {
 	private MemcachedClient memcachedClient;
 	@Resource
 	private PasteService pasteService; 
+	 @Resource
+	private ExcelService excelService;
 
 	/**
 	 * 新建sheet
@@ -145,4 +156,85 @@ public class SheetController extends BaseController {
 			this.assemblePasteData(req, resp);
 		}
 	}
+	
+	
+	/**
+	 * 通过像素动态加载excel
+	 */
+	@RequestMapping("/area")
+	public void openexcel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
+		String excelId = openExcel.getExcelId();
+		int memStep = (int)memcachedClient.get(excelId+"_ope");
+		String curStep = req.getHeader("step");
+		int cStep = 0;
+		if(!StringUtil.isEmpty(curStep)){
+			cStep = Integer.valueOf(curStep);
+		}
+		int rowBegin = openExcel.getTop();
+		int rowEnd = openExcel.getBottom();
+		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		JsonReturn data = new JsonReturn("");
+		if (cStep == memStep) {
+			if (excelBook != null) {
+				ExcelSheet excelSheet = excelBook.getSheets().get(0);
+				ReturnParam returnParam = new ReturnParam();
+				CompleteExcel excel = new CompleteExcel();
+				SpreadSheet spreadSheet = new SpreadSheet();
+				excel.getSpreadSheet().add(spreadSheet);
+				spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
+				data.setReturncode(Constant.SUCCESS_CODE);
+				data.setReturndata(excel);
+				data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
+				data.setMaxRowPixel(returnParam.getMaxRowPixel());
+				memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
+			} else {
+				data.setReturncode(Constant.CACHE_INVALID_CODE);
+				data.setReturndata(Constant.CACHE_INVALID_MSG);
+			}
+		}else{
+			for (int i = 0; i < 100; i++) {
+				int mStep = (int)memcachedClient.get(excelId+"_ope");
+				if(cStep == mStep){
+					if (excelBook != null) {
+						ExcelSheet excelSheet = excelBook.getSheets().get(0);
+						ReturnParam returnParam = new ReturnParam();
+						CompleteExcel excel = new CompleteExcel();
+						SpreadSheet spreadSheet = new SpreadSheet();
+						excel.getSpreadSheet().add(spreadSheet);
+						spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
+						data.setReturncode(Constant.SUCCESS_CODE);
+						data.setReturndata(excel);
+						data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
+						data.setMaxRowPixel(returnParam.getMaxRowPixel());
+						memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
+					} else {
+						data.setReturncode(Constant.CACHE_INVALID_CODE);
+						data.setReturndata(Constant.CACHE_INVALID_MSG);
+					}
+				}else{
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		if("".equals(data.getReturndata())){
+			data.setReturncode(-1);
+		}
+		this.sendJson(resp, data);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
