@@ -7,6 +7,8 @@ import java.util.List;
 public class Occupy implements Serializable {
 	private List<String> x = new ArrayList<String>();
 	private List<String> y = new ArrayList<String>();
+	private int row;
+	private int col;
 
 	public List<String> getX() {
 		return x;
@@ -23,4 +25,22 @@ public class Occupy implements Serializable {
 	public void setY(List<String> y) {
 		this.y = y;
 	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
+	}
+	
+	
 }
