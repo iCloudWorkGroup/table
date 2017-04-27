@@ -532,10 +532,13 @@ public class ExcelController extends BaseController {
 	 */
 	@RequestMapping(value="/reload")
 	public void position(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		//long b1 = System.currentTimeMillis();
 		String excelId = req.getHeader("excelId");
 		Position position = getJsonDataParameter(req, Position.class);
 		int height = position.getBottom();
+		//long mget1 = System.currentTimeMillis();
 		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		//long mget2 = System.currentTimeMillis();
 		ReturnParam returnParam = new ReturnParam();
 		JsonReturn data = new JsonReturn("");
 		CompleteExcel excel = new CompleteExcel();
@@ -556,10 +559,16 @@ public class ExcelController extends BaseController {
 		// data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
 		data.setDisplayColStartAlias(spreadSheet.getSheet().getGlX().get(0).getAliasX());
 		data.setDisplayRowStartAlias(spreadSheet.getSheet().getGlY().get(0).getAliasY());
+		//long mset1 = System.currentTimeMillis();
 		memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
 		memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
-		//System.out.println(JSON.toJSONString(data));
+		//long mset2 = System.currentTimeMillis();
+		//long b2 = System.currentTimeMillis();
+//		System.out.println("position =====================" +(b2-b1));
+//		System.out.println("mget ========================" + (mget2-mget1));
+//		System.out.println("mset ========================" + (mset2-mset1));
 		this.sendJson(resp, data);
+		
 	}
 
 	// /**

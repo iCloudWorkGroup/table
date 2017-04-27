@@ -10,14 +10,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.acmr.excel.model.Constant;
-import com.acmr.mq.consumer.queue.QueueReceiver;
-import com.acmr.mq.producer.queue.QueueSender;
 
 public class CorsInterceptor implements HandlerInterceptor {
-	@Resource
-	private QueueSender queueSender;
-	@Resource
-	private QueueReceiver queueReceiver;
 
 	@Override
 	public void afterCompletion(HttpServletRequest paramHttpServletRequest,

@@ -148,7 +148,7 @@ public class SheetController extends BaseController {
 	@RequestMapping("/cut")
 	public void cut(HttpServletRequest req,HttpServletResponse resp) throws Exception{
 		Copy copy = getJsonDataParameter(req, Copy.class);
-		ExcelBook excelBook = (ExcelBook)memcachedClient.get(copy.getExcelId());
+		ExcelBook excelBook = (ExcelBook)memcachedClient.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.cut);
@@ -164,7 +164,7 @@ public class SheetController extends BaseController {
 	@RequestMapping("/area")
 	public void openexcel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
-		String excelId = openExcel.getExcelId();
+		String excelId = req.getHeader("excelId");
 		int memStep = (int)memcachedClient.get(excelId+"_ope");
 		String curStep = req.getHeader("step");
 		int cStep = 0;
