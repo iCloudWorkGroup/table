@@ -2,24 +2,15 @@ package com.acmr.excel.model;
 
 import java.io.Serializable;
 
-public class RowLine implements Serializable{
-	private String excelId;
-	private String rowNum;
+public class RowLine implements Serializable {
+	private int num;
 
-	public String getExcelId() {
-		return excelId;
+	public int getNum() {
+		return num;
 	}
 
-	public void setExcelId(String excelId) {
-		this.excelId = excelId;
+	public void setNum(int num) {
+		this.num = num;
 	}
 
-	public String getRowNum() {
-		return rowNum;
-	}
-
-	public void setRowNum(String rowNum) {
-		this.rowNum = rowNum;
-	}
-	
 }

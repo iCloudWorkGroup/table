@@ -67,7 +67,7 @@
 	
 	<!-- memcached注入-->  
 	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
-		<property name="servers" value="${memcache.address}"/>
+		<property name="servers" value="${memcache.server}:${memcache.port}"/>
 		<property name="protocol" value="BINARY"/>
 		<property name="transcoder">
 			<bean class="net.spy.memcached.transcoders.SerializingTranscoder">

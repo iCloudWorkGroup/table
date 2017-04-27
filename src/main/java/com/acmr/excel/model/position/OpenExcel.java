@@ -2,8 +2,8 @@ package com.acmr.excel.model.position;
 
 public class OpenExcel {
 	private String excelId;
-	private int rowBegin;
-	private int rowEnd;
+	private int top;
+	private int bottom;
 	private int colBegin;
 	private int colEnd;
 
@@ -15,20 +15,21 @@ public class OpenExcel {
 		this.excelId = excelId;
 	}
 
-	public int getRowBegin() {
-		return rowBegin;
+	
+	public int getTop() {
+		return top;
 	}
 
-	public void setRowBegin(int rowBegin) {
-		this.rowBegin = rowBegin;
+	public void setTop(int top) {
+		this.top = top;
 	}
 
-	public int getRowEnd() {
-		return rowEnd;
+	public int getBottom() {
+		return bottom;
 	}
 
-	public void setRowEnd(int rowEnd) {
-		this.rowEnd = rowEnd;
+	public void setBottom(int bottom) {
+		this.bottom = bottom;
 	}
 
 	public int getColBegin() {

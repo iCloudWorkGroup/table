@@ -2,7 +2,6 @@ package com.acmr.excel.controller;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,13 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import net.spy.memcached.MemcachedClient;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -277,7 +273,7 @@ public class ExcelController extends BaseController {
 		VersionHistory versionHistory = new VersionHistory();
 		memcachedClient.set(excelId+"_history", Constant.MEMCACHED_EXP_TIME, versionHistory);
 		return new ModelAndView("/index").addObject("excelId", excelId).addObject("sheetId", "1")
-				.addObject("build", false);
+				.addObject("build", false).addObject("frontName",Constant.frontName);
 	}
 	// public void getExcelParam(HttpServletRequest req, HttpServletResponse
 	// resp) throws IOException {
@@ -294,79 +290,7 @@ public class ExcelController extends BaseController {
 	// this.sendJson(resp, data);
 	// }
 	// }
-	/**
-	 * 通过像素动态加载excel
-	 */
-
-	public void openexcel(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
-		// String excelId = req.getParameter("excelId");
-		// //int sheetId = Integer.valueOf(req.getParameter("sheetId"));
-		// int rowBegin = Integer.valueOf(req.getParameter("rowBegin"));
-		// int rowEnd = Integer.valueOf(req.getParameter("rowEnd"));
-		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
-		String excelId = openExcel.getExcelId();
-		int memStep = (int)memcachedClient.get(excelId+"_ope");
-		String curStep = req.getHeader("step");
-		int cStep = 0;
-		if(!StringUtil.isEmpty(curStep)){
-			cStep = Integer.valueOf(curStep);
-		}
-		int rowBegin = openExcel.getRowBegin();
-		int rowEnd = openExcel.getRowEnd();
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
-		JsonReturn data = new JsonReturn("");
-		if (cStep == memStep) {
-			if (excelBook != null) {
-				ExcelSheet excelSheet = excelBook.getSheets().get(0);
-				ReturnParam returnParam = new ReturnParam();
-				CompleteExcel excel = new CompleteExcel();
-				SpreadSheet spreadSheet = new SpreadSheet();
-				excel.getSpreadSheet().add(spreadSheet);
-				spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
-				data.setReturncode(Constant.SUCCESS_CODE);
-				data.setReturndata(excel);
-				data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
-				data.setMaxRowPixel(returnParam.getMaxRowPixel());
-				memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
-			} else {
-				data.setReturncode(Constant.CACHE_INVALID_CODE);
-				data.setReturndata(Constant.CACHE_INVALID_MSG);
-			}
-		}else{
-			for (int i = 0; i < 100; i++) {
-				int mStep = (int)memcachedClient.get(excelId+"_ope");
-				if(cStep == mStep){
-					if (excelBook != null) {
-						ExcelSheet excelSheet = excelBook.getSheets().get(0);
-						ReturnParam returnParam = new ReturnParam();
-						CompleteExcel excel = new CompleteExcel();
-						SpreadSheet spreadSheet = new SpreadSheet();
-						excel.getSpreadSheet().add(spreadSheet);
-						spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
-						data.setReturncode(Constant.SUCCESS_CODE);
-						data.setReturndata(excel);
-						data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
-						data.setMaxRowPixel(returnParam.getMaxRowPixel());
-						memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
-					} else {
-						data.setReturncode(Constant.CACHE_INVALID_CODE);
-						data.setReturndata(Constant.CACHE_INVALID_MSG);
-					}
-				}else{
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		if("".equals(data.getReturndata())){
-			data.setReturncode(-1);
-		}
-		this.sendJson(resp, data);
-	}
+	
 
 	/**
 	 * 通过别名加载excel
