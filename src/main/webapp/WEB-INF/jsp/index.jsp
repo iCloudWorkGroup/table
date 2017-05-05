@@ -24,6 +24,7 @@
 					<li><span><a id="download" href="<%=request.getContextPath() %>/download/${excelId}">下载</a></span></li>
 					<!--  <li><span><a href="/${frontName}/excel.htm?m=save&excelId=${excelId}">保存</a></span></li> -->
 					<li><span><a href="<%=request.getContextPath() %>/reopen/${excelId}">重新打开</a></span></li>
+
 				</ul>
 			</div>
 			<div class="excel-name">

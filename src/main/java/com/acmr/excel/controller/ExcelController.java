@@ -50,6 +50,7 @@ import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.model.position.Position;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.HandleExcelService;
+import com.acmr.excel.service.StoreService;
 import com.acmr.excel.util.ExcelConst;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.FileUtil;
@@ -74,22 +75,7 @@ public class ExcelController extends BaseController {
 	 @Resource
 	private ExcelService excelService;
 	 @Resource
-	private MemcachedClient memcachedClient;
-	
-
-	public void setMemcachedClient(MemcachedClient memcachedClient) {
-		this.memcachedClient = memcachedClient;
-	}
-
-	public void setHandleExcelService(HandleExcelService handleExcelService) {
-		this.handleExcelService = handleExcelService;
-	}
-
-
-	public void setExcelService(ExcelService excelService) {
-		this.excelService = excelService;
-	}
-	
+	private StoreService storeService;
 
 	/**
 	 * excel下载
@@ -97,7 +83,7 @@ public class ExcelController extends BaseController {
 	@RequestMapping(value="/download/{excelId}",method=RequestMethod.GET)
 	public void download(HttpServletRequest req, HttpServletResponse resp) {
 		String excelId = req.getParameter("excelId");
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		if (excelBook != null) {
 			//excelService.changeHeightOrWidth(excelBook);
 			try {
@@ -126,10 +112,10 @@ public class ExcelController extends BaseController {
 	public ModelAndView main(HttpServletRequest req, HttpServletResponse resp) {
 		String excelId = UUIDUtil.getUUID();
 		ExcelBook excelBook = handleExcelService.createNewExcel(excelId);
-		memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excelBook);
-		memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
+		storeService.set(excelId,excelBook);
+		storeService.set(excelId+"_ope", 0);
 		VersionHistory versionHistory = new VersionHistory();
-		memcachedClient.set(excelId+"_history", Constant.MEMCACHED_EXP_TIME, versionHistory);
+		storeService.set(excelId+"_history", versionHistory);
 		log.info("初始化excel");
 		// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
 		// } <input type="hidden" id="excelId" value="(.*)"/>
@@ -163,8 +149,8 @@ public class ExcelController extends BaseController {
 			}
 		}
 		//excelsheet.MergedRegions(4, 4, 6, 6);
-		memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excelBook);
-		memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
+		storeService.set(excelId, excelBook);
+		storeService.set(excelId+"_ope", 0);
 		JsonReturn data = new JsonReturn("");
 		data.setReturndata(excelId);
 		this.sendJson(resp, data);
@@ -189,11 +175,25 @@ public class ExcelController extends BaseController {
 		excelBook.getSheets().add(sheet);
 		return excelBook;
 	}
-
-	public void open(HttpServletRequest req, HttpServletResponse resp) throws InterruptedException {
-		ExcelBook excelBook1 = (ExcelBook) MemcacheUtil.get("f3e2ebd8-f82e-4ba7-ae3c-70304e33232d", memcachedClient);
-		System.out.println(JSON.toJSONString(excelBook1));
-		//this.sendJson(resp, data);
+	private String readFile(String filepath) {
+		String content = "";
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filepath));
+			String str = null;
+			StringBuffer buf = new StringBuffer();
+			while ((str = br.readLine()) != null) {
+				buf.append(str);
+				buf.append("\r\n");
+			}
+			content = buf.toString();
+			// System.out.println(content);
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return content;
 	}
 	
 	/**
@@ -211,8 +211,8 @@ public class ExcelController extends BaseController {
 		if (StringUtil.isEmpty(excelId)) {
 			excelId = UUIDUtil.getUUID();
 			ExcelBook excelBook = handleExcelService.createNewExcel(excelId);
-			memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excelBook);
-			memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
+			storeService.set(excelId, excelBook);
+			storeService.set(excelId+"_ope",  0);
 			buildState += "\"true\";";
 			// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
 		} else {
@@ -271,7 +271,7 @@ public class ExcelController extends BaseController {
 	public ModelAndView reopen(@PathVariable String excelId) {
 		//String excelId = req.getParameter("excelId");
 		VersionHistory versionHistory = new VersionHistory();
-		memcachedClient.set(excelId+"_history", Constant.MEMCACHED_EXP_TIME, versionHistory);
+		storeService.set(excelId+"_history",  versionHistory);
 		return new ModelAndView("/index").addObject("excelId", excelId).addObject("sheetId", "1")
 				.addObject("build", false).addObject("frontName",Constant.frontName);
 	}
@@ -301,7 +301,7 @@ public class ExcelController extends BaseController {
 		// int sheetId = Integer.valueOf(req.getParameter("sheetId"));
 		String rowBegin = req.getParameter("rowBeginAlais");
 		String rowEnd = req.getParameter("rowEndAlais");
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		// Workbook workbook = this.mockWorkbook();
 		// CompleteExcel excel = excelService.getExcel(workbook);
 		JsonReturn data = new JsonReturn("");
@@ -324,122 +324,9 @@ public class ExcelController extends BaseController {
 		this.sendJson(resp, data);
 	}
 
-	// public void openExcelByIndex(HttpServletRequest req,HttpServletResponse
-	// resp) throws IOException {
-	// String excelId = req.getParameter("excelId");
-	// String rowBegin = req.getParameter("rowBegin");
-	// String rowEnd = req.getParameter("rowEnd");
-	// // String colEnd = req.getParameter("colEnd");
-	// CompleteExcel excel =
-	// (CompleteExcel)getSession(req).getAttribute(excelId);
-	// Workbook workbook = this.mockWorkbook();
-	// excel = excelService.getExcel(workbook);
-	// if(excel != null){
-	// excel = excelService.openExcelByIndex(excel,rowBegin,rowEnd);
-	// }
-	// JSONReturnData data = new JSONReturnData("");
-	// String jsonData = JSON.toJSONString(excel);
-	// ////system.out.println(jsonData);
-	// data.setReturndata(excel);
-	// this.sendJson(resp, data);
-	// }
-	// public void getExcelParam(HttpServletRequest req,HttpServletResponse
-	// resp) throws IOException {
-	// Workbook workbook = this.mockWorkbook();
-	// String excelId = req.getParameter("excelId");
-	// CompleteExcel excel = excelService.getExcel(workbook);
-	// ////system.out.println(JSON.toJSONString(excel));
-	// List<Gly> glys = excel.getSpreadSheet().get(0).getSheet().getGlY();
-	// JsonReturn data = new JsonReturn("");
-	// int rowNum = glys.size();
-	// data.setRowNum(rowNum);
-	// Gly gly = glys.get(rowNum-1);
-	// int rowLength = gly.getTop() + gly.getHeight();
-	// getSession(req).setAttribute(excelId, excel);
-	// data.setRowLength(rowLength);
-	// this.sendJson(resp, data);
-	// }
-	// public void getExcelParamByIndex(HttpServletRequest
-	// req,HttpServletResponse resp) throws IOException {
-	// Workbook workbook = this.mockWorkbook();
-	// String excelId = req.getParameter("excelId");
-	// CompleteExcel excel = excelService.getExcel(workbook);
-	// ////system.out.println(JSON.toJSONString(excel));
-	// List<Gly> glys = excel.getSpreadSheet().get(0).getSheet().getGlY();
-	// getSession(req).setAttribute(excelId, excel);
-	// JSONReturnData data = new JSONReturnData("");
-	// data.setReturndata(glys.size());
-	// this.sendJson(resp, data);
-	// }
-	// public void readExcel(HttpServletRequest req, HttpServletResponse resp)
-	// throws IOException {
-	// Workbook workbook = this.mockWorkbook();
-	// CompleteExcel excel = excelService.getExcel(workbook);
-	// ////system.out.println(JSON.toJSONString(excel));
-	// }
-	//
+	
 
-//	private Workbook mockWorkbook() {
-//		File file = new File("d:/a2.xlsx");
-//		InputStream is;
-//		try {
-//			is = new FileInputStream(file);
-//			return new XSSFWorkbook(is);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
-	private String readFile(String filepath) {
-		String content = "";
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(filepath));
-			String str = null;
-			StringBuffer buf = new StringBuffer();
-			while ((str = br.readLine()) != null) {
-				buf.append(str);
-				buf.append("\r\n");
-			}
-			content = buf.toString();
-			// System.out.println(content);
-			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return content;
-	}
-
-	// public void upload(HttpServletRequest req, HttpServletResponse resp)
-	// throws Exception{
-	// //Workbook workbook = this.mockWorkbook();
-	// List<MultipartFile> files = ((MultipartHttpServletRequest)
-	// req).getFiles("file");
-	// Workbook workbook =
-	// ExcelUtil.createWorkbook(files.get(0).getInputStream());
-	// CompleteExcel excel = excelService.getExcel(workbook);
-	// String excelId = UUIDUtil.getUUID();
-	// getSession(req).setAttribute(excelId, excel);
-	// OnlineExcel onlineExcel = new OnlineExcel();
-	// onlineExcel.setExcelId(excelId);
-	// //System.out.println(JSONObject.toJSONString(excel));
-	// onlineExcel.setJsonObject(JSONObject.toJSONString(excel));
-	// onlineExcel.setName("测试上传"+System.currentTimeMillis());
-	// JSONReturnData data = new JSONReturnData("");
-	// try {
-	// excelService.saveOrUpdateExcel(onlineExcel);
-	// data.setReturncode(200);
-	// data.setReturndata(excelId);
-	// } catch (Exception e) {
-	// data.setReturncode(202);
-	// e.printStackTrace();
-	// }
-	// this.sendJson(resp, data);
-	// }
+	
 	/**
 	 * 上传excel
 	 * 
@@ -476,8 +363,8 @@ public class ExcelController extends BaseController {
 		excelSheet.getExps().put("ifUpload", "true");
 //		memcachedClient.set(excelId, 60 * 60 * 1, excel);
 //		memcachedClient.set(excelId + "init", 60 * 60 * 1, excel);
-		memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excel);
-		memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
+		storeService.set(excelId,excel);
+		storeService.set(excelId+"_ope",  0);
 		JsonReturn data = new JsonReturn("");
 		data.setReturncode(200);
 		data.setReturndata(excelId);
@@ -485,23 +372,6 @@ public class ExcelController extends BaseController {
 		// System.out.println("upload========================="+JSON.toJSONString(excelBook));
 		this.sendJson(resp, data);
 	}
-//	public void save(HttpServletRequest req, HttpServletResponse resp)
-//			throws Exception {
-//		String excelId = req.getParameter("excelId");
-//		CompleteExcel excel = (CompleteExcel) getSession(req).getAttribute(
-//				excelId);
-//		JSONReturnData data = new JSONReturnData("");
-//		if (excel == null) {
-//			data.setReturncode(ExcelConst.SESSION_INVALID);
-//		} else {
-//			Workbook workbook = downLoadExcelService.downloadExcel(excel);
-//			data.setReturncode(ExcelConst.SUCCESS);
-//			OutputStream out = resp.getOutputStream();
-//			workbook.write(out);
-//			data.setReturndata(out);
-//		}
-//		this.sendJson(resp, data);
-//	}
 	
 	/**
 	 * 上传完成之后的页面
@@ -515,15 +385,6 @@ public class ExcelController extends BaseController {
 		return new ModelAndView("/index").addObject("excelId", excelId);
 	}
 
-	/**
-	 * 展示所有可以还原的excel
-	 * 
-	 * @return 列表页面
-	 */
-	public ModelAndView show(HttpServletRequest req, HttpServletResponse resp) {
-		List<OnlineExcel> excels = excelService.getAllExcel();
-		return new ModelAndView("/show").addObject("excels", excels);
-	}
 
 	/**
 	 * 重新打开excel
@@ -537,7 +398,7 @@ public class ExcelController extends BaseController {
 		Position position = getJsonDataParameter(req, Position.class);
 		int height = position.getBottom();
 		//long mget1 = System.currentTimeMillis();
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		//long mget2 = System.currentTimeMillis();
 		ReturnParam returnParam = new ReturnParam();
 		JsonReturn data = new JsonReturn("");
@@ -560,8 +421,8 @@ public class ExcelController extends BaseController {
 		data.setDisplayColStartAlias(spreadSheet.getSheet().getGlX().get(0).getAliasX());
 		data.setDisplayRowStartAlias(spreadSheet.getSheet().getGlY().get(0).getAliasY());
 		//long mset1 = System.currentTimeMillis();
-		memcachedClient.set(excelId+"_ope", Constant.MEMCACHED_EXP_TIME, 0);
-		memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
+		storeService.set(excelId+"_ope",  0);
+		storeService.set(excelId,  excelBook);
 		//long mset2 = System.currentTimeMillis();
 		//long b2 = System.currentTimeMillis();
 //		System.out.println("position =====================" +(b2-b1));
@@ -632,14 +493,14 @@ public class ExcelController extends BaseController {
 		// String startX = req.getParameter("startX");
 		// String startY = req.getParameter("startY");
 		Thread.sleep(3000);
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		JsonReturn data = new JsonReturn("");
 		if (excelBook != null) {
 			OnlineExcel olExcel = new OnlineExcel();
 			olExcel.setExcelId(excelId);
 			//olExcel.setExcelObject(ExcelBook.JSONString());
 			excelService.saveOrUpdateExcel(olExcel);
-			memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME,excelBook);
+			storeService.set(excelId, excelBook);
 			data.setReturncode(200);
 		}
 		this.sendJson(resp, data);

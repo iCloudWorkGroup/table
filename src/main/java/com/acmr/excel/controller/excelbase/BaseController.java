@@ -36,34 +36,7 @@ public class BaseController extends MultiActionController {
 	@Resource
 	private QueueSender queueSender;
 
-	// /**
-	// * 获取decode解码后的参数对象
-	// * @param <T>
-	// * @param req
-	// * @param key
-	// * @return <T> t
-	// * @throws IllegalAccessException
-	// * @throws InstantiationException
-	// */
-	// public <T> T getJsonDataParameter(HttpServletRequest req, Class<T> t){
-	// String value = req.getParameter(ExcelConst.PARAMETER_HEAD_STRING);
-	// if (StringUtil.isEmpty(value)) {
-	// try {
-	// return t.newInstance();
-	// } catch (InstantiationException | IllegalAccessException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// if (req.getMethod().toLowerCase().equals("get")) {
-	// try {
-	// value = new String(value.replaceAll("%", "###").getBytes(
-	// "iso-8859-1"), "utf-8");
-	// value = java.net.URLDecoder.decode(value, "utf-8");
-	// } catch (UnsupportedEncodingException e1) {
-	// }
-	// }
-	// return JSON.parseObject(value, t);
-	// }
+	
 	/**
 	 * session缓存
 	 * 
@@ -76,42 +49,7 @@ public class BaseController extends MultiActionController {
 		return req.getSession();
 	}
 
-	/**
-	 * 把对象放入缓存
-	 * 
-	 * @param req
-	 *            request对象
-	 * @param memcachedClient
-	 *            memcached对象
-	 * @param key
-	 *            键
-	 * @param excel
-	 *            值
-	 */
 
-	protected void setCache(HttpServletRequest req,
-			MemcachedClient memcachedClient, String key, CompleteExcel excel) {
-		memcachedClient.set(key, 60 * 60 * 24, excel);
-		req.getSession().setAttribute(key, excel);
-	}
-
-	/**
-	 * 把对象从缓存中取出
-	 * 
-	 * @param req
-	 *            request对象
-	 * @param memcachedClient
-	 *            memcached对象
-	 * @param key
-	 *            键
-	 * @return excel对象
-	 */
-
-	protected CompleteExcel getCache(HttpServletRequest req,
-			MemcachedClient memcachedClient, String key) {
-		return (CompleteExcel) memcachedClient.get(key);
-		// return (CompleteExcel)req.getSession().setAttribute(key);
-	}
 
 	/**
 	 * 把json串转化为实际对象
