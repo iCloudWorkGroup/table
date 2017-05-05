@@ -22,6 +22,7 @@ import com.acmr.excel.service.CellService;
 import com.acmr.excel.service.HandleExcelService;
 import com.acmr.excel.service.PasteService;
 import com.acmr.excel.service.SheetService;
+import com.acmr.excel.service.StoreService;
 import com.acmr.mq.Model;
 
 /**
@@ -33,7 +34,7 @@ public class QueueReceiver implements MessageListener {
 	@Resource
 	private HandleExcelService handleExcelService;
 	@Resource
-	private MemcachedClient memcachedClient;
+	private StoreService storeService;
 	@Resource
 	private CellService cellService;
 	@Resource
@@ -52,7 +53,7 @@ public class QueueReceiver implements MessageListener {
 				logger.info("**********receive message excelId : "+excelId + " === step : " + step + "== reqPath : "+ model.getReqPath());
 				ExecutorService executor = Executors.newFixedThreadPool(1);
 				
-				Runnable worker = new WorkerThread2(step, memcachedClient,excelId + "_ope", handleExcelService, cellService, 
+				Runnable worker = new WorkerThread2(step, storeService,excelId + "_ope", handleExcelService, cellService, 
 						pasteService ,sheetService,model);
 				executor.execute(worker);
 				executor.shutdown();

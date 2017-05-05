@@ -21,17 +21,17 @@
 				<ul class="fui-control-list">
 					<li><span id="homeTool" class="active">开始</span></li>
 					<li><span id="reviewTool">审阅</span></li>
-					<li><span><a id="download" href="/${frontName}/download/${excelId}">下载</a></span></li>
+					<li><span><a id="download" href="<%=request.getContextPath() %>/download/${excelId}">下载</a></span></li>
 					<!--  <li><span><a href="/${frontName}/excel.htm?m=save&excelId=${excelId}">保存</a></span></li> -->
-					<li><span><a href="/${frontName}/reopen/${excelId}">重新打开</a></span></li>
-					<!-- &excelId=${excelId} -->
+					<li><span><a href="<%=request.getContextPath() %>/reopen/${excelId}">重新打开</a></span></li>
+
 				</ul>
 			</div>
 			<div class="excel-name">
 				<div class="textarea">Book Name</div>
 			</div>
-			<div class="version">Version frontend : 0.6.0</div>
-			<div class="version">Version java : 0.10.1</div>
+			<!--<div class="version">Version frontend : 0.6.0</div>
+			<div class="version">Version java : 0.10.1</div>-->
 		</div>
 		<div class="toolBar" id="toolBar">
 			<ul class="tabContainer homeToolContainer">

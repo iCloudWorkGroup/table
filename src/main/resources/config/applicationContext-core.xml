@@ -64,24 +64,7 @@
 	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-	
-	<!-- memcached注入-->  
-	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
-		<property name="servers" value="${memcache.server}:${memcache.port}"/>
-		<property name="protocol" value="BINARY"/>
-		<property name="transcoder">
-			<bean class="net.spy.memcached.transcoders.SerializingTranscoder">
-				<property name="compressionThreshold" value="1024"/>
-			</bean>
-		</property>
-		<property name="opTimeout" value="5000"/>
-		<property name="timeoutExceptionThreshold" value="1998"/>
-		<!--<property name="hashAlg">
-				<value type="net.spy.memcached.DefaultHashAlgorithm">KETAMA_HASH</value>
-			</property>-->
-		<property name="locatorType" value="CONSISTENT"/> 
-		<property name="failureMode" value="Redistribute"/>
-		<property name="useNagleAlgorithm" value="false"/>
-	</bean>
+	<!--<import resource="classpath:config/applicationContext-spy-memcache.xml" />-->
+	<import resource="classpath:config/applicationContext-java-memcache.xml" />
 	
 </beans>

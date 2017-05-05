@@ -26,6 +26,7 @@ import com.acmr.excel.model.copy.Copy;
 import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
+import com.acmr.excel.service.StoreService;
 import com.acmr.excel.util.JsonReturn;
 import com.acmr.excel.util.StringUtil;
 
@@ -39,7 +40,7 @@ import com.acmr.excel.util.StringUtil;
 @RequestMapping("/sheet")
 public class SheetController extends BaseController {
 	@Resource
-	private MemcachedClient memcachedClient;
+	private StoreService storeService;
 	@Resource
 	private PasteService pasteService; 
 	 @Resource
@@ -117,12 +118,13 @@ public class SheetController extends BaseController {
 	@RequestMapping("/paste")
 	public void paste(HttpServletRequest req,HttpServletResponse resp) throws Exception{
 		Paste paste = getJsonDataParameter(req, Paste.class);
-		ExcelBook excelBook = (ExcelBook)memcachedClient.get(req.getHeader("excelId"));
+		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isAblePaste(paste, excelBook);
 		if(isAblePasteResult){
 			this.assembleData(req, resp, paste, OperatorConstant.paste);
+			this.sendJson(resp, true);
 		}else{
-			this.assemblePasteData(req, resp);
+			this.sendJson(resp, false);
 		}
 		
 	}
@@ -133,13 +135,15 @@ public class SheetController extends BaseController {
 	@RequestMapping("/copy")
 	public void copy(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		Copy copy = getJsonDataParameter(req, Copy.class);
-		ExcelBook excelBook = (ExcelBook)memcachedClient.get(req.getHeader("excelId"));
+		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.copy);
+			this.sendJson(resp, true);
 		}else{
-			this.assemblePasteData(req, resp);
+			this.sendJson(resp, false);
 		}
+		
 	}
 	/**
 	 * 剪切粘贴
@@ -148,12 +152,13 @@ public class SheetController extends BaseController {
 	@RequestMapping("/cut")
 	public void cut(HttpServletRequest req,HttpServletResponse resp) throws Exception{
 		Copy copy = getJsonDataParameter(req, Copy.class);
-		ExcelBook excelBook = (ExcelBook)memcachedClient.get(copy.getExcelId());
+		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.cut);
+			this.sendJson(resp, true);
 		}else{
-			this.assemblePasteData(req, resp);
+			this.sendJson(resp, false);
 		}
 	}
 	
@@ -164,8 +169,8 @@ public class SheetController extends BaseController {
 	@RequestMapping("/area")
 	public void openexcel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
-		String excelId = openExcel.getExcelId();
-		int memStep = (int)memcachedClient.get(excelId+"_ope");
+		String excelId = req.getHeader("excelId");
+		int memStep = (int)storeService.get(excelId+"_ope");
 		String curStep = req.getHeader("step");
 		int cStep = 0;
 		if(!StringUtil.isEmpty(curStep)){
@@ -173,7 +178,7 @@ public class SheetController extends BaseController {
 		}
 		int rowBegin = openExcel.getTop();
 		int rowEnd = openExcel.getBottom();
-		ExcelBook excelBook = (ExcelBook) memcachedClient.get(excelId);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		JsonReturn data = new JsonReturn("");
 		if (cStep == memStep) {
 			if (excelBook != null) {
@@ -187,14 +192,14 @@ public class SheetController extends BaseController {
 				data.setReturndata(excel);
 				data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
 				data.setMaxRowPixel(returnParam.getMaxRowPixel());
-				memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
+				storeService.set(excelId,excelBook);
 			} else {
 				data.setReturncode(Constant.CACHE_INVALID_CODE);
 				data.setReturndata(Constant.CACHE_INVALID_MSG);
 			}
 		}else{
 			for (int i = 0; i < 100; i++) {
-				int mStep = (int)memcachedClient.get(excelId+"_ope");
+				int mStep = (int)storeService.get(excelId+"_ope");
 				if(cStep == mStep){
 					if (excelBook != null) {
 						ExcelSheet excelSheet = excelBook.getSheets().get(0);
@@ -207,7 +212,7 @@ public class SheetController extends BaseController {
 						data.setReturndata(excel);
 						data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
 						data.setMaxRowPixel(returnParam.getMaxRowPixel());
-						memcachedClient.set(excelId, Constant.MEMCACHED_EXP_TIME, excelBook);
+						storeService.set(excelId, excelBook);
 					} else {
 						data.setReturncode(Constant.CACHE_INVALID_CODE);
 						data.setReturndata(Constant.CACHE_INVALID_MSG);

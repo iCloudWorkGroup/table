@@ -1,7 +1,9 @@
 package com.acmr.excel.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.acmr.excel.util.PropertiesReaderUtil;
 
@@ -13,7 +15,7 @@ public class Constant {
 	public static final int MEMCACHED_EXP_TIME = 60 * 60 * 24 * 1;
 	public static final String queueName = PropertiesReaderUtil.get("activemq.queueName");
 	public static final String frontName = PropertiesReaderUtil.get("frontName");
-
+	public static Map<String,Object> map = new HashMap<String,Object>();
 	/**
 	 * 单元格高亮
 	 */
