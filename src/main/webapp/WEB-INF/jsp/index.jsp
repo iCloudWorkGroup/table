@@ -5,6 +5,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Spreadsheet Online Office</title>
+		<link rel="shortcut icon" type="image/x-icon" href="/${frontName}/favicon.ico"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/main.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/toolbar.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/widget.css"/>
