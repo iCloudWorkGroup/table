@@ -27,6 +27,7 @@ import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
 import com.acmr.excel.service.StoreService;
+import com.acmr.excel.util.AnsycDataReturn;
 import com.acmr.excel.util.JsonReturn;
 import com.acmr.excel.util.StringUtil;
 
@@ -120,11 +121,14 @@ public class SheetController extends BaseController {
 		Paste paste = getJsonDataParameter(req, Paste.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isAblePaste(paste, excelBook);
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, paste, OperatorConstant.paste);
-			this.sendJson(resp, true);
+			ansycDataReturn.setIsLegal(true);
+			this.sendJson(resp, ansycDataReturn);
 		}else{
-			this.sendJson(resp, false);
+			ansycDataReturn.setIsLegal(false);
+			this.sendJson(resp, ansycDataReturn);
 		}
 		
 	}
@@ -137,11 +141,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.copy);
-			this.sendJson(resp, true);
+			ansycDataReturn.setIsLegal(true);
+			this.sendJson(resp, ansycDataReturn);
 		}else{
-			this.sendJson(resp, false);
+			ansycDataReturn.setIsLegal(false);
+			this.sendJson(resp, ansycDataReturn);
 		}
 		
 	}
@@ -154,11 +161,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.cut);
-			this.sendJson(resp, true);
+			ansycDataReturn.setIsLegal(true);
+			this.sendJson(resp, ansycDataReturn);
 		}else{
-			this.sendJson(resp, false);
+			ansycDataReturn.setIsLegal(false);
+			this.sendJson(resp, ansycDataReturn);
 		}
 	}
 	

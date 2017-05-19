@@ -380,10 +380,10 @@ public class ExcelController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/uploadComplete/{excelId}")
-	public ModelAndView uploadComplete(@PathVariable String excelId) throws Exception {
-		return new ModelAndView("/index").addObject("excelId", excelId);
-	}
+//	@RequestMapping("/uploadComplete/{excelId}")
+//	public ModelAndView uploadComplete(@PathVariable String excelId) throws Exception {
+//		return new ModelAndView("/index").addObject("excelId", excelId).addObject("frontName",Constant.frontName);
+//	}
 
 
 	/**
