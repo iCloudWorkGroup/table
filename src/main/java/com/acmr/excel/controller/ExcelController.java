@@ -202,11 +202,11 @@ public class ExcelController extends BaseController {
 	 * @param req
 	 * @param resp
 	 */
-
-	public void getscript(HttpServletRequest req, HttpServletResponse resp) {
-		String excelId = req.getParameter("excelId");
+	@RequestMapping(value="/getscript/{excelId}",method=RequestMethod.GET)
+	public void getscript(@PathVariable String excelId,HttpServletRequest req, HttpServletResponse resp) {
+		//String excelId = req.getParameter("excelId");
 		String realPath = req.getSession().getServletContext().getRealPath("/");
-		String jsString = readFile(realPath + "dist/my.js");
+		String jsString = readFile(realPath + "dist/fn.js");
 		String buildState = "window.SPREADSHEET_BUILD_STATE=";
 		if (StringUtil.isEmpty(excelId)) {
 			excelId = UUIDUtil.getUUID();
@@ -231,7 +231,12 @@ public class ExcelController extends BaseController {
 		}
 
 	}
+	@RequestMapping(value="/getscript",method=RequestMethod.GET)
+	public void getscripts(HttpServletRequest req, HttpServletResponse resp) {
+		//String excelId = req.getParameter("excelId");
+		getscript(null, req, resp);
 
+	}
 	// private void test500LineData(CompleteExcel excel) {
 	// SheetElement sheet = excel.getSpreadSheet().get(0).getSheet();
 	// Map<String, Map<String, Integer>> alaisY =
