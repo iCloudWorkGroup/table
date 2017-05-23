@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.spy.memcached.MemcachedClient;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +69,7 @@ import com.alibaba.fastjson.JSON;
  */
  @Controller
  @RequestMapping
+ @Scope("singleton")
 public class ExcelController extends BaseController {
 	private static Logger log = Logger.getLogger(ExcelController.class); 
 	 @Resource
@@ -205,8 +207,8 @@ public class ExcelController extends BaseController {
 	@RequestMapping(value="/getscript/{excelId}",method=RequestMethod.GET)
 	public void getscript(@PathVariable String excelId,HttpServletRequest req, HttpServletResponse resp) {
 		//String excelId = req.getParameter("excelId");
-		String realPath = req.getSession().getServletContext().getRealPath("/");
-		String jsString = readFile(realPath + "dist/fn.js");
+		//String realPath = req.getSession().getServletContext().getRealPath("/");
+		String jsString = readFile(Constant.outPath);
 		String buildState = "window.SPREADSHEET_BUILD_STATE=";
 		if (StringUtil.isEmpty(excelId)) {
 			excelId = UUIDUtil.getUUID();
