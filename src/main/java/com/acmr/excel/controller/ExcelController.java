@@ -83,8 +83,7 @@ public class ExcelController extends BaseController {
 	 * excel下载
 	 */
 	@RequestMapping(value="/download/{excelId}",method=RequestMethod.GET)
-	public void download(HttpServletRequest req, HttpServletResponse resp) {
-		String excelId = req.getParameter("excelId");
+	public void download(@PathVariable String excelId,HttpServletRequest req, HttpServletResponse resp) {
 		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		if (excelBook != null) {
 			//excelService.changeHeightOrWidth(excelBook);
