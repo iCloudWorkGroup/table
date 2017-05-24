@@ -748,8 +748,14 @@ public class ExcelService {
 		ExcelSheetFreeze excelfrozen = excelSheet.getFreeze();
 		if (excelfrozen != null) {
 			Frozen frozen = spreadSheet.getSheet().getFrozen();
-			frozen.setRowIndex(excelfrozen.getRow() + 1 + "");
-			frozen.setColIndex(excelfrozen.getCol() + 1 + "");
+			int rf = excelfrozen.getRow();
+			if(rf != 0){
+				frozen.setRow(rf);
+			}
+			int cf = excelfrozen.getCol();
+			if(cf != 0){
+				frozen.setCol(cf);
+			}
 			frozen.setState("1");
 		}
 		return spreadSheet;

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Frozen implements Serializable{
 	private String state;
-	private String rowIndex;
-	private String colIndex;
+	private Integer row;
+	private Integer col;
 	private String displayAreaStartAlaisX;
 	private String displayAreaStartAlaisY;
 
@@ -16,21 +16,22 @@ public class Frozen implements Serializable{
 	public void setState(String state) {
 		this.state = state;
 	}
+	
 
-	public String getRowIndex() {
-		return rowIndex;
+	public Integer getRow() {
+		return row;
 	}
 
-	public void setRowIndex(String rowIndex) {
-		this.rowIndex = rowIndex;
+	public void setRow(Integer row) {
+		this.row = row;
 	}
 
-	public String getColIndex() {
-		return colIndex;
+	public Integer getCol() {
+		return col;
 	}
 
-	public void setColIndex(String colIndex) {
-		this.colIndex = colIndex;
+	public void setCol(Integer col) {
+		this.col = col;
 	}
 
 	public String getDisplayAreaStartAlaisX() {
