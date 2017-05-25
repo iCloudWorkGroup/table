@@ -152,7 +152,7 @@ public class CellService {
 		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
 		int colIndex = colWidth.getCol();
 		int offsetWidth = colWidth.getOffset();
-		colList.get(colIndex).setWidth(colList.get(colIndex).getWidth() + offsetWidth);
+		colList.get(colIndex).setWidth(offsetWidth);
 	}
 	/**
 	 * 列隐藏
@@ -197,7 +197,7 @@ public class CellService {
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
 		int rowIndex = rowHeight.getRow();
 		int offsetHeight = rowHeight.getOffset();
-		rowList.get(rowIndex).setHeight(rowList.get(rowIndex).getHeight() + offsetHeight);
+		rowList.get(rowIndex).setHeight(offsetHeight);
 	}
 
 }
