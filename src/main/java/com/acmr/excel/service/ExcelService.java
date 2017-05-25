@@ -629,9 +629,9 @@ public class ExcelService {
 //			}
 //		}
 		
-		if(!StringUtil.isEmpty(excelCell.getMemo())){
+		//if(!StringUtil.isEmpty(excelCell.getMemo())){
 			customProp.setComment(excelCell.getMemo());
-		}
+		//}
 		
 		
 		ExcelColor fontColor = excelFont.getColor();

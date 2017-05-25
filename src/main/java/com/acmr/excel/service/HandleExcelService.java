@@ -881,8 +881,10 @@ public class HandleExcelService {
 		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>) excelSheet.getCols();
 		int startRowIndex = comment.getCoordinate().getStartRow();
 		int endRowIndex = comment.getCoordinate().getEndRow();
+		boolean rowFlag = false;
 		if (endRowIndex == -1) {
 			endRowIndex = rowList.size() - 1;
+			rowFlag = true;
 		} 
 		int startColIndex = comment.getCoordinate().getStartCol();
 		int endColIndex = comment.getCoordinate().getEndCol();
@@ -891,10 +893,14 @@ public class HandleExcelService {
 			endColIndex = colList.size() - 1;
 			colFlag = true;
 		} 
+		String com = comment.getComment();
+		if(com == null){
+			com = "";
+		}
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
-			if(colFlag){
+			if(rowFlag){
 				Map<String, String> exps = rowList.get(i).getExps();
-				exps.put("comment", comment.getComment());
+				exps.put("comment",com );
 			}
 			List<ExcelCell> cellList = rowList.get(i).getCells();
 			for (int j = startColIndex; j <= endColIndex; j++) {
@@ -909,14 +915,17 @@ public class HandleExcelService {
 				}else{
 					changeArea.setOriginalValue(excelCell.getMemo());
 				}
-				excelCell.setMemo(comment.getComment());
-				changeArea.setUpdateValue(comment.getComment());
+				excelCell.setMemo(com);
+				changeArea.setUpdateValue(com);
 				history.getChangeAreaList().add(changeArea);
 			}
 		}
-		for (int j = startColIndex; j <= endColIndex; j++) {
-			Map<String, String> colExps = colList.get(j).getExps();
-			colExps.put("comment", comment.getComment());
+		if(colFlag){
+			for (int j = startColIndex; j <= endColIndex; j++) {
+				Map<String, String> colExps = colList.get(j).getExps();
+				colExps.put("comment", com);
+			}
 		}
+		
 	}
 }
