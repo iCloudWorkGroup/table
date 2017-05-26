@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.acmr.excel.model.Constant;
 import com.acmr.excel.service.StoreService;
 import com.danga.MemCached.MemCachedClient;
 
@@ -19,7 +20,7 @@ public class MemJCServiceImpl implements StoreService {
 
 	@Override
 	public Object set(String id, Object object) {
-		memCachedClient.set(id, object);
+		memCachedClient.set(id, object,Integer.valueOf(Constant.MEMCACHED_EXP_TIME));
 		return null;
 	}
 

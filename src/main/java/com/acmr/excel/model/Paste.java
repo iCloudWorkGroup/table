@@ -4,20 +4,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Paste implements Serializable {
-	private String excelId;
-	private int startColSort;
-	private int startRowSort;
+	private int oprCol;
+	private int oprRow;
 	private List<OuterPasteData> pasteData;
 	private int colLen;
 	private int rowLen;
 
-	public String getExcelId() {
-		return excelId;
-	}
-
-	public void setExcelId(String excelId) {
-		this.excelId = excelId;
-	}
 
 	public List<OuterPasteData> getPasteData() {
 		return pasteData;
@@ -43,20 +35,20 @@ public class Paste implements Serializable {
 		this.rowLen = rowLen;
 	}
 
-	public int getStartColSort() {
-		return startColSort;
+	public int getOprCol() {
+		return oprCol;
 	}
 
-	public void setStartColSort(int startColSort) {
-		this.startColSort = startColSort;
+	public void setOprCol(int oprCol) {
+		this.oprCol = oprCol;
 	}
 
-	public int getStartRowSort() {
-		return startRowSort;
+	public int getOprRow() {
+		return oprRow;
 	}
 
-	public void setStartRowSort(int startRowSort) {
-		this.startRowSort = startRowSort;
+	public void setOprRow(int oprRow) {
+		this.oprRow = oprRow;
 	}
 
 }

@@ -17,13 +17,13 @@ public class MemcacheUtil {
    public static synchronized Object get(String key,MemcachedClient memcache) throws InterruptedException{
 		String noLock = (String) memcache.get(key + "PK");
 		if ("true".equals(noLock)) {
-			memcache.set(key + "PK", Constant.MEMCACHED_EXP_TIME, "false");
+			memcache.set(key + "PK", Integer.valueOf(Constant.MEMCACHED_EXP_TIME), "false");
 			return memcache.get(key);
 		} else {
 			for (int i = 0; i < 1000; i++) {
 				noLock = (String) memcache.get(key + "PK");
 				if ("true".equals(noLock)) {
-					memcache.set(key + "PK", Constant.MEMCACHED_EXP_TIME, "false");
+					memcache.set(key + "PK", Integer.valueOf(Constant.MEMCACHED_EXP_TIME), "false");
 					return memcache.get(key);
 				} else {
 					Thread.sleep(10);
@@ -40,7 +40,7 @@ public class MemcacheUtil {
     */
    
 	public static void set(String hey, MemcachedClient memcache, Object object) {
-		memcache.set(hey, Constant.MEMCACHED_EXP_TIME, object);
-		memcache.set(hey + "PK", Constant.MEMCACHED_EXP_TIME, "true");
+		memcache.set(hey, Integer.valueOf(Constant.MEMCACHED_EXP_TIME), object);
+		memcache.set(hey + "PK", Integer.valueOf(Constant.MEMCACHED_EXP_TIME), "true");
 	}
 }

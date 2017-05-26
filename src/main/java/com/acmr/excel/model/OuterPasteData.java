@@ -3,31 +3,32 @@ package com.acmr.excel.model;
 import java.io.Serializable;
 
 public class OuterPasteData implements Serializable {
-	private int colSort;
-	private int rowSort;
-	private String text;
+	private int col;
+	private int row;
+	private String content;
 
-	public int getColSort() {
-		return colSort;
+	public int getCol() {
+		return col;
 	}
 
-	public void setColSort(int colSort) {
-		this.colSort = colSort;
+	public void setCol(int col) {
+		this.col = col;
 	}
 
-	public int getRowSort() {
-		return rowSort;
+	public int getRow() {
+		return row;
 	}
 
-	public void setRowSort(int rowSort) {
-		this.rowSort = rowSort;
+	public void setRow(int row) {
+		this.row = row;
 	}
 
-	public String getText() {
-		return text;
+	public String getContent() {
+		return content;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setContent(String content) {
+		this.content = content;
 	}
+
 }

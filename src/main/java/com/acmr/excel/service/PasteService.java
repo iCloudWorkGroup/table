@@ -14,11 +14,15 @@ import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.OuterPasteData;
 import com.acmr.excel.model.Paste;
 import com.acmr.excel.model.copy.Copy;
+import com.acmr.excel.model.copy.TempObj;
 import com.acmr.excel.model.history.ChangeArea;
 import com.acmr.excel.model.history.History;
 import com.acmr.excel.model.history.VersionHistory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 @Service
@@ -38,8 +42,8 @@ public class PasteService {
 		int endRowIndex = copy.getOrignal().getEndRow();
 		int startColIndex = copy.getOrignal().getStartCol();
 		int endColIndex = copy.getOrignal().getEndCol();
-		int targetRowIndex = copy.getTarget().getOrignalRow();
-		int targetColIndex = copy.getTarget().getOrignalCol();
+		int targetRowIndex = copy.getTarget().getOprRow();
+		int targetColIndex = copy.getTarget().getOprCol();
 		int rowRange = endRowIndex - startRowIndex;
 		int colRange = endColIndex - startColIndex;
 		for (int i = targetRowIndex; i < targetRowIndex + rowRange; i++) {
@@ -82,9 +86,9 @@ public class PasteService {
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>) excelSheet.getRows();
 		List<OuterPasteData> pasteList = paste.getPasteData();
 		for (OuterPasteData outerPasteData : pasteList) {
-			int rowIndex = outerPasteData.getRowSort();
+			int rowIndex = outerPasteData.getRow();
 			ExcelRow excelRow = rowList.get(rowIndex);
-			int colIndex = outerPasteData.getColSort();
+			int colIndex = outerPasteData.getCol();
 			List<ExcelCell> cellList = excelRow.getCells();
 			ExcelCell excelCell = cellList.get(colIndex);
 			ChangeArea changeArea = new ChangeArea();
@@ -98,7 +102,7 @@ public class PasteService {
 			}else{
 				changeArea.setOriginalValue(excelCell.clone());
 			}
-			String text = outerPasteData.getText();
+			String text = outerPasteData.getContent();
 				//text = java.net.URLDecoder.decode(text, "utf-8");
 			excelCell.setText(text);
 			excelCell.setType(CELLTYPE.STRING);
@@ -164,8 +168,9 @@ public class PasteService {
 		int endRowIndex = copy.getOrignal().getEndRow();
 		int startColIndex = copy.getOrignal().getStartCol();
 		int endColIndex = copy.getOrignal().getEndCol();
-		int targetRowIndex = copy.getTarget().getOrignalRow();
-		int targetColIndex = copy.getTarget().getOrignalCol();
+		int targetRowIndex = copy.getTarget().getOprRow();
+		int targetColIndex = copy.getTarget().getOprCol();
+		List<TempObj> temList = new ArrayList<TempObj>();
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			ExcelRow excelRow = rowList.get(i);
 			int tempColIndex = targetColIndex;
@@ -181,7 +186,12 @@ public class PasteService {
 					changeArea.setOriginalValue(rowList.get(targetRowIndex).getCells().get(tempColIndex));
 				}
 				ExcelCell newExcelCell = excelCell.clone();
-				rowList.get(targetRowIndex).set(tempColIndex, newExcelCell);
+				//rowList.get(targetRowIndex).set(tempColIndex, newExcelCell);
+				TempObj tempObj = new TempObj();
+				tempObj.setRow(targetRowIndex);
+				tempObj.setCol(tempColIndex);
+				tempObj.setExcelCell(newExcelCell);
+				temList.add(tempObj);
 				changeArea.setUpdateValue(newExcelCell);
 				history.getChangeAreaList().add(changeArea);
 				if ("cut".equals(flag)) {
@@ -197,6 +207,12 @@ public class PasteService {
 			}
 			targetRowIndex++;
 		}
+
+		for (TempObj tempObj : temList) {
+			rowList.get(tempObj.getRow()).set(tempObj.getCol(),tempObj.getExcelCell());
+		}
+		
+		
 	}
 
 	/**
@@ -211,8 +227,8 @@ public class PasteService {
 		boolean canPaste = true;
 		ExcelSheet excelSheet = excelBook.getSheets().get(0);
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>) excelSheet.getRows();
-		int startRowIndex = paste.getStartRowSort();
-		int startColIndex = paste.getStartColSort();
+		int startRowIndex = paste.getOprRow();
+		int startColIndex = paste.getOprCol();
 		int rowRange = paste.getRowLen();
 		int colRange = paste.getColLen();
 		for (int i = startRowIndex; i < startRowIndex + rowRange; i++) {
@@ -243,8 +259,8 @@ public class PasteService {
 		int endColIndex = copy.getOrignal().getEndCol();
 		int rowRange = endRowIndex - startRowIndex;
 		int colRange = endColIndex - startColIndex;
-		int targetStartRowIndex = copy.getTarget().getOrignalRow();
-		int targetStartColIndex = copy.getTarget().getOrignalCol();
+		int targetStartRowIndex = copy.getTarget().getOprRow();
+		int targetStartColIndex = copy.getTarget().getOprCol();
 		for (int i = targetStartRowIndex; i <= targetStartRowIndex + rowRange; i++) {
 			ExcelRow excelRow = rowList.get(i);
 			for (int j = targetStartColIndex; j <= targetStartColIndex + colRange; j++) {

@@ -3,23 +3,23 @@ package com.acmr.excel.model.copy;
 import java.io.Serializable;
 
 public class Target implements Serializable {
-	private int orignalCol;
-	private int orignalRow;
+	private int oprCol;
+	private int oprRow;
 
-	public int getOrignalCol() {
-		return orignalCol;
+	public int getOprCol() {
+		return oprCol;
 	}
 
-	public void setOrignalCol(int orignalCol) {
-		this.orignalCol = orignalCol;
+	public void setOprCol(int oprCol) {
+		this.oprCol = oprCol;
 	}
 
-	public int getOrignalRow() {
-		return orignalRow;
+	public int getOprRow() {
+		return oprRow;
 	}
 
-	public void setOrignalRow(int orignalRow) {
-		this.orignalRow = orignalRow;
+	public void setOprRow(int oprRow) {
+		this.oprRow = oprRow;
 	}
 
 }

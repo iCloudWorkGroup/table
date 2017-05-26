@@ -14,7 +14,7 @@ import com.acmr.excel.service.StoreService;
 public class MemcacheServiceImpl implements StoreService {
 	@Resource
 	private MemcachedClient memcachedClient;
-	private int exp = Constant.MEMCACHED_EXP_TIME;
+	private int exp = Integer.valueOf(Constant.MEMCACHED_EXP_TIME);
 
 	@Override
 	public Object get(String id) {
