@@ -30,11 +30,15 @@ public class RmiServiceImpl extends UnicastRemoteObject implements RmiService {
 	
 
 	@Override
-	public void saveExcelBook(String excelId, ExcelBook excelBook) throws RemoteException {
+	public boolean saveExcelBook(String excelId, ExcelBook excelBook) throws RemoteException {
 		//MemcachedClient memcachedClient = MemcacheFactory.CACHESOURCE.getMemcacheClient();
-		memCachedClient.set(excelId,excelBook);
-		memCachedClient.set(excelId+"_ope",  0);
-		//System.out.println(storeService.get(excelId+"_ope"));
+		boolean excelResult = memCachedClient.set(excelId,excelBook);
+		boolean opeResult = memCachedClient.set(excelId+"_ope",  0);
+		if(excelResult && opeResult){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	@Override

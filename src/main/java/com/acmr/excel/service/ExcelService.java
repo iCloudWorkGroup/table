@@ -723,14 +723,9 @@ public class ExcelService {
 			endPixel = startPixel + height + 200;
 		}
 		
-		int minLeft = glxList.get(0).getLeft();
 		Glx glxLeft = glxList.get(glxList.size() - 1);
 		int maxLeft = glxLeft.getLeft() + glxLeft.getWidth();
 		returnParam.setMaxColPixel(maxLeft);
-		int startColPixel = 0;
-		int OffsetCol = startColPixel - minLeft;
-		int startCPixel = OffsetCol < 200 ? OffsetCol : startColPixel - 200;
-		int endColPixel = 0;
 		// int oldrowBeginIndex = BinarySearch.rowsBinarySearch(startPixel,
 		// glyList, 0, glyList.size()-1);
 		int rowBeginIndex = BinarySearch.rowsBinarySearch(glyList, startPixel);
@@ -749,11 +744,11 @@ public class ExcelService {
 		if (excelfrozen != null) {
 			Frozen frozen = spreadSheet.getSheet().getFrozen();
 			int rf = excelfrozen.getRow();
-			if(rf != 0){
+			if(!"fr".equals(excelSheet.getExps().get("fr"))){
 				frozen.setRow(rf);
 			}
 			int cf = excelfrozen.getCol();
-			if(cf != 0){
+			if(!"fc".equals(excelSheet.getExps().get("fc"))){
 				frozen.setCol(cf);
 			}
 			frozen.setState("1");

@@ -1,5 +1,7 @@
 package com.acmr.excel.service.impl;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Resource;
 
 import net.spy.memcached.MemcachedClient;
@@ -22,9 +24,16 @@ public class MemcacheServiceImpl implements StoreService {
 	}
 
 	@Override
-	public Object set(String id, Object object) {
+	public boolean set(String id, Object object) {
 		OperationFuture<Boolean> f = memcachedClient.set(id, exp, object);
-		return null;
+		try {
+			return f.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

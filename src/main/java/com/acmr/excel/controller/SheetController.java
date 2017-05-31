@@ -178,10 +178,18 @@ public class SheetController extends BaseController {
 	 */
 	@RequestMapping("/area")
 	public void openexcel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
 		String excelId = req.getHeader("excelId");
-		int memStep = (int)storeService.get(excelId+"_ope");
 		String curStep = req.getHeader("step");
+		JsonReturn data = new JsonReturn("");
+		if(StringUtil.isEmpty(excelId) || StringUtil.isEmpty(curStep)){
+			data.setReturncode(303);
+			data.setReturndata("excelId和step都不能为空");
+			resp.setStatus(400);
+			this.sendJson(resp, data);
+			return;
+		}
+		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
+		int memStep = (int)storeService.get(excelId+"_ope");
 		int cStep = 0;
 		if(!StringUtil.isEmpty(curStep)){
 			cStep = Integer.valueOf(curStep);
@@ -189,7 +197,7 @@ public class SheetController extends BaseController {
 		int rowBegin = openExcel.getTop();
 		int rowEnd = openExcel.getBottom();
 		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
-		JsonReturn data = new JsonReturn("");
+		
 		if (cStep == memStep) {
 			if (excelBook != null) {
 				ExcelSheet excelSheet = excelBook.getSheets().get(0);

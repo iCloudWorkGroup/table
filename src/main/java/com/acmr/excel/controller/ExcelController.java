@@ -369,11 +369,18 @@ public class ExcelController extends BaseController {
 		excelSheet.getExps().put("ifUpload", "true");
 //		memcachedClient.set(excelId, 60 * 60 * 1, excel);
 //		memcachedClient.set(excelId + "init", 60 * 60 * 1, excel);
-		storeService.set(excelId,excel);
-		storeService.set(excelId+"_ope",  0);
 		JsonReturn data = new JsonReturn("");
-		data.setReturncode(200);
-		data.setReturndata(excelId);
+		boolean excelResult = storeService.set(excelId,excel);
+		boolean opeResult = storeService.set(excelId+"_ope",  0);
+		if(excelResult && opeResult){
+			data.setReturncode(200);
+			data.setReturndata(excelId);
+		}else{
+			data.setReturncode(204);
+			data.setReturndata("上传失败");
+			resp.setStatus(413);
+		}
+		
 		// ExcelBook excelBook = (ExcelBook)memcachedClient.get(excelId);
 		// System.out.println("upload========================="+JSON.toJSONString(excelBook));
 		this.sendJson(resp, data);

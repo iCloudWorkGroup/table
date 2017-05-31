@@ -19,9 +19,9 @@ public class MemJCServiceImpl implements StoreService {
 	}
 
 	@Override
-	public Object set(String id, Object object) {
-		memCachedClient.set(id, object,Integer.valueOf(Constant.MEMCACHED_EXP_TIME));
-		return null;
+	public boolean set(String id, Object object) {
+		boolean result = memCachedClient.set(id, object,Integer.valueOf(Constant.MEMCACHED_EXP_TIME));
+		return result;
 	}
 
 }

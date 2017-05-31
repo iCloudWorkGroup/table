@@ -69,8 +69,18 @@ public class SheetService {
 			excelSheetFreeze = new ExcelSheetFreeze();
 			excelSheet.setFreeze(excelSheetFreeze);
 		}
+		excelSheet.getExps().remove("fr");
+		excelSheet.getExps().remove("fc");
 		int frozenYIndex = frozen.getOrignalRow();
 		int frozenXIndex = frozen.getOrignalCol();
+		if(frozenYIndex == -1){
+			frozenYIndex = 0;
+			excelSheet.getExps().put("fr", "fr");
+		}
+		if(frozenXIndex == -1){
+			frozenXIndex = 0;
+			excelSheet.getExps().put("fc", "fc");
+		}
 		excelSheetFreeze.setRow(frozenYIndex);
 		excelSheetFreeze.setCol(frozenXIndex);
 		excelSheetFreeze.setFirstrow(frozenYIndex);

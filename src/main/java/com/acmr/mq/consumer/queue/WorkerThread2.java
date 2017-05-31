@@ -1,6 +1,8 @@
 package com.acmr.mq.consumer.queue;
 
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import acmr.excel.pojo.ExcelBook;
@@ -201,6 +203,9 @@ public class WorkerThread2 implements Runnable{
 			break;
 		case OperatorConstant.unFrozen:
 			excelBook.getSheets().get(0).setFreeze(null);
+			Map<String, String> map = excelBook.getSheets().get(0).getExps();
+			map.remove("fr");
+			map.remove("fc");
 			break;
 		case OperatorConstant.colswidth:
 			ColWidth colWidth = (ColWidth) model.getObject();
