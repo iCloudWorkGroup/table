@@ -376,8 +376,7 @@ public class ExcelController extends BaseController {
 			data.setReturncode(200);
 			data.setReturndata(excelId);
 		}else{
-			data.setReturncode(204);
-			data.setReturndata("上传失败");
+			data = null;
 			resp.setStatus(413);
 		}
 		

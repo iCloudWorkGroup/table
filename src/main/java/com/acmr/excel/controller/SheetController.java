@@ -182,10 +182,10 @@ public class SheetController extends BaseController {
 		String curStep = req.getHeader("step");
 		JsonReturn data = new JsonReturn("");
 		if(StringUtil.isEmpty(excelId) || StringUtil.isEmpty(curStep)){
-			data.setReturncode(303);
-			data.setReturndata("excelId和step都不能为空");
+//			data.setReturncode(303);
+//			data.setReturndata("excelId和step都不能为空");
 			resp.setStatus(400);
-			this.sendJson(resp, data);
+			this.sendJson(resp, null);
 			return;
 		}
 		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);
