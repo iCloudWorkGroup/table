@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.spy.memcached.MemcachedClient;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;

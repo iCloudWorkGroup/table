@@ -21,12 +21,15 @@ import javax.servlet.ServletContextListener;
 
 
 
+
+
+import net.spy.memcached.MemcachedClient;
+
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.acmr.excel.util.PropertiesReaderUtil;
 import com.acmr.rmi.service.RmiService;
-import com.danga.MemCached.MemCachedClient;
 
 public class RmiServer implements ServletContextListener {
 	private Registry reg;
@@ -59,7 +62,7 @@ public class RmiServer implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(event.getServletContext());
-		MemCachedClient memcachedClient = (MemCachedClient) springContext.getBean("memcachedClient");
+		MemcachedClient memcachedClient = (MemcachedClient) springContext.getBean("memcachedClient");
 		try {
 			RmiService rmi = new RmiServiceImpl(memcachedClient);
 			String port = PropertiesReaderUtil.get("rmi.port");

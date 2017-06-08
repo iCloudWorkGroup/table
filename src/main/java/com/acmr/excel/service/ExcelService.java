@@ -744,14 +744,19 @@ public class ExcelService {
 		if (excelfrozen != null) {
 			Frozen frozen = spreadSheet.getSheet().getFrozen();
 			int rf = excelfrozen.getRow();
-			if(!"fr".equals(excelSheet.getExps().get("fr"))){
+			if("fr".equals(excelSheet.getExps().get("fr"))){
+				frozen.setRow(-1);
+			}else{
 				frozen.setRow(rf);
 			}
 			int cf = excelfrozen.getCol();
-			if(!"fc".equals(excelSheet.getExps().get("fc"))){
+			if("fc".equals(excelSheet.getExps().get("fc"))){
+				frozen.setCol(-1);
+			}else{
 				frozen.setCol(cf);
 			}
-			frozen.setState("1");
+//			frozen.setViewCol(excelfrozen.getFirstcol());
+//			frozen.setViewRow(excelfrozen.getFirstrow());
 		}
 		return spreadSheet;
 	}

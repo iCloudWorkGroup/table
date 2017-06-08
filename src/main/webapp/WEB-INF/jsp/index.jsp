@@ -36,17 +36,19 @@
 		</div>
 		<div class="toolBar" id="toolBar">
 			<ul class="tabContainer homeToolContainer">
-			<li class="fui-group" id="undoredoContainer">
+				<li class="fui-group" id="undoredoContainer">
 					<span class="fui-container">
 						<div class="fui-body">
 							<span class="fui-layout">
-								<div class="fui-section fui-alone" data-toolbar="undo">
-									<div class="fui-cf-ico ico-paste"></div><div class="fui-cf-desc"><div class="fui-cf-text">后退</div></div>
+								<div class="fui-transverse">
+									<span class="ico-section" data-toolbar="redo">
+										<div class="fui-cf-bg-extend-ico ico-redo"></div>
+									</span>
 								</div>
-							</span>
-							<span class="fui-layout">
-								<div class="fui-section fui-alone" data-toolbar="redo">
-									<div class="fui-cf-ico ico-paste"></div><div class="fui-cf-desc"><div class="fui-cf-text">前进</div></div>
+								<div class="fui-transverse">
+									<span class="ico-section" data-toolbar="undo">
+										<div class="fui-cf-bg-extend-ico ico-undo"></div>
+									</span>
 								</div>
 							</span>
 						</div>
@@ -215,7 +217,7 @@
 						<div class="fui-body">
 							<span class="fui-layout">
 								<div class="fui-section fui-alone" data-toolbar="addComment">
-									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
+									<div class="fui-cf-comment-ico ico-commentadd fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">增加批注</div>
 									</div>
@@ -223,7 +225,7 @@
 							</span>
 							<span class="fui-layout">
 								<div class="fui-section fui-alone" data-toolbar="editComment">
-									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
+									<div class="fui-cf-comment-ico ico-commentedit fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">编辑批注</div>
 									</div>
@@ -231,7 +233,7 @@
 							</span>
 							<span class="fui-layout">
 								<div class="fui-section fui-alone" data-toolbar="deleteComment">
-									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
+									<div class="fui-cf-comment-ico ico-commentremove fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">删除批注</div>
 									</div>
@@ -247,7 +249,7 @@
 						<div class="fui-body">
 							<span class="fui-layout">
 								<div class="fui-section fui-alone" data-toolbar="insert">
-									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
+									<div class="fui-cf-bg-extend2-ico ico-insert fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">　插入　</div>
 										<div class="fui-cf-extend caret"></div>
@@ -256,7 +258,7 @@
 							</span>
 							<span class="fui-layout">
 								<div class="fui-section fui-alone" data-toolbar="delete">
-									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
+									<div class="fui-cf-bg-extend2-ico ico-delete fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">　删除　</div>
 										<div class="fui-cf-extend caret"></div>
@@ -294,7 +296,9 @@
 				</li>
 			</ul>
 		</div>
-		<div id="spreadSheet" style="width:100%;height:calc(100% - 130px);position:relative;"></div>
+		<div style="top:130px;bottom:0;position:absolute;left:0;right:0;">
+			<div id="spreadSheet" style="position:relative;height:100%;"></div>
+		</div>
 		<div class="widget-list">
 			<div class="widget" data-widget="border">
 				<div class="widget-panel">
@@ -348,13 +352,13 @@
 				<div class="widget-panel">
 					<ul class="widget-menu">
 						<li data-format="normal">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-routine  widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">常规</div>
 							</span>
 						</li>
 						<li data-format="text">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-text  widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">文本</div>
 							</span>
@@ -390,37 +394,37 @@
 							</span>
 						</li>
 						<li data-format="date-1">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-date widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">日期 1999/01/01</div>
 							</span>
 						</li>
 						<li data-format="date-2">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-date widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">日期 1999年01月01日</div>
 							</span>
 						</li>
 						<li data-format="date-3">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-date widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">日期 1999年01月</div>
 							</span>
 						</li>
 						<li data-format="percent">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-percent widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">百分比</div>
 							</span>
 						</li>
 						<li data-format="coin-1">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-currency widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">货币 $</div>
 							</span>
 						</li>
 						<li data-format="coin-2">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="fui-cf-ico ico-currency widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-pad">货币 ¥</div>
 							</span>
@@ -493,17 +497,17 @@
 					</ul>
 				</div>
 			</div>
-						<div class="widget" data-widget="insert" id="insert">
+			<div class="widget" data-widget="insert" id="insert">
 				<div class="widget-panel">
 					<ul class="widget-menu frozenBox" style="min-width:220px">
 						<li data-type="row">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class=" widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-weight">插入工作表行</div>
 							</span>
 						</li>
 						<li data-type="column">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-weight">插入工作表列</div>
 							</span>
@@ -515,13 +519,13 @@
 				<div class="widget-panel">
 					<ul class="widget-menu frozenBox" style="min-width:220px">
 						<li data-type="row">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-weight">删除工作表行</div>
 							</span>
 						</li>
 						<li data-type="column">
-							<span class="fui-cf-extend-ico ico-frozencustomized widget-ico"></span>
+							<span class="widget-ico"></span>
 							<span class="widget-content">
 								<div class="widget-weight">删除工作表列</div>
 							</span>

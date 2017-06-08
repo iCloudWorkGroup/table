@@ -19,7 +19,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.spy.memcached.MemcachedClient;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -56,7 +55,6 @@ import com.acmr.excel.util.ExcelConst;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.FileUtil;
 import com.acmr.excel.util.JsonReturn;
-import com.acmr.excel.util.MemcacheUtil;
 import com.acmr.excel.util.StringUtil;
 import com.acmr.excel.util.UUIDUtil;
 import com.acmr.excel.util.UploadThread;
@@ -410,7 +408,8 @@ public class ExcelController extends BaseController {
 		Position position = getJsonDataParameter(req, Position.class);
 		int height = position.getBottom();
 		//long mget1 = System.currentTimeMillis();
-		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
+		Object o = storeService.get(excelId);
+		ExcelBook excelBook = (ExcelBook)o ;
 		//long mget2 = System.currentTimeMillis();
 		ReturnParam returnParam = new ReturnParam();
 		JsonReturn data = new JsonReturn("");

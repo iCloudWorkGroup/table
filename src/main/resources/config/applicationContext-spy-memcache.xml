@@ -12,8 +12,8 @@
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
 	default-lazy-init="false">
 	<!-- memcached注入-->  
-	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
-		<property name="servers" value="${memcache.server}:${memcache.port}"/>
+	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean" >
+		<property name="servers" value="${memcache.server}"/>
 		<property name="protocol" value="BINARY"/>
 		<property name="transcoder">
 			<bean class="net.spy.memcached.transcoders.SerializingTranscoder">

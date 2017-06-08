@@ -71,8 +71,8 @@ public class SheetService {
 		}
 		excelSheet.getExps().remove("fr");
 		excelSheet.getExps().remove("fc");
-		int frozenYIndex = frozen.getOrignalRow();
-		int frozenXIndex = frozen.getOrignalCol();
+		int frozenYIndex = frozen.getOprRow();
+		int frozenXIndex = frozen.getOprCol();
 		if(frozenYIndex == -1){
 			frozenYIndex = 0;
 			excelSheet.getExps().put("fr", "fr");

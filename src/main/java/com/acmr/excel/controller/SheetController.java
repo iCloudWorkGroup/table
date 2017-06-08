@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.spy.memcached.MemcachedClient;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -118,8 +117,13 @@ public class SheetController extends BaseController {
 	 */
 	@RequestMapping("/paste")
 	public void paste(HttpServletRequest req,HttpServletResponse resp) throws Exception{
+		String excelId = req.getHeader("excelId");
+		if (StringUtil.isEmpty(excelId)) {
+			resp.setStatus(400);
+			return;
+		}
 		Paste paste = getJsonDataParameter(req, Paste.class);
-		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
+		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isAblePaste(paste, excelBook);
 		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
@@ -138,8 +142,13 @@ public class SheetController extends BaseController {
 	 */
 	@RequestMapping("/copy")
 	public void copy(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		String excelId = req.getHeader("excelId");
+		if (StringUtil.isEmpty(excelId)) {
+			resp.setStatus(400);
+			return;
+		}
 		Copy copy = getJsonDataParameter(req, Copy.class);
-		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
+		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
 		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
@@ -158,8 +167,13 @@ public class SheetController extends BaseController {
 	 */
 	@RequestMapping("/cut")
 	public void cut(HttpServletRequest req,HttpServletResponse resp) throws Exception{
+		String excelId = req.getHeader("excelId");
+		if (StringUtil.isEmpty(excelId)) {
+			resp.setStatus(400);
+			return;
+		}
 		Copy copy = getJsonDataParameter(req, Copy.class);
-		ExcelBook excelBook = (ExcelBook)storeService.get(req.getHeader("excelId"));
+		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
 		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
@@ -182,10 +196,7 @@ public class SheetController extends BaseController {
 		String curStep = req.getHeader("step");
 		JsonReturn data = new JsonReturn("");
 		if(StringUtil.isEmpty(excelId) || StringUtil.isEmpty(curStep)){
-//			data.setReturncode(303);
-//			data.setReturndata("excelId和step都不能为空");
 			resp.setStatus(400);
-			this.sendJson(resp, null);
 			return;
 		}
 		OpenExcel openExcel = getJsonDataParameter(req, OpenExcel.class);

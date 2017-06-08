@@ -3,27 +3,28 @@ package com.acmr.rmi.service.impl;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.internal.OperationFuture;
+
 import org.springframework.stereotype.Service;
 
-import net.spy.memcached.MemcachedClient;
 import acmr.excel.pojo.ExcelBook;
 
-import com.acmr.cache.MemcacheFactory;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.service.StoreService;
 import com.acmr.rmi.service.RmiService;
-import com.danga.MemCached.MemCachedClient;
 
 public class RmiServiceImpl extends UnicastRemoteObject implements RmiService {
-	private MemCachedClient memCachedClient;
+	private MemcachedClient memCachedClient;
 	
-	public RmiServiceImpl(MemCachedClient memCachedClient) throws RemoteException {
+	public RmiServiceImpl(MemcachedClient memCachedClient) throws RemoteException {
 		this.memCachedClient = memCachedClient;
 	} 
 	
@@ -32,13 +33,18 @@ public class RmiServiceImpl extends UnicastRemoteObject implements RmiService {
 	@Override
 	public boolean saveExcelBook(String excelId, ExcelBook excelBook) throws RemoteException {
 		//MemcachedClient memcachedClient = MemcacheFactory.CACHESOURCE.getMemcacheClient();
-		boolean excelResult = memCachedClient.set(excelId,excelBook);
-		boolean opeResult = memCachedClient.set(excelId+"_ope",  0);
-		if(excelResult && opeResult){
-			return true;
-		}else{
-			return false;
+		OperationFuture<Boolean> excelResult = memCachedClient.set(excelId, 60 * 60 * 24 * 1, excelBook);
+		OperationFuture<Boolean> opeResult = memCachedClient.set(excelId+"_ope", 60 * 60 * 24 * 1, 0);
+		try {
+			if(excelResult.get() && opeResult.get()){
+				return true;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	@Override

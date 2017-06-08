@@ -64,7 +64,7 @@
 	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-	<!--<import resource="classpath:config/applicationContext-spy-memcache.xml" />-->
-	<import resource="classpath:config/applicationContext-java-memcache.xml" />
+	<import resource="classpath:config/applicationContext-spy-memcache.xml" />
+	<!--<import resource="classpath:config/applicationContext-java-memcache.xml" />-->
 	
 </beans>

@@ -1,4 +1,4 @@
-package com.acmr.excel.service.impl;
+/*package com.acmr.excel.service.impl;
 
 import javax.annotation.Resource;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.service.StoreService;
-import com.danga.MemCached.MemCachedClient;
+import com.whalin.MemCached.MemCachedClient;
 
 @Service
 public class MemJCServiceImpl implements StoreService {
@@ -25,3 +25,4 @@ public class MemJCServiceImpl implements StoreService {
 	}
 
 }
+*/

@@ -431,15 +431,16 @@ public class CellFormateUtil {
 		switch (dataFormate) {
 		case "General":
 			//NUMERIC
-			if(CELLTYPE.NUMERIC == excelCell.getType()){
-				Object o = excelCell.getValue();
-				if(o != null){
-					DecimalFormat df = new DecimalFormat("#.##");
-					String value = df.format(o);
-					text = value;
-					content.setTexts(text);
-				}
-			}
+//			if(CELLTYPE.NUMERIC == excelCell.getType()){
+//				Object o = excelCell.getValue();
+//				if(o != null){
+//					DecimalFormat df = new DecimalFormat("#.######");
+//					String value = df.format(o);
+//					text = value;
+//					content.setTexts(text);
+//				}
+//			}
+			content.setTexts(text);
 			formate.setType("normal");
 			content.setDisplayTexts(text);
 			break;

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.service.StoreService;
 
-//@Service
+@Service
 public class MemcacheServiceImpl implements StoreService {
 	@Resource
 	private MemcachedClient memcachedClient;

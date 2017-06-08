@@ -13,7 +13,7 @@
 	default-lazy-init="false">
 	
 
-	<bean id="memcachedPool" class="com.danga.MemCached.SockIOPool" factory-method="getInstance" 
+	<bean id="memcachedPool" class="com.whalin.MemCached.SockIOPool" factory-method="getInstance" 
 		init-method="initialize"	destroy-method="shutDown">
 		<property name="servers">
 			<list>
@@ -39,7 +39,7 @@
 			<value>${memcache.socketTO}</value>
 		</property>
 	</bean>
-	<bean id="memcachedClient" class="com.danga.MemCached.MemCachedClient">
+	<bean id="memcachedClient" class="com.whalin.MemCached.MemCachedClient">
 	</bean>
 
 

@@ -13,7 +13,6 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 
-import net.spy.memcached.MemcachedClient;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;

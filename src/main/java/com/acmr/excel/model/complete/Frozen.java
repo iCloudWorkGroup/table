@@ -3,19 +3,11 @@ package com.acmr.excel.model.complete;
 import java.io.Serializable;
 
 public class Frozen implements Serializable{
-	private String state;
 	private Integer row;
 	private Integer col;
-	private String displayAreaStartAlaisX;
-	private String displayAreaStartAlaisY;
+	private Integer viewRow;
+	private Integer viewCol;
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
 	
 
 	public Integer getRow() {
@@ -34,20 +26,21 @@ public class Frozen implements Serializable{
 		this.col = col;
 	}
 
-	public String getDisplayAreaStartAlaisX() {
-		return displayAreaStartAlaisX;
+	public Integer getViewRow() {
+		return viewRow;
 	}
 
-	public void setDisplayAreaStartAlaisX(String displayAreaStartAlaisX) {
-		this.displayAreaStartAlaisX = displayAreaStartAlaisX;
+	public void setViewRow(Integer viewRow) {
+		this.viewRow = viewRow;
 	}
 
-	public String getDisplayAreaStartAlaisY() {
-		return displayAreaStartAlaisY;
+	public Integer getViewCol() {
+		return viewCol;
 	}
 
-	public void setDisplayAreaStartAlaisY(String displayAreaStartAlaisY) {
-		this.displayAreaStartAlaisY = displayAreaStartAlaisY;
+	public void setViewCol(Integer viewCol) {
+		this.viewCol = viewCol;
 	}
 
+	
 }

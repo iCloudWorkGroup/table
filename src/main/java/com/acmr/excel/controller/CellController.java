@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.spy.memcached.MemcachedClient;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,6 @@ import com.acmr.excel.model.comment.Comment;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.service.HandleExcelService;
-import com.acmr.excel.util.MemcacheUtil;
 
 /**
  * 单元格操作
