@@ -136,6 +136,10 @@ public class CellService {
 	 */
 	public void deleteCol(ExcelSheet excelSheet, ColOperate colOperate) {
 		excelSheet.delColumn(colOperate.getCol());
+		List<ExcelColumn> excelColumns = excelSheet.getCols();
+		if(excelColumns.size() < 26){
+			excelColumns.add(new ExcelColumn());
+		}
 	}
 
 	/**

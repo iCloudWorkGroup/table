@@ -522,15 +522,15 @@ public class HandleExcelService {
 					}else{
 						changeArea.setOriginalValue(excelCell.getCellstyle().clone());
 					}
-					int rowSpan = excelCell.getRowspan();
+//					int rowSpan = excelCell.getRowspan();
 					//int colSpan = excelCell.getColspan();
-					if(rowSpan > 1){
-						int[] cel = sheet.getMergFirstCell(i, j);
-						int temp = rowEndIndex - rowBeginIndex + 1;
-						if (rowBeginIndex != cel[0] || temp != rowSpan) {
-							continue;
-						}
-					}
+//					if(rowSpan > 1){
+//						int[] cel = sheet.getMergFirstCell(i, j);
+//						int temp = rowEndIndex - rowBeginIndex + 1;
+//						if (rowBeginIndex != cel[0] || temp != rowSpan) {
+//							continue;
+//						}
+//					}
 					ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
 					ExcelFont excelFont = excelCellStyle.getFont();
 					if (type.equals(CellUpdateType.align_level)) { 
@@ -894,9 +894,9 @@ public class HandleExcelService {
 			colFlag = true;
 		} 
 		String com = comment.getComment();
-		if(com == null){
-			com = "";
-		}
+//		if(com == null){
+//			com = "";
+//		}
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			if(rowFlag){
 				Map<String, String> exps = rowList.get(i).getExps();
