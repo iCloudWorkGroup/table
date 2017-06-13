@@ -516,21 +516,20 @@ public class HandleExcelService {
 					changeArea.setRowIndex(i);
 					changeArea.setColIndex(j);
 					if (excelCell == null) {
-						changeArea.setOriginalValue(null);
+						changeArea.setOriginalValue(new ExcelCellStyle());
 						excelCell = new ExcelCell();
 						excelCellList.set(j, excelCell);
 					}else{
 						changeArea.setOriginalValue(excelCell.getCellstyle().clone());
 					}
-//					int rowSpan = excelCell.getRowspan();
-					//int colSpan = excelCell.getColspan();
-//					if(rowSpan > 1){
-//						int[] cel = sheet.getMergFirstCell(i, j);
-//						int temp = rowEndIndex - rowBeginIndex + 1;
-//						if (rowBeginIndex != cel[0] || temp != rowSpan) {
-//							continue;
-//						}
-//					}
+					int rowSpan = excelCell.getRowspan();
+					int colSpan = excelCell.getColspan();
+					if (rowSpan > 1 || colSpan > 1) {
+						int[] cel = sheet.getMergFirstCell(i, j);
+						if (i != cel[0] || j != cel[1]) {
+							continue;
+						}
+					}
 					ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
 					ExcelFont excelFont = excelCellStyle.getFont();
 					if (type.equals(CellUpdateType.align_level)) { 

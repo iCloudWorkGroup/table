@@ -347,6 +347,7 @@ public class CellFormateUtil {
 		}else{
 			int textLength = text.split("\\.")[1].length();
 			//小数
+			numberFormat.setMinimumFractionDigits(textLength);
 			retVal = numberFormat.format(Double.valueOf(text));
 			String[] news = retVal.split("\\.");
 			int retLength = 0;
@@ -431,15 +432,15 @@ public class CellFormateUtil {
 		switch (dataFormate) {
 		case "General":
 			//NUMERIC
-//			if(CELLTYPE.NUMERIC == excelCell.getType()){
-//				Object o = excelCell.getValue();
-//				if(o != null){
-//					DecimalFormat df = new DecimalFormat("#.######");
-//					String value = df.format(o);
-//					text = value;
-//					content.setTexts(text);
-//				}
-//			}
+			if(CELLTYPE.NUMERIC == excelCell.getType()){
+				Object o = excelCell.getValue();
+				if(o != null){
+					DecimalFormat df = new DecimalFormat("#.######");
+					String value = df.format(o);
+					text = value;
+					//content.setTexts(text);
+				}
+			}
 			content.setTexts(text);
 			formate.setType("normal");
 			content.setDisplayTexts(text);
@@ -559,6 +560,18 @@ public class CellFormateUtil {
 				formate.setDecimal(decimal);
 				formate.setThousands(false);
 				content.setDisplayTexts(d);
+				if(CELLTYPE.STRING == excelCell.getType()){
+					formate.setIsValid(false);
+					content.setDisplayTexts(excelCell.getText());
+				}
+			}else if (dataFormate.startsWith("0.0")) {
+				// 小数
+				String d = setNumber(excelCell, 1, false);
+				formate.setType("number");
+				formate.setDecimal(1);
+				formate.setThousands(false);
+				content.setDisplayTexts(d);
+				content.setTexts(d);
 				if(CELLTYPE.STRING == excelCell.getType()){
 					formate.setIsValid(false);
 					content.setDisplayTexts(excelCell.getText());
@@ -686,12 +699,9 @@ public class CellFormateUtil {
 	}  
 	  
 	public static void main(String[] args) {  
-	    String intNumber = "12340.00";  
-	    System.out.println(getPrettyNumber(intNumber));  
-	    String doubleNumber = "00.340";  
-	    System.out.println(getPrettyNumber(doubleNumber));  
-	      
-	    String eNumber = "1.2e3";  
-	    System.out.println(getPrettyNumber(eNumber));  
+		NumberFormat numberFormat = NumberFormat.getNumberInstance();
+		numberFormat.setMinimumFractionDigits(5);
+		String s = "0.46801";
+		System.out.println(numberFormat.format(Double.valueOf(s)));
 	} 
 }

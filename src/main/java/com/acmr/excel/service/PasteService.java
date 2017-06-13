@@ -6,6 +6,7 @@ import acmr.excel.pojo.Constants.CELLTYPE;
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelColor;
+import acmr.excel.pojo.ExcelColumn;
 import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
 import acmr.util.ListHashMap;
@@ -84,6 +85,13 @@ public class PasteService {
 		history.setOperatorType(OperatorConstant.paste);
 		ExcelSheet excelSheet = excelBook.getSheets().get(0);
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>) excelSheet.getRows();
+		int colLength = excelSheet.getCols().size();
+		int colRange = paste.getColLen();
+		if (colLength < paste.getOprCol() + colRange) {
+			for (int i = 0; i < paste.getOprCol() + colRange - colLength; i++) {
+				excelSheet.addColumn();
+			}
+		}
 		List<OuterPasteData> pasteList = paste.getPasteData();
 		for (OuterPasteData outerPasteData : pasteList) {
 			int rowIndex = outerPasteData.getRow();
@@ -170,6 +178,13 @@ public class PasteService {
 		int endColIndex = copy.getOrignal().getEndCol();
 		int targetRowIndex = copy.getTarget().getOprRow();
 		int targetColIndex = copy.getTarget().getOprCol();
+		int colLength = excelSheet.getCols().size();
+		int colRange = endColIndex - startColIndex;
+		if (colLength < targetColIndex + colRange) {
+			for (int i = 0; i <= targetColIndex + colRange - colLength; i++) {
+				excelSheet.addColumn();
+			}
+		}
 		List<TempObj> temList = new ArrayList<TempObj>();
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			ExcelRow excelRow = rowList.get(i);
@@ -234,6 +249,9 @@ public class PasteService {
 		for (int i = startRowIndex; i < startRowIndex + rowRange; i++) {
 			ExcelRow excelRow = rowList.get(i);
 			for (int j = startColIndex; j < startColIndex + colRange; j++) {
+				if (j > excelSheet.getCols().size() - 1) {
+					break;
+				}
 				ExcelCell excelCell = excelRow.getCells().get(j);
 				if (excelCell == null) {
 					continue;
@@ -261,9 +279,18 @@ public class PasteService {
 		int colRange = endColIndex - startColIndex;
 		int targetStartRowIndex = copy.getTarget().getOprRow();
 		int targetStartColIndex = copy.getTarget().getOprCol();
+		int colLength = excelSheet.getCols().size();
+//		if (colLength < targetStartColIndex + colRange) {
+//			for (int i = 0; i <= targetStartColIndex + colRange - colLength+1; i++) {
+//				excelSheet.addColumn();
+//			}
+//		}
 		for (int i = targetStartRowIndex; i <= targetStartRowIndex + rowRange; i++) {
 			ExcelRow excelRow = rowList.get(i);
 			for (int j = targetStartColIndex; j <= targetStartColIndex + colRange; j++) {
+				if (j > excelSheet.getCols().size() - 1) {
+					break;
+				}
 				ExcelCell excelCell = excelRow.getCells().get(j);
 				if (excelCell == null) {
 					continue;
