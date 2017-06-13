@@ -5,7 +5,6 @@ module.exports = function(grunt) {
         bump: {
             options: {
                 updateConfigs: ['pkg'],
-                commit: false,
                 commitFIles: ['package.json', '../../CHANGELOG.md'],
                 commitMessage: 'spreadsheet: release v%VERSION%',
                 push: false
