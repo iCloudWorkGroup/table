@@ -815,6 +815,7 @@ public class HandleExcelService {
 				if(excelCell == null){
 					changeArea.setOriginalValue(null);
 					excelCell = new ExcelCell();
+					cellList.set(j, excelCell);
 				}else{
 					changeArea.setOriginalValue(excelCell.clone());
 				}
