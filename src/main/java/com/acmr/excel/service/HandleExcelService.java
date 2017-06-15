@@ -785,7 +785,7 @@ public class HandleExcelService {
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
 		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
 		int startRowIndex = cellFormate.getCoordinate().getStartRow();
-		int endRowIndex = cellFormate.getCoordinate().getEndCol();
+		int endRowIndex = cellFormate.getCoordinate().getEndRow();
 		if (endRowIndex == -1) {
 			endRowIndex = rowList.size() - 1;
 		} 

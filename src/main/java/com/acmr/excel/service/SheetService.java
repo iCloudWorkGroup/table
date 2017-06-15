@@ -115,6 +115,7 @@ public class SheetService {
 		versionHistory.getVersion().put(step, version-1);
 		switch (operatorType) {
 		case OperatorConstant.textData:
+		case OperatorConstant.merge:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
@@ -203,12 +204,7 @@ public class SheetService {
 				}else{
 					excelCell.setMemo((String)changeArea.getOriginalValue());
 				}
-				
 			}
-			break;
-		case OperatorConstant.merge:
-			sheet.SplitRegions(hisory.getMergerRowStart(), hisory.getMergerColStart(), hisory.getMergerRowEnd(),
-					hisory.getMergerColEnd());
 			break;
 		case OperatorConstant.mergedelete:
 			sheet.MergedRegions(hisory.getMergerRowStart(), hisory.getMergerColStart(), hisory.getMergerRowEnd(),

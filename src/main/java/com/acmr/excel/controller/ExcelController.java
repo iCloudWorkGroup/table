@@ -418,6 +418,8 @@ public class ExcelController extends BaseController {
 		if (excelBook != null) {
 			ExcelSheet excelSheet = excelBook.getSheets().get(0);
 			spreadSheet = excelService.positionExcel(excelSheet, spreadSheet,height, returnParam);
+			data.setAliasColCounter(excelSheet.getMaxcol()+1+"");
+			data.setAliasRowCounter(excelSheet.getMaxrow()+1+"");
 		}
 		excel.getSpreadSheet().add(spreadSheet);
 		data.setReturncode(200);
@@ -431,6 +433,7 @@ public class ExcelController extends BaseController {
 		// data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
 		data.setDisplayColStartAlias(spreadSheet.getSheet().getGlX().get(0).getAliasX());
 		data.setDisplayRowStartAlias(spreadSheet.getSheet().getGlY().get(0).getAliasY());
+		
 		//long mset1 = System.currentTimeMillis();
 		storeService.set(excelId+"_ope",  0);
 		storeService.set(excelId,  excelBook);

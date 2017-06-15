@@ -53,6 +53,20 @@ public class CellService {
 		int firstCol = cell.getCoordinate().getStartCol();
 		int lastRow = cell.getCoordinate().getEndRow();
 		int lastCol = cell.getCoordinate().getEndCol();
+		for (int i = firstRow; i <= lastRow; i++) {
+			for (int j = firstCol; j <= lastCol; j++) {
+				ChangeArea changeArea = new ChangeArea();
+				changeArea.setRowIndex(i);
+				changeArea.setColIndex(j);
+				ExcelCell excelCell = excelSheet.getRows().get(i).getCells().get(j);
+				if (excelCell == null) {
+					changeArea.setOriginalValue(null);
+				} else {
+					changeArea.setOriginalValue(excelCell.clone());
+				}
+				history.getChangeAreaList().add(changeArea);
+			}
+		}
 		history.setMergerRowStart(firstRow);
 		history.setMergerRowEnd(lastRow);
 		history.setMergerColStart(firstCol);
@@ -80,6 +94,20 @@ public class CellService {
 		int firstCol = cell.getCoordinate().getStartCol();
 		int lastRow = cell.getCoordinate().getEndRow();
 		int lastCol = cell.getCoordinate().getEndCol();
+		for (int i = firstRow; i <= lastRow; i++) {
+			for (int j = firstCol; j <= lastCol; j++) {
+				ChangeArea changeArea = new ChangeArea();
+				changeArea.setRowIndex(i);
+				changeArea.setColIndex(j);
+				ExcelCell excelCell = excelSheet.getRows().get(i).getCells().get(j);
+				if (excelCell == null) {
+					changeArea.setOriginalValue(null);
+				} else {
+					changeArea.setOriginalValue(excelCell.clone());
+				}
+				history.getChangeAreaList().add(changeArea);
+			}
+		}
 		history.setMergerRowStart(firstRow);
 		history.setMergerRowEnd(lastRow);
 		history.setMergerColStart(firstCol);
@@ -138,7 +166,7 @@ public class CellService {
 		excelSheet.delColumn(colOperate.getCol());
 		List<ExcelColumn> excelColumns = excelSheet.getCols();
 		if(excelColumns.size() < 26){
-			excelColumns.add(new ExcelColumn());
+			excelSheet.addColumn();
 		}
 	}
 

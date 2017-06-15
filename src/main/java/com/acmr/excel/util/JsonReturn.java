@@ -39,6 +39,8 @@ public class JsonReturn {
 	private int dataColStartIndex;
 	private int maxRowPixel;
 	private int maxColPixel;
+	private String aliasRowCounter;
+	private String aliasColCounter;
 
 	// private Object returnParam;
 	
@@ -46,6 +48,22 @@ public class JsonReturn {
 
 	public int getMaxPixel() {
 		return maxPixel;
+	}
+
+	public String getAliasRowCounter() {
+		return aliasRowCounter;
+	}
+
+	public void setAliasRowCounter(String aliasRowCounter) {
+		this.aliasRowCounter = aliasRowCounter;
+	}
+
+	public String getAliasColCounter() {
+		return aliasColCounter;
+	}
+
+	public void setAliasColCounter(String aliasColCounter) {
+		this.aliasColCounter = aliasColCounter;
 	}
 
 	public int getReturncode() {
