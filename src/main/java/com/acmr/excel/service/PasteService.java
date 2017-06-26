@@ -104,21 +104,45 @@ public class PasteService {
 			changeArea.setRowIndex(rowIndex);
 			if (excelCell == null) {
 				changeArea.setOriginalValue(null);
-				excelCell = new ExcelCell();
-				excelCell.getCellstyle().setBgcolor(new ExcelColor(255, 255, 255));
-				cellList.set(colIndex, excelCell);
+//				excelCell = new ExcelCell();
+//				excelCell.getCellstyle().setBgcolor(new ExcelColor(255, 255, 255));
+//				cellList.set(colIndex, excelCell);
 			}else{
 				changeArea.setOriginalValue(excelCell.clone());
 			}
-			String text = outerPasteData.getContent();
-				//text = java.net.URLDecoder.decode(text, "utf-8");
-			excelCell.setText(text);
-			excelCell.setType(CELLTYPE.STRING);
-			excelCell.setValue(text);
+//			String text = outerPasteData.getContent();
+//				//text = java.net.URLDecoder.decode(text, "utf-8");
+//			excelCell.setText(text);
+//			excelCell.setType(CELLTYPE.STRING);
+//			excelCell.setValue(text);
 			changeArea.setUpdateValue(excelCell);
 			history.getChangeAreaList().add(changeArea);
 		}
 		versionHistory.getMap().put(version, history);
+		int row = paste.getOprRow();
+		int col = paste.getOprCol();
+		for (int i = row; i < row + paste.getRowLen(); i++) {
+			for (int j = col; j < col + paste.getColLen(); j++) {
+				rowList.get(i).set(j, null);
+			}
+		}
+		for (OuterPasteData outerPasteData : pasteList) {
+			int rowIndex = outerPasteData.getRow();
+			ExcelRow excelRow = rowList.get(rowIndex);
+			int colIndex = outerPasteData.getCol();
+			List<ExcelCell> cellList = excelRow.getCells();
+			ExcelCell excelCell = cellList.get(colIndex);
+			if (excelCell == null) {
+				excelCell = new ExcelCell();
+				excelCell.getCellstyle().setBgcolor(new ExcelColor(255, 255, 255));
+				cellList.set(colIndex, excelCell);
+			}
+			String text = outerPasteData.getContent();
+//				//text = java.net.URLDecoder.decode(text, "utf-8");
+			excelCell.setText(text);
+			excelCell.setType(CELLTYPE.STRING);
+			excelCell.setValue(text);
+		}
 	}
 
 	/**
@@ -305,7 +329,4 @@ public class PasteService {
 		}
 		return canPaste;
 	}
-	
-	
-
 }
