@@ -410,9 +410,9 @@ public class HandleExcelService {
 		List<Coordinate> coordinateList = colorSet.getCoordinates();
 		ExcelSheet sheet = excelBook.getSheets().get(0);
 		List<ColorSetRet> colorSetRetList = new ArrayList<ColorSetRet>();
-		int z = 0;
+		//int z = 0;
 		for(Coordinate coordinate : coordinateList){
-			ColorSetRet cr = null;
+			//ColorSetRet cr = null;
 			int colStartIndex = coordinate.getStartCol();
 			int rowStartIndex = coordinate.getStartRow();
 			int colEndIndex = coordinate.getEndCol();
@@ -430,34 +430,34 @@ public class HandleExcelService {
 				List<ExcelCell> cellList = excelRow.getCells();
 				for(int j = colStartIndex;j<=colEndIndex;j++){
 					ExcelCell excelCell = cellList.get(j);
-					if(excelCell != null){
-						int colspan = excelCell.getColspan();
-						int rowspan = excelCell.getRowspan();
-						if(colspan != 1 || rowspan != 1){
-							int[] mergFirstCell = sheet.getMergFirstCell(i, j);
-							if(mergFirstCell[0] < rowStartIndex || mergFirstCell[0] > rowEndIndex || 
-									mergFirstCell[1] < colStartIndex || mergFirstCell[1] > colEndIndex){
-								cr = new ColorSetRet();
-								cr.setIndex(z);
-								cr.setErrorMessage("该区域存在合并的单元格，不能操作");
-								break;
-							}
-						}
-					}
+//					if(excelCell != null){
+//						int colspan = excelCell.getColspan();
+//						int rowspan = excelCell.getRowspan();
+//						if(colspan != 1 || rowspan != 1){
+//							int[] mergFirstCell = sheet.getMergFirstCell(i, j);
+//							if(mergFirstCell[0] < rowStartIndex || mergFirstCell[0] > rowEndIndex || 
+//									mergFirstCell[1] < colStartIndex || mergFirstCell[1] > colEndIndex){
+//								cr = new ColorSetRet();
+//								cr.setIndex(z);
+//								cr.setErrorMessage("该区域存在合并的单元格，不能操作");
+//								break;
+//							}
+//						}
+//					}
 					if (excelCell == null) {
 						excelCell = new ExcelCell();
 						cellList.set(j, excelCell);
 					}
 					ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
-					excelCellStyle.setBgcolor(ExcelUtil.getColor(colorSet.getBgcolor()));
-					excelCellStyle.setFgcolor(ExcelUtil.getColor(colorSet.getBgcolor()));
+					excelCellStyle.setBgcolor(ExcelUtil.getColor(colorSet.getColor()));
+					excelCellStyle.setFgcolor(ExcelUtil.getColor(colorSet.getColor()));
 					excelCellStyle.setPattern(Short.valueOf("1"));
 				}
 			}
-		   z++;
-		   if(cr != null){
-				colorSetRetList.add(cr);
-		   }
+		   //z++;
+//		   if(cr != null){
+//				colorSetRetList.add(cr);
+//		   }
 		}
 		return colorSetRetList;
 	}

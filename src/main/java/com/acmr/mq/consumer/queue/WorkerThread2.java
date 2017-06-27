@@ -10,6 +10,7 @@ import acmr.excel.pojo.ExcelBook;
 import com.acmr.excel.model.AddLine;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.ColWidth;
+import com.acmr.excel.model.ColorSet;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
@@ -252,6 +253,9 @@ public class WorkerThread2 implements Runnable{
 		    sheetService.redo(versionHistory, step, excelBook.getSheets().get(0));
 		    storeService.set(excelId+"_history",  versionHistory);
 		break;
+		case OperatorConstant.batchcolorset:
+			ColorSet colorSet= (ColorSet) model.getObject();
+			handleExcelService.batchColorSet(colorSet, excelBook);
 		default:
 			break;
 		}

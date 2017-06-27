@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,6 +16,7 @@ import acmr.excel.pojo.ExcelBook;
 import com.acmr.excel.controller.excelbase.BaseController;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.ColWidth;
+import com.acmr.excel.model.ColorSet;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.RowHeight;
@@ -226,11 +228,15 @@ public class CellController extends BaseController {
 	}
 	
 	
+//    @RequestMapping("/bg-batch")
+//	public void color_set(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+//		Cell cell = getJsonDataParameter(req, Cell.class);
+//		this.assembleData(req, resp, cell, OperatorConstant.colorset);
+//	}
     @RequestMapping("/bg-batch")
-	public void color_set(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		Cell cell = getJsonDataParameter(req, Cell.class);
-		this.assembleData(req, resp, cell, OperatorConstant.colorset);
+	public void batchcolorset(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	ColorSet cell = getJsonDataParameter(req, ColorSet.class);
+		this.assembleData(req, resp, cell, OperatorConstant.batchcolorset);
 	}
-
 
 }

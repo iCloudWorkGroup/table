@@ -3,18 +3,9 @@ package com.acmr.excel.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class ColorSet implements Serializable{
-	private int sheetId;
+public class ColorSet implements Serializable {
 	private List<Coordinate> coordinates;
-	private String bgcolor;
-
-	public int getSheetId() {
-		return sheetId;
-	}
-
-	public void setSheetId(int sheetId) {
-		this.sheetId = sheetId;
-	}
+	private String color;
 
 	public List<Coordinate> getCoordinates() {
 		return coordinates;
@@ -24,12 +15,12 @@ public class ColorSet implements Serializable{
 		this.coordinates = coordinates;
 	}
 
-	public String getBgcolor() {
-		return bgcolor;
+	public String getColor() {
+		return color;
 	}
 
-	public void setBgcolor(String bgcolor) {
-		this.bgcolor = bgcolor;
+	public void setColor(String color) {
+		this.color = color;
 	}
 
 }
