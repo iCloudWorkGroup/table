@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ColorSet implements Serializable {
-	private List<Coordinate> coordinates;
+	private List<Coordinate> coordinate;
 	private String color;
 
-	public List<Coordinate> getCoordinates() {
-		return coordinates;
+	public List<Coordinate> getCoordinate() {
+		return coordinate;
 	}
 
-	public void setCoordinates(List<Coordinate> coordinates) {
-		this.coordinates = coordinates;
+	public void setCoordinate(List<Coordinate> coordinate) {
+		this.coordinate = coordinate;
 	}
 
 	public String getColor() {

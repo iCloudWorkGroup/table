@@ -13,6 +13,7 @@
 	<body>
 		<input type="hidden" id="build" value=${build}>
 		<input type="hidden" id ="excelId" value=${excelId}> 
+		<input type="button" id ="t" value=test> 
 		<!-- <button id="btn">test</button> -->
 		<div class="topBar">
 			<div class="file-control">

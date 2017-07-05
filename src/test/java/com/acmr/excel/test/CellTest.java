@@ -52,7 +52,7 @@ public class CellTest {
 		coordinate2.setEndCol(2);
 		coordinates.add(coordinate1);
 		coordinates.add(coordinate2);
-		colorSet.setCoordinates(coordinates);
+		colorSet.setCoordinate(coordinates);
 		String color = "rgb(73, 68, 41)";
 		colorSet.setColor(color);
 		handleExcelService.batchColorSet(colorSet, excelBook);

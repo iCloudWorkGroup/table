@@ -407,7 +407,7 @@ public class HandleExcelService {
 	}
 	
 	public List<ColorSetRet> batchColorSet(ColorSet colorSet, ExcelBook excelBook) {
-		List<Coordinate> coordinateList = colorSet.getCoordinates();
+		List<Coordinate> coordinateList = colorSet.getCoordinate();
 		ExcelSheet sheet = excelBook.getSheets().get(0);
 		List<ColorSetRet> colorSetRetList = new ArrayList<ColorSetRet>();
 		//int z = 0;
