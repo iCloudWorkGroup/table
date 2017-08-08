@@ -35,5 +35,4 @@ public class MemcacheServiceImpl implements StoreService {
 		}
 		return false;
 	}
-
 }

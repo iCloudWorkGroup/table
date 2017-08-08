@@ -21,8 +21,8 @@ import acmr.excel.pojo.ExcelSheet;
 import acmr.excel.pojo.Excelborder;
 import acmr.util.ListHashMap;
 
+import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
-import com.acmr.excel.model.ColorSet;
 import com.acmr.excel.model.ColorSetRet;
 import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.OperatorConstant;
@@ -57,7 +57,7 @@ public class HandleExcelService {
 	 *
 	 */
 	public enum CellUpdateType {
-		align_level, align_vertical, frame, font_size, date_format, text, font_color, fill_bgcolor, font_italic, font_weight, font_family, word_wrap;
+		align_level, align_vertical, frame, font_size, date_format, text, font_color, fill_bgcolor, font_italic,font_underline, font_weight, font_family, word_wrap;
 	}
 
 	/**
@@ -406,10 +406,9 @@ public class HandleExcelService {
 		}
 	}
 	
-	public List<ColorSetRet> batchColorSet(ColorSet colorSet, ExcelBook excelBook) {
+	public void areaSet(AreaSet colorSet, ExcelBook excelBook,int type) {
 		List<Coordinate> coordinateList = colorSet.getCoordinate();
 		ExcelSheet sheet = excelBook.getSheets().get(0);
-		List<ColorSetRet> colorSetRetList = new ArrayList<ColorSetRet>();
 		//int z = 0;
 		for(Coordinate coordinate : coordinateList){
 			//ColorSetRet cr = null;
@@ -444,14 +443,29 @@ public class HandleExcelService {
 //							}
 //						}
 //					}
+					if(type == OperatorConstant.CLEANDATA && excelCell == null){
+						continue;
+					}
 					if (excelCell == null) {
 						excelCell = new ExcelCell();
 						cellList.set(j, excelCell);
 					}
-					ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
-					excelCellStyle.setBgcolor(ExcelUtil.getColor(colorSet.getColor()));
-					excelCellStyle.setFgcolor(ExcelUtil.getColor(colorSet.getColor()));
-					excelCellStyle.setPattern(Short.valueOf("1"));
+					switch (type) {
+					case OperatorConstant.CLEANDATA:
+						excelCell.setType(CELLTYPE.BLANK);
+						excelCell.setText("");
+						excelCell.setValue(null);
+						break;
+					case OperatorConstant.batchcolorset:
+						ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
+						excelCellStyle.setBgcolor(ExcelUtil.getColor(colorSet.getColor()));
+						excelCellStyle.setFgcolor(ExcelUtil.getColor(colorSet.getColor()));
+						excelCellStyle.setPattern(Short.valueOf("1"));
+						break;
+					default:
+						break;
+					}
+					
 				}
 			}
 		   //z++;
@@ -459,7 +473,6 @@ public class HandleExcelService {
 //				colorSetRetList.add(cr);
 //		   }
 		}
-		return colorSetRetList;
 	}
 	
 	
@@ -652,7 +665,16 @@ public class HandleExcelService {
 						history.setOperatorType(OperatorConstant.fontitalic);
 						excelFont.setItalic(Boolean.valueOf(cell.getItalic()));
 						excelCellStyle.setFont(excelFont);
-					} else if (type.equals(CellUpdateType.font_color)) {
+					} 
+					else if (type.equals(CellUpdateType.font_underline)) {
+						history.setOperatorType(OperatorConstant.UNDERLINE);
+						byte b = 0;
+						if(1 == cell.getUnderline()){
+							b = 1;
+						}
+						excelFont.setUnderline(b);
+						excelCellStyle.setFont(excelFont);
+					}else if (type.equals(CellUpdateType.font_color)) {
 						history.setOperatorType(OperatorConstant.fontcolor);
 						excelFont.setColor(ExcelUtil.getColor(cell.getColor()));
 						excelCellStyle.setFont(excelFont);
@@ -698,6 +720,14 @@ public class HandleExcelService {
 				exps.remove(types);
 			}
 			break;
+		case "font_underline":
+			//斜体
+			if(1 == cell.getUnderline()){
+				exps.put(types, "1");
+			}else{
+				exps.remove(types);
+			}
+			break;	
 		case "frame":
 			//边框
 			if("none".equals(cell.getDirection())){

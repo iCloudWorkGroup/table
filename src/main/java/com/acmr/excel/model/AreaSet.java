@@ -3,7 +3,7 @@ package com.acmr.excel.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class ColorSet implements Serializable {
+public class AreaSet implements Serializable {
 	private List<Coordinate> coordinate;
 	private String color;
 

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,9 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import acmr.excel.pojo.ExcelBook;
 
 import com.acmr.excel.controller.excelbase.BaseController;
+import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.ColWidth;
-import com.acmr.excel.model.ColorSet;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.RowHeight;
@@ -148,7 +149,17 @@ public class CellController extends BaseController {
 		Cell cell = getJsonDataParameter(req, Cell.class);
 		this.assembleData(req, resp, cell, OperatorConstant.fontitalic);
 	}
-
+	/**
+	 * 斜体
+	 * 
+	 * @throws IOException
+	 */
+	@RequestMapping("/font-underline")
+	public void font_underline(HttpServletRequest req, HttpServletResponse resp)
+			throws Exception {
+		AreaSet underline = getJsonDataParameter(req, AreaSet.class);
+		this.assembleData(req, resp, underline, OperatorConstant.UNDERLINE);
+	}
 	/**
 	 * 字体颜色
 	 * 
@@ -235,8 +246,13 @@ public class CellController extends BaseController {
 //	}
     @RequestMapping("/bg-batch")
 	public void batchcolorset(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-    	ColorSet cell = getJsonDataParameter(req, ColorSet.class);
+    	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
 		this.assembleData(req, resp, cell, OperatorConstant.batchcolorset);
+	}
+    @RequestMapping("/clean-data")
+	public void areaDel(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
+		this.assembleData(req, resp, cell, OperatorConstant.CLEANDATA);
 	}
 
 }

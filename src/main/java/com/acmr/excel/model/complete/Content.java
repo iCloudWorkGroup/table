@@ -18,6 +18,7 @@ public class Content implements Serializable {
 	private Integer weight;
 	private String texts = "";
 	private String displayTexts;
+	private String underline;
 
 	public String getSize() {
 		return size;
@@ -114,10 +115,12 @@ public class Content implements Serializable {
 	public void setDisplayTexts(String displayTexts) {
 		this.displayTexts = displayTexts;
 	}
+	
+	public String getUnderline() {
+		return underline;
+	}
 
-	public static void main(String[] args) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("1", "1");
-		System.out.println(map.remove("2"));
+	public void setUnderline(String underline) {
+		this.underline = underline;
 	}
 }

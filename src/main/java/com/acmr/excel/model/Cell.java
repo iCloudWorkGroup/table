@@ -10,6 +10,7 @@ public class Cell implements Serializable {
 	private String isBold;
 	private String italic;
 	private String wordWrap;
+	private int underline;
 
 	/**
 	 * 行索引
@@ -218,6 +219,14 @@ public class Cell implements Serializable {
 
 	public void setWordWrap(String wordWrap) {
 		this.wordWrap = wordWrap;
+	}
+
+	public int getUnderline() {
+		return underline;
+	}
+
+	public void setUnderline(int underline) {
+		this.underline = underline;
 	}
 
 }

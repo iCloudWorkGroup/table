@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 import acmr.excel.pojo.ExcelBook;
 
 import com.acmr.excel.model.AddLine;
+import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.ColWidth;
-import com.acmr.excel.model.ColorSet;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
@@ -116,6 +116,11 @@ public class WorkerThread2 implements Runnable{
 			handleExcelService.updateCells(CellUpdateType.font_italic, cell,excelBook,versionHistory,step);
 			storeService.set(excelId+"_history", versionHistory);
 			break;
+		case OperatorConstant.UNDERLINE:
+			cell = (Cell) model.getObject();
+			handleExcelService.updateCells(CellUpdateType.font_underline, cell,excelBook,versionHistory,step);
+			storeService.set(excelId+"_history", versionHistory);
+			break;	
 		case OperatorConstant.fontcolor:
 			cell = (Cell) model.getObject();
 			handleExcelService.updateCells(CellUpdateType.font_color, cell,excelBook,versionHistory,step);
@@ -254,8 +259,13 @@ public class WorkerThread2 implements Runnable{
 		    storeService.set(excelId+"_history",  versionHistory);
 		break;
 		case OperatorConstant.batchcolorset:
-			ColorSet colorSet= (ColorSet) model.getObject();
-			handleExcelService.batchColorSet(colorSet, excelBook);
+			AreaSet colorSet= (AreaSet) model.getObject();
+			handleExcelService.areaSet(colorSet, excelBook,OperatorConstant.batchcolorset);
+		break;	
+		case OperatorConstant.CLEANDATA:
+			AreaSet areaDel= (AreaSet) model.getObject();
+			handleExcelService.areaSet(areaDel, excelBook,OperatorConstant.CLEANDATA);
+		break;
 		default:
 			break;
 		}

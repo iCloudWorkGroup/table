@@ -47,5 +47,12 @@ public class OperatorConstant {
 	public static final int undo = 34;
 	//前进
 	public static final int redo = 35;
-	
+	/**
+	 * 区域删除
+	 */
+	public static final int CLEANDATA = 36;
+	/**
+	 * 下划线
+	 */
+	public static final int UNDERLINE = 37;
 }

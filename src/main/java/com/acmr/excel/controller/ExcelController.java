@@ -217,6 +217,8 @@ public class ExcelController extends BaseController {
 		} else {
 			buildState += "\"false\";";
 		}
+		VersionHistory versionHistory = new VersionHistory();
+		storeService.set(excelId+"_history", versionHistory);
 		String excelIdString = "window.SPREADSHEET_AUTHENTIC_KEY=\"" + excelId
 				+ "\";";
 

@@ -249,6 +249,12 @@ public class ExcelService {
 			} else {
 				content.setItalic(null);
 			}
+			String underline = colMap.get("font_underline");
+			if (underline != null) {
+				content.setUnderline(underline);
+			} else {
+				content.setUnderline(underline);
+			}
 			content.setSize(colMap.get("font_size"));
 			content.setRgbColor(null);
 			content.setTexts(null);
@@ -437,6 +443,12 @@ public class ExcelService {
 				} else {
 					content.setItalic(null);
 				}
+				String underline = colMap.get("font_underline");
+				if (underline != null) {
+					content.setUnderline(underline);
+				} else {
+					content.setUnderline(underline);
+				}
 				content.setSize(colMap.get("font_size"));
 				content.setRgbColor(null);
 				content.setTexts(null);
@@ -591,6 +603,7 @@ public class ExcelService {
 			content.setBd(false);
 		}
 		content.setItalic(excelFont.isItalic());
+		content.setUnderline(excelFont.getUnderline() == 0 ? "0" : "1");
 //		ExcelColor fontColor = excelFont.getColor();
 //		if (fontColor != null) {
 //			int[] rgb = fontColor.getRGBInt();
@@ -629,9 +642,9 @@ public class ExcelService {
 //			}
 //		}
 		
-		//if(!StringUtil.isEmpty(excelCell.getMemo())){
+		if(!StringUtil.isEmpty(excelCell.getMemo())){
 			customProp.setComment(excelCell.getMemo());
-		//}
+		}
 		
 		
 		ExcelColor fontColor = excelFont.getColor();
