@@ -486,15 +486,19 @@ public class CellFormateUtil {
 		case "0;[Red]0":	
 		case "0_ ;[Red]\\-0\\ ":	
 			//整数
-			formate.setType("number");
-			content.setTexts(excelCell.getValue().toString());
-			String zdisplayText = setNumber(excelCell, 0, false);
-			content.setDisplayTexts(zdisplayText);
-			formate.setDecimal(0);
-			formate.setThousands(false);
 			if(CELLTYPE.STRING == excelCell.getType()){
 				formate.setIsValid(false);
+				content.setTexts(excelCell.getText());
+				content.setDisplayTexts(excelCell.getText());
+			}else{
+				content.setTexts(excelCell.getValue().toString());
+				String zdisplayText = setNumber(excelCell, 0, false);
+				content.setDisplayTexts(zdisplayText);
 			}
+			formate.setType("number");
+			formate.setDecimal(0);
+			formate.setThousands(false);
+			
 			break;	
 		case "#,##0_);\\(#,##0\\)":
 			//整数千分位
@@ -551,6 +555,21 @@ public class CellFormateUtil {
 				formate.setIsValid(false);
 			}
 			break;
+			
+		case "0":
+			if(CELLTYPE.STRING == excelCell.getType()){
+				formate.setIsValid(false);
+				content.setTexts(excelCell.getText());
+				content.setDisplayTexts(excelCell.getText());
+			}else{
+				String rxt = getPrettyNumber(excelCell.getText());
+				content.setTexts(rxt);
+				excelCell.setText(rxt);
+				content.setDisplayTexts(setNumber(excelCell, 0, false));
+			}
+			formate.setType("number");
+			formate.setDecimal(0);
+			break;
 		default:
 			if (dataFormate.startsWith("0.0") && dataFormate.endsWith("0\\)") && !dataFormate.contains(";[Red]")) {
 				// 小数
@@ -567,12 +586,14 @@ public class CellFormateUtil {
 				}
 			}else if (dataFormate.startsWith("0.0")) {
 				// 小数
-				String d = setNumber(excelCell, 1, false);
+				int index = dataFormate.indexOf("_");
+				int decimal = index - 2;
+				String d = setNumber(excelCell, index-2, false);
 				formate.setType("number");
-				formate.setDecimal(1);
+				formate.setDecimal(decimal);
 				formate.setThousands(false);
 				content.setDisplayTexts(d);
-				content.setTexts(d);
+				content.setTexts(excelCell.getValue()+"");
 				if(CELLTYPE.STRING == excelCell.getType()){
 					formate.setIsValid(false);
 					content.setDisplayTexts(excelCell.getText());
@@ -701,8 +722,8 @@ public class CellFormateUtil {
 	  
 	public static void main(String[] args) {  
 		NumberFormat numberFormat = NumberFormat.getNumberInstance();
-		numberFormat.setMinimumFractionDigits(5);
-		String s = "0.46801";
+		numberFormat.setMinimumFractionDigits(3);
+		String s = "16177070.7477562";
 		System.out.println(numberFormat.format(Double.valueOf(s)));
 	} 
 }
