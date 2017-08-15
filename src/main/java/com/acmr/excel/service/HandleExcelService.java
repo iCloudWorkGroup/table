@@ -452,7 +452,7 @@ public class HandleExcelService {
 					}
 					switch (type) {
 					case OperatorConstant.CLEANDATA:
-						excelCell.setType(CELLTYPE.BLANK);
+						//excelCell.setType(CELLTYPE.BLANK);
 						excelCell.setText("");
 						excelCell.setValue(null);
 						break;

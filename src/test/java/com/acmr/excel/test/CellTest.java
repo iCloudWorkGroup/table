@@ -112,7 +112,6 @@ public class CellTest {
 							(i == coordinate.getEndRow() && j == coordinate.getEndCol())){
 						Assert.assertEquals("", excelCell.getText());
 						Assert.assertNull(excelCell.getValue());
-						Assert.assertEquals(CELLTYPE.BLANK, excelCell.getType());
 					}else{
 						Assert.assertNull(excelCell);
 					}
