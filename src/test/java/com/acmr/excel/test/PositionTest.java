@@ -32,14 +32,14 @@ public class PositionTest {
 	@Test
 	public void testPositionWithUnderline() {
 		excelFont.setUnderline((byte) 0);
-		content.setUnderline(excelFont.getUnderline() == 0 ? "0" : "1");
-		Assert.assertEquals("0", content.getUnderline());
+		content.setUnderline(excelFont.getUnderline() == 0 ? 0 : 1);
+		Assert.assertEquals(Integer.valueOf(0), content.getUnderline());
 		excelFont.setUnderline((byte) 1);
-		content.setUnderline(excelFont.getUnderline() == 0 ? "0" : "1");
-		Assert.assertEquals("1", content.getUnderline());
+		content.setUnderline(excelFont.getUnderline() == 0 ? 0 : 1);
+		Assert.assertEquals(Integer.valueOf(1), content.getUnderline());
 		excelFont.setUnderline((byte) 2);
-		content.setUnderline(excelFont.getUnderline() == 0 ? "0" : "1");
-		Assert.assertEquals("1", content.getUnderline());
+		content.setUnderline(excelFont.getUnderline() == 0 ? 0 : 1);
+		Assert.assertEquals(Integer.valueOf(1), content.getUnderline());
 	}
 
 	@After

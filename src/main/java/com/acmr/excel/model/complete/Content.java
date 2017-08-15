@@ -18,7 +18,7 @@ public class Content implements Serializable {
 	private Integer weight;
 	private String texts = "";
 	private String displayTexts;
-	private String underline;
+	private Integer underline;
 
 	public String getSize() {
 		return size;
@@ -115,12 +115,13 @@ public class Content implements Serializable {
 	public void setDisplayTexts(String displayTexts) {
 		this.displayTexts = displayTexts;
 	}
-	
-	public String getUnderline() {
+
+	public Integer getUnderline() {
 		return underline;
 	}
 
-	public void setUnderline(String underline) {
+	public void setUnderline(Integer underline) {
 		this.underline = underline;
 	}
+		
 }

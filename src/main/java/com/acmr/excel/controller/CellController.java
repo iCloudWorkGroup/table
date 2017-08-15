@@ -157,7 +157,7 @@ public class CellController extends BaseController {
 	@RequestMapping("/font-underline")
 	public void font_underline(HttpServletRequest req, HttpServletResponse resp)
 			throws Exception {
-		AreaSet underline = getJsonDataParameter(req, AreaSet.class);
+		Cell underline = getJsonDataParameter(req, Cell.class);
 		this.assembleData(req, resp, underline, OperatorConstant.UNDERLINE);
 	}
 	/**

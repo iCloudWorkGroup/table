@@ -251,9 +251,7 @@ public class ExcelService {
 			}
 			String underline = colMap.get("font_underline");
 			if (underline != null) {
-				content.setUnderline(underline);
-			} else {
-				content.setUnderline(underline);
+				content.setUnderline(Integer.valueOf(underline));
 			}
 			content.setSize(colMap.get("font_size"));
 			content.setRgbColor(null);
@@ -445,10 +443,8 @@ public class ExcelService {
 				}
 				String underline = colMap.get("font_underline");
 				if (underline != null) {
-					content.setUnderline(underline);
-				} else {
-					content.setUnderline(underline);
-				}
+					content.setUnderline(Integer.valueOf(underline));
+				} 
 				content.setSize(colMap.get("font_size"));
 				content.setRgbColor(null);
 				content.setTexts(null);
@@ -603,7 +599,7 @@ public class ExcelService {
 			content.setBd(false);
 		}
 		content.setItalic(excelFont.isItalic());
-		content.setUnderline(excelFont.getUnderline() == 0 ? "0" : "1");
+		content.setUnderline(excelFont.getUnderline() == 0 ? 0 : 1);
 //		ExcelColor fontColor = excelFont.getColor();
 //		if (fontColor != null) {
 //			int[] rgb = fontColor.getRGBInt();
