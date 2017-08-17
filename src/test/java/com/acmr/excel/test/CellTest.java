@@ -13,6 +13,7 @@ import acmr.excel.pojo.Constants.CELLTYPE;
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelColor;
+import acmr.excel.pojo.ExcelColumn;
 import acmr.excel.pojo.ExcelFont;
 import acmr.excel.pojo.ExcelRow;
 
@@ -157,6 +158,85 @@ public class CellTest {
 			}
 		}
 	}
+	/**
+	 * 测试一整列变色
+	 */
+	@Test
+	public void testColumnColor(){
+		Cell cell = new Cell();
+		Coordinate coordinate = cell.getCoordinate();
+		coordinate.setStartRow(0);
+		coordinate.setEndRow(-1);
+		coordinate.setStartCol(1);
+		coordinate.setEndCol(1);
+		cell.setColor("rgb(147, 137, 83)");
+		handleExcelService.updateCells(CellUpdateType.fill_bgcolor, cell,excelBook,new VersionHistory(),1);
+		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
+		ExcelColumn excelColumn = colList.get(1);
+		Assert.assertEquals("rgb(147, 137, 83)", excelColumn.getExps().get("fill_bgcolor"));;
+	}	
+	
+	/**
+	 * 测试多整列变色
+	 */
+	@Test
+	public void testMulColumnColor(){
+		Cell cell = new Cell();
+		Coordinate coordinate = cell.getCoordinate();
+		coordinate.setStartRow(0);
+		coordinate.setEndRow(-1);
+		coordinate.setStartCol(1);
+		coordinate.setEndCol(3);
+		cell.setColor("rgb(147, 137, 83)");
+		handleExcelService.updateCells(CellUpdateType.fill_bgcolor, cell,excelBook,new VersionHistory(),1);
+		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
+		ExcelColumn excelColumn = colList.get(1);
+		ExcelColumn excelColumn2 = colList.get(2);
+		ExcelColumn excelColumn3 = colList.get(3);
+		Assert.assertEquals("rgb(147, 137, 83)", excelColumn.getExps().get("fill_bgcolor"));
+		Assert.assertEquals("rgb(147, 137, 83)", excelColumn2.getExps().get("fill_bgcolor"));
+		Assert.assertEquals("rgb(147, 137, 83)", excelColumn3.getExps().get("fill_bgcolor"));
+	}
+	/**
+	 * 测试一整行变色
+	 */
+	@Test
+	public void testRowColor(){
+		Cell cell = new Cell();
+		Coordinate coordinate = cell.getCoordinate();
+		coordinate.setStartRow(1);
+		coordinate.setEndRow(1);
+		coordinate.setStartCol(0);
+		coordinate.setEndCol(-1);
+		cell.setColor("rgb(147, 137, 83)");
+		handleExcelService.updateCells(CellUpdateType.fill_bgcolor, cell,excelBook,new VersionHistory(),1);
+		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
+		ExcelRow excelRow = rowList.get(1);
+		Assert.assertEquals("rgb(147, 137, 83)", excelRow.getExps().get("fill_bgcolor"));;
+	}	
+	
+	/**
+	 * 测试多整行变色
+	 */
+	@Test
+	public void testMulRowColor(){
+		Cell cell = new Cell();
+		Coordinate coordinate = cell.getCoordinate();
+		coordinate.setStartRow(1);
+		coordinate.setEndRow(3);
+		coordinate.setStartCol(0);
+		coordinate.setEndCol(-1);
+		cell.setColor("rgb(147, 137, 83)");
+		handleExcelService.updateCells(CellUpdateType.fill_bgcolor, cell,excelBook,new VersionHistory(),1);
+		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
+		ExcelRow excelRow = rowList.get(1);
+		ExcelRow excelRow2 = rowList.get(2);
+		ExcelRow excelRow3 = rowList.get(3);
+		Assert.assertEquals("rgb(147, 137, 83)", excelRow.getExps().get("fill_bgcolor"));
+		Assert.assertEquals("rgb(147, 137, 83)", excelRow2.getExps().get("fill_bgcolor"));
+		Assert.assertEquals("rgb(147, 137, 83)", excelRow3.getExps().get("fill_bgcolor"));
+	}
+	
 	
 	@After
 	public void after() {

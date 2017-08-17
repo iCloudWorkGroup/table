@@ -204,9 +204,9 @@ public class ExcelService {
 //			}
 			gly.setTop(getRowTop(glyList, i));
 			gly.setIndex(i);
+			setProperty(excelRow.getExps(), gly.getOperProp());
 			glyList.add(gly);
 		}
-
 	}
 
 	private void bookToOlExcelGlxList(ExcelSheet excelSheet, List<Glx> glxList) {
@@ -223,116 +223,117 @@ public class ExcelService {
 			}else{
 				glx.setWidth(excelColumn.getWidth());
 			}
-			
 			glx.setLeft(getColLeft(glxList, i));
 			glx.setIndex(i);
-			Map<String, String> colMap = excelColumn.getExps();
-			//Content content = glxList.get(i).getOperProp().getContent();
-			OperProp operProp = glx.getOperProp();
-			Content content = operProp.getContent();
-			String alignCol = colMap.get("align_vertical");
-			content.setAlignCol(alignCol);
-			String alignRow = colMap.get("align_level");
-			content.setAlignRow(alignRow);
-			String bd = colMap.get("font_weight");
-			if (bd != null) {
-				content.setBd(Boolean.valueOf(bd));
-			} else {
-				content.setBd(null);
-			}
-			String color = colMap.get("font_color");
-			content.setColor(color);
-			content.setFamily(colMap.get("font_family"));
-			String italic = colMap.get("font_italic");
-			if (italic != null) {
-				content.setItalic(Boolean.valueOf(italic));
-			} else {
-				content.setItalic(null);
-			}
-			String underline = colMap.get("font_underline");
-			if (underline != null) {
-				content.setUnderline(Integer.valueOf(underline));
-			}
-			content.setSize(colMap.get("font_size"));
-			content.setRgbColor(null);
-			content.setTexts(null);
-			content.setAlignLine(null);
-//			CustomProp customProp = glxList.get(i).getOperProp()
-//					.getCustomProp();
-			CustomProp customProp = operProp.getCustomProp();
-			Format formate = operProp.getFormate();
-			customProp.setBackground(colMap.get("fill_bgcolor"));
-			formate.setType(colMap.get("format")); 
-			formate.setCurrencySign(colMap.get("currency"));
-			formate.setDateFormat(colMap.get("dateFormat"));
-			customProp.setIsValid(null);
-			String decimalPoint = colMap.get("decimalPoint");
-			if (decimalPoint != null) {
-				formate.setDecimal(Integer.valueOf(decimalPoint));
-			} else {
-				formate.setDecimal(null);
-			}
-			String thousandPoint = colMap.get("thousandPoint");
-			if (thousandPoint != null) {
-				formate.setThousands(Boolean.valueOf(thousandPoint));
-			} else {
-				formate.setThousands(null);
-			}
-
-			customProp.setComment(colMap.get("comment"));
-			//Border border = glxList.get(i).getOperProp().getBorder();
-			Border border = operProp.getBorder();
-			String bottom = colMap.get("bottom");
-			String top = colMap.get("top");
-			String left = colMap.get("left");
-			String right = colMap.get("right");
-			String all = colMap.get("all");
-			String outer = colMap.get("outer");
-			String none = colMap.get("none");
-			if (bottom != null) {
-				border.setBottom(Boolean.valueOf(bottom));
-			} else {
-				border.setBottom(null);
-			}
-			if (top != null) {
-				border.setTop(Boolean.valueOf(top));
-			} else {
-				border.setTop(null);
-			}
-			if (left != null) {
-				border.setLeft(Boolean.valueOf(left));
-			} else {
-				border.setLeft(null);
-			}
-			if (right != null) {
-				border.setRight(Boolean.valueOf(right));
-			} else {
-				border.setRight(null);
-			}
-			if (all != null) {
-				border.setAll(Boolean.valueOf(all));
-			} else {
-				border.setAll(null);
-			}
-			if (outer != null) {
-				border.setOuter(Boolean.valueOf(outer));
-			} else {
-				border.setOuter(null);
-			}
-			if (none != null) {
-				border.setNone(Boolean.valueOf(none));
-			} else {
-				border.setNone(null);
-			}
-			
-			operProp.setContent(content);
-			operProp.setBorder(border);
-			operProp.setContent(content);
-			glx.setOperProp(operProp);
+			setProperty(excelColumn.getExps(), glx.getOperProp());
 			glxList.add(glx);
 		}
 	}
+	/**
+	 * 设置行列属性
+	 * @param map
+	 * @param operProp
+	 */
+	private void setProperty(Map<String, String> map,OperProp operProp){
+		Content content = operProp.getContent();
+		String alignCol = map.get("align_vertical");
+		content.setAlignCol(alignCol);
+		String alignRow = map.get("align_level");
+		content.setAlignRow(alignRow);
+		String bd = map.get("font_weight");
+		if (bd != null) {
+			content.setBd(Boolean.valueOf(bd));
+		} else {
+			content.setBd(null);
+		}
+		String color = map.get("font_color");
+		content.setColor(color);
+		content.setFamily(map.get("font_family"));
+		String italic = map.get("font_italic");
+		if (italic != null) {
+			content.setItalic(Boolean.valueOf(italic));
+		} else {
+			content.setItalic(null);
+		}
+		String underline = map.get("font_underline");
+		if (underline != null) {
+			content.setUnderline(Integer.valueOf(underline));
+		}
+		content.setSize(map.get("font_size"));
+		content.setRgbColor(null);
+		content.setTexts(null);
+		content.setAlignLine(null);
+//		CustomProp customProp = glxList.get(i).getOperProp()
+//				.getCustomProp();
+		CustomProp customProp = operProp.getCustomProp();
+		Format formate = operProp.getFormate();
+		customProp.setBackground(map.get("fill_bgcolor"));
+		formate.setType(map.get("format")); 
+		formate.setCurrencySign(map.get("currency"));
+		formate.setDateFormat(map.get("dateFormat"));
+		customProp.setIsValid(null);
+		String decimalPoint = map.get("decimalPoint");
+		if (decimalPoint != null) {
+			formate.setDecimal(Integer.valueOf(decimalPoint));
+		} else {
+			formate.setDecimal(null);
+		}
+		String thousandPoint = map.get("thousandPoint");
+		if (thousandPoint != null) {
+			formate.setThousands(Boolean.valueOf(thousandPoint));
+		} else {
+			formate.setThousands(null);
+		}
 
+		customProp.setComment(map.get("comment"));
+		//Border border = glxList.get(i).getOperProp().getBorder();
+		Border border = operProp.getBorder();
+		String bottom = map.get("bottom");
+		String top = map.get("top");
+		String left = map.get("left");
+		String right = map.get("right");
+		String all = map.get("all");
+		String outer = map.get("outer");
+		String none = map.get("none");
+		if (bottom != null) {
+			border.setBottom(Boolean.valueOf(bottom));
+		} else {
+			border.setBottom(null);
+		}
+		if (top != null) {
+			border.setTop(Boolean.valueOf(top));
+		} else {
+			border.setTop(null);
+		}
+		if (left != null) {
+			border.setLeft(Boolean.valueOf(left));
+		} else {
+			border.setLeft(null);
+		}
+		if (right != null) {
+			border.setRight(Boolean.valueOf(right));
+		} else {
+			border.setRight(null);
+		}
+		if (all != null) {
+			border.setAll(Boolean.valueOf(all));
+		} else {
+			border.setAll(null);
+		}
+		if (outer != null) {
+			border.setOuter(Boolean.valueOf(outer));
+		} else {
+			border.setOuter(null);
+		}
+		if (none != null) {
+			border.setNone(Boolean.valueOf(none));
+		} else {
+			border.setNone(null);
+		}
+		operProp.setContent(content);
+		operProp.setBorder(border);
+		operProp.setContent(content);
+	}
 	private int getColLeft(List<Glx> glxList, int i) {
 		if (i == 0) {
 			return 0;

@@ -494,20 +494,21 @@ public class HandleExcelService {
 		int colBeginIndex = cell.getCoordinate().getStartCol();
 		int rowEndIndex = cell.getCoordinate().getEndRow();
 		int colEndIndex = cell.getCoordinate().getEndCol();
+		boolean rowFlag = false;
+		//整列
 		if (rowEndIndex == -1) {
 			rowEndIndex = rowList.size() - 1;
-			for (int i = rowBeginIndex; i <= rowEndIndex; i++) {
-				Map<String, String> exps = rowList.get(i).getExps();
-				setExps(exps, type, cell);
-			}
-		} 
-		if (colEndIndex == -1 ) {
-			colEndIndex = columnList.size() - 1;
 			for (int i = colBeginIndex; i <= colEndIndex; i++) {
 				Map<String, String> exps = columnList.get(i).getExps();
 				setExps(exps, type, cell);
 			}
+		}
+		if (colEndIndex == -1 ) {
+			colEndIndex = columnList.size() - 1;
+
+			rowFlag = true;
 		} 
+	
 		if (rowBeginIndex != -1 && rowEndIndex != -1 && colBeginIndex != -1&& colEndIndex != -1) {
 			Integer version = versionHistory.getVersion().get(step-1);
 			if(version == null){
@@ -521,6 +522,11 @@ public class HandleExcelService {
 				if (excelRow == null) {
 					excelRow = new ExcelRow();
 					rowList.set(i, excelRow);
+				}
+				//整行
+				if(rowFlag){
+					Map<String, String> exps = rowList.get(i).getExps();
+					setExps(exps, type, cell);
 				}
 				List<ExcelCell> excelCellList = excelRow.getCells();
 				for (int j = colBeginIndex; j <= colEndIndex; j++) {
@@ -743,10 +749,10 @@ public class HandleExcelService {
 			break;
 		case "fill_bgcolor":
 			//背景色
-			if("rgb(255,255,255)".equals(cell.getBgcolor())){
+			if("rgb(255,255,255)".equals(cell.getColor())){
 				exps.remove(types);
 			}else{
-				exps.put(types, cell.getBgcolor());
+				exps.put(types, cell.getColor());
 			}
 			break;
 		case "align_level":
