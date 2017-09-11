@@ -6,6 +6,7 @@ import java.util.List;
 public class AreaSet implements Serializable {
 	private List<Coordinate> coordinate;
 	private String color;
+	private boolean lock;
 
 	public List<Coordinate> getCoordinate() {
 		return coordinate;
@@ -21,6 +22,14 @@ public class AreaSet implements Serializable {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public boolean isLock() {
+		return lock;
+	}
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
 	}
 
 }

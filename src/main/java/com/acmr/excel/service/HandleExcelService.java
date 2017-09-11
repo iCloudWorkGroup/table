@@ -42,6 +42,7 @@ import com.acmr.excel.util.CellFormateUtil;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.StringUtil;
 import com.acmr.excel.util.UUIDUtil;
+import com.alibaba.fastjson.JSON;
 
 /**
  * 操作excelservice
@@ -406,8 +407,8 @@ public class HandleExcelService {
 		}
 	}
 	
-	public void areaSet(AreaSet colorSet, ExcelBook excelBook,int type) {
-		List<Coordinate> coordinateList = colorSet.getCoordinate();
+	public void areaSet(AreaSet areaSet, ExcelBook excelBook,int type) {
+		List<Coordinate> coordinateList = areaSet.getCoordinate();
 		ExcelSheet sheet = excelBook.getSheets().get(0);
 		//int z = 0;
 		for(Coordinate coordinate : coordinateList){
@@ -416,6 +417,7 @@ public class HandleExcelService {
 			int rowStartIndex = coordinate.getStartRow();
 			int colEndIndex = coordinate.getEndCol();
 			int rowEndIndex = coordinate.getEndRow();
+			
 			ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)sheet.getRows();
 			ListHashMap<ExcelColumn> columnList = (ListHashMap<ExcelColumn>)sheet.getCols();
 			for (int i = rowList.size() - 1; i <= rowEndIndex; i++) {
@@ -424,8 +426,24 @@ public class HandleExcelService {
 			for (int i = columnList.size() - 1; i < colEndIndex; i++) {
 				sheet.addColumn();
 			}
+			//整列
+			if (rowEndIndex == -1) {
+				rowEndIndex = rowList.size() - 1;
+				for (int i = colStartIndex; i <= colEndIndex; i++) {
+					setExcelCellStyle(columnList.get(i).getCellstyle(), OperatorConstant.CELLLOCK, areaSet);
+				}
+			}
+			boolean rowFlag = false;
+			if (colEndIndex == -1 ) {
+				colEndIndex = columnList.size() - 1;
+				rowFlag = true;
+			} 
 			for(int i = rowStartIndex ; i <= rowEndIndex ;i++){
 				ExcelRow excelRow = rowList.get(i);
+				//整行
+				if(rowFlag){
+					setExcelCellStyle(rowList.get(i).getCellstyle(), OperatorConstant.CELLLOCK, areaSet);
+				}
 				List<ExcelCell> cellList = excelRow.getCells();
 				for(int j = colStartIndex;j<=colEndIndex;j++){
 					ExcelCell excelCell = cellList.get(j);
@@ -458,9 +476,12 @@ public class HandleExcelService {
 						break;
 					case OperatorConstant.batchcolorset:
 						ExcelCellStyle excelCellStyle = excelCell.getCellstyle();
-						excelCellStyle.setBgcolor(ExcelUtil.getColor(colorSet.getColor()));
-						excelCellStyle.setFgcolor(ExcelUtil.getColor(colorSet.getColor()));
+						excelCellStyle.setBgcolor(ExcelUtil.getColor(areaSet.getColor()));
+						excelCellStyle.setFgcolor(ExcelUtil.getColor(areaSet.getColor()));
 						excelCellStyle.setPattern(Short.valueOf("1"));
+						break;
+					case OperatorConstant.CELLLOCK:
+						setExcelCellStyle(excelCell.getCellstyle(), OperatorConstant.CELLLOCK, areaSet);
 						break;
 					default:
 						break;
@@ -475,7 +496,15 @@ public class HandleExcelService {
 		}
 	}
 	
-	
+	private void setExcelCellStyle(ExcelCellStyle excelCellStyle,int type,AreaSet areaSet){
+		switch (type) {
+		case OperatorConstant.CELLLOCK:
+			excelCellStyle.setLocked(areaSet.isLock());
+			break;
+		default:
+			break;
+		}
+	}
 	
 	
 	/**

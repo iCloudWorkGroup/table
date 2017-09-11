@@ -41,13 +41,21 @@ public class JsonReturn {
 	private int maxColPixel;
 	private String aliasRowCounter;
 	private String aliasColCounter;
-
+	private boolean protect;
 	// private Object returnParam;
 	
-	
+		
 
 	public int getMaxPixel() {
 		return maxPixel;
+	}
+
+	public boolean isProtect() {
+		return protect;
+	}
+
+	public void setProtect(boolean protect) {
+		this.protect = protect;
 	}
 
 	public String getAliasRowCounter() {

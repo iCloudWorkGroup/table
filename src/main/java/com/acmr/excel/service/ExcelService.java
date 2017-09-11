@@ -24,6 +24,7 @@ import acmr.excel.pojo.Excelborder;
 import com.acmr.excel.dao.ExcelDao;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.OnlineExcel;
+import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.complete.Border;
 import com.acmr.excel.model.complete.Content;
 import com.acmr.excel.model.complete.CustomProp;
@@ -205,6 +206,7 @@ public class ExcelService {
 			gly.setTop(getRowTop(glyList, i));
 			gly.setIndex(i);
 			setProperty(excelRow.getExps(), gly.getOperProp());
+			setStyle(excelRow.getCellstyle(), gly.getOperProp());
 			glyList.add(gly);
 		}
 	}
@@ -226,6 +228,7 @@ public class ExcelService {
 			glx.setLeft(getColLeft(glxList, i));
 			glx.setIndex(i);
 			setProperty(excelColumn.getExps(), glx.getOperProp());
+			setStyle(excelColumn.getCellstyle(), glx.getOperProp());
 			glxList.add(glx);
 		}
 	}
@@ -423,6 +426,7 @@ public class ExcelService {
 				}
 				Map<String, String> colMap = excelRow.getExps();
 				Content content = glyList.get(i).getOperProp().getContent();
+				setStyle(excelRow.getCellstyle(), glyList.get(i).getOperProp());
 				String alignCol = colMap.get("align_vertical");
 				content.setAlignCol(alignCol);
 				String alignRow = colMap.get("align_level");
@@ -515,7 +519,9 @@ public class ExcelService {
 			}
 		}
 	}
-
+	private void setStyle(ExcelCellStyle style,OperProp operProp){
+		operProp.setLocked(style.isLocked() ? null : false);
+	}
 
 	/**
 	 * 设置单元格常规属性
@@ -652,6 +658,7 @@ public class ExcelService {
 		}
 		// ExcelColor bgColor = excelCellStyle.getBgcolor();
 		ExcelColor fgColor = excelCellStyle.getFgcolor();
+		cell.setLocked(excelCellStyle.isLocked() ? null : false);
 		// if(bgColor != null){
 		// int[] rgb = bgColor.getRGBInt();
 		// customProp.setBackground(ExcelUtil.getRGB(rgb));

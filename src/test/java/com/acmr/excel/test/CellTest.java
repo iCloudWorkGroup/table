@@ -21,9 +21,11 @@ import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.OperatorConstant;
+import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.service.HandleExcelService;
 import com.acmr.excel.service.HandleExcelService.CellUpdateType;
+import com.acmr.excel.service.SheetService;
 
 /**
  * 单元格操作测试类
@@ -34,11 +36,13 @@ import com.acmr.excel.service.HandleExcelService.CellUpdateType;
 public class CellTest {
 	private HandleExcelService handleExcelService;
 	private ExcelBook excelBook;
+	private SheetService sheetService;
 
 	@Before
 	public void before() {
 		handleExcelService = new HandleExcelService();
 		excelBook = TestUtil.createNewExcel();
+		sheetService = new SheetService();
 	}
 
 	/**
@@ -237,7 +241,85 @@ public class CellTest {
 		Assert.assertEquals("rgb(147, 137, 83)", excelRow3.getExps().get("fill_bgcolor"));
 	}
 	
+	/**
+	 * 测试区域单元格锁定
+	 */
+	@Test
+	public void testAreaCellLock() {
+		AreaSet areaSet = new AreaSet();
+		List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		Coordinate coordinate1 = new Coordinate();
+		coordinate1.setEndRow(2);
+		coordinate1.setStartRow(0);
+		coordinate1.setStartCol(0);
+		coordinate1.setEndCol(2);
+		coordinates.add(coordinate1);
+		areaSet.setCoordinate(coordinates);
+		areaSet.setLock(false);
+		handleExcelService.areaSet(areaSet, excelBook,OperatorConstant.CELLLOCK);
+		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
+		for (Coordinate coordinate : coordinates) {
+			for (int i = coordinate.getStartRow(); i <= coordinate.getEndRow(); i++) {
+				for (int j = coordinate.getStartCol(); j <= coordinate.getEndCol(); j++) {
+					ExcelCell excelCell = rowList.get(i).getCells().get(j);
+					Assert.assertEquals(false, excelCell.getCellstyle().isLocked());
+				}
+			}
+		}
+	}
+	/**
+	 * 测试区域整行锁定
+	 */
+	@Test
+	public void testRowLock() {
+		AreaSet areaSet = new AreaSet();
+		List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		Coordinate coordinate1 = new Coordinate();
+		coordinate1.setEndRow(3);
+		coordinate1.setStartRow(2);
+		coordinate1.setStartCol(0);
+		coordinate1.setEndCol(-1);
+		coordinates.add(coordinate1);
+		areaSet.setCoordinate(coordinates);
+		areaSet.setLock(false);
+		handleExcelService.areaSet(areaSet, excelBook,OperatorConstant.CELLLOCK);
+		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
+		Assert.assertEquals(false, rowList.get(2).getCellstyle().isLocked());
+		Assert.assertEquals(false, rowList.get(3).getCellstyle().isLocked());
+	}
+	/**
+	 * 测试区域整列锁定
+	 */
+	@Test
+	public void testColLock() {
+		AreaSet areaSet = new AreaSet();
+		List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		Coordinate coordinate1 = new Coordinate();
+		coordinate1.setEndRow(-1);
+		coordinate1.setStartRow(0);
+		coordinate1.setStartCol(2);
+		coordinate1.setEndCol(3);
+		coordinates.add(coordinate1);
+		areaSet.setCoordinate(coordinates);
+		areaSet.setLock(false);
+		handleExcelService.areaSet(areaSet, excelBook,OperatorConstant.CELLLOCK);
+		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
+		Assert.assertEquals(false, colList.get(2).getCellstyle().isLocked());
+		Assert.assertEquals(false, colList.get(3).getCellstyle().isLocked());
+	}
 	
+	/**
+	 * 测试保护
+	 */
+	@Test
+	public void testProtect(){
+		Protect protect = new Protect();
+		protect.setPassword("123");
+		protect.setProtect(true);
+		sheetService.protect(protect, excelBook);
+		Assert.assertEquals(true, excelBook.getSheets().get(0).isProtect());
+		Assert.assertEquals("123", excelBook.getSheets().get(0).getPassword());
+	}
 	@After
 	public void after() {
 		excelBook = null;

@@ -2,12 +2,12 @@ package com.acmr.excel.model.complete;
 
 import java.io.Serializable;
 
-
 public class OperProp implements Serializable {
 	private Content content = new Content();
 	private Border border = new Border();
 	private CustomProp customProp = new CustomProp();
 	private Format formate = new Format();
+	private Boolean locked;
 
 	public Format getFormate() {
 		return formate;
@@ -39,6 +39,14 @@ public class OperProp implements Serializable {
 
 	public void setBorder(Border border) {
 		this.border = border;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 }

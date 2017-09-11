@@ -9,11 +9,11 @@
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/main.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/toolbar.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/widget.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/siderbar.css"/>
 	</head>
 	<body>
 		<input type="hidden" id="build" value=${build}>
 		<input type="hidden" id ="excelId" value=${excelId}> 
-		<!-- <button id="btn">test</button> -->
 		<div class="topBar">
 			<div class="file-control">
 				<span>文件</span>

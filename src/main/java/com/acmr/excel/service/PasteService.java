@@ -280,6 +280,11 @@ public class PasteService {
 				if (excelCell == null) {
 					continue;
 				}
+				//锁定
+				if (excelCell.getCellstyle().isLocked()) {
+					canPaste = false;
+					break;
+				}
 				int colspan = excelCell.getColspan();
 				int rowspan = excelCell.getRowspan();
 				if (colspan != 1 || rowspan != 1) {
@@ -318,6 +323,11 @@ public class PasteService {
 				ExcelCell excelCell = excelRow.getCells().get(j);
 				if (excelCell == null) {
 					continue;
+				}
+				//锁定
+				if (excelCell.getCellstyle().isLocked()) {
+					canPaste = false;
+					break;
 				}
 				int colspan = excelCell.getColspan();
 				int rowspan = excelCell.getRowspan();

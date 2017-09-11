@@ -7,6 +7,7 @@ public class OneCell extends BaseCell implements Serializable {
 	private boolean wordWrap;
 	private boolean highlight;
 	private boolean hidden;
+	private Boolean locked;
 
 	public boolean isHidden() {
 		return hidden;
@@ -39,4 +40,13 @@ public class OneCell extends BaseCell implements Serializable {
 	public void setWordWrap(boolean wordWrap) {
 		this.wordWrap = wordWrap;
 	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
 }

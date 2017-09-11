@@ -254,5 +254,9 @@ public class CellController extends BaseController {
     	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
 		this.assembleData(req, resp, cell, OperatorConstant.CLEANDATA);
 	}
-
+    @RequestMapping("/lock")
+	public void lock(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
+		this.assembleData(req, resp, cell, OperatorConstant.CELLLOCK);
+	}
 }

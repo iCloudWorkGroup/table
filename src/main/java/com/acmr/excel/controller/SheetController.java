@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,13 +21,16 @@ import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
+import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.complete.CompleteExcel;
 import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
 import com.acmr.excel.model.copy.Copy;
+import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
+import com.acmr.excel.service.SheetService;
 import com.acmr.excel.service.StoreService;
 import com.acmr.excel.util.AnsycDataReturn;
 import com.acmr.excel.util.JsonReturn;
@@ -42,9 +48,11 @@ public class SheetController extends BaseController {
 	@Resource
 	private StoreService storeService;
 	@Resource
-	private PasteService pasteService; 
-	 @Resource
+	private PasteService pasteService;
+	@Resource
 	private ExcelService excelService;
+	@Resource
+	private SheetService sheetService;
 
 	/**
 	 * 新建sheet
@@ -261,14 +269,31 @@ public class SheetController extends BaseController {
 		this.sendJson(resp, data);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * sheet保护
+	 * @param req
+	 * @param resp
+	 * @throws IOException
+	 */
+	@RequestMapping("/protect")
+	public void protect(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String excelId = req.getHeader("excelId");
+		String step = req.getHeader("step");
+		Protect protect = getJsonDataParameter(req, Protect.class);
+		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
+		JsonReturn data = new JsonReturn("");
+		if(!protect.isProtect()){
+			if (excelBook.getSheets().get(0).getPassword() == null || 
+					excelBook.getSheets().get(0).getPassword().equals(protect.getPassword())) {
+				data.setReturndata(true);
+				this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
+			}else{
+				data.setReturndata(false);
+			}
+			this.sendJson(resp, data);
+		}else{
+			this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
+		}
+		
+	}
 }

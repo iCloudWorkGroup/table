@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelCellStyle;
 import acmr.excel.pojo.ExcelColumn;
@@ -16,6 +17,7 @@ import acmr.util.ListHashMap;
 
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
+import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.model.history.ChangeArea;
@@ -429,8 +431,14 @@ public class SheetService {
 			break;
 		}
 	}
-	
-	
-	
+	/**
+	 * sheet保护
+	 * @param protect
+	 * @param excelBook
+	 */
+	public void protect(Protect protect,ExcelBook excelBook){
+		excelBook.getSheets().get(0).setProtect(protect.isProtect());
+		excelBook.getSheets().get(0).setPassword(protect.getPassword());
+	}
 	
 }

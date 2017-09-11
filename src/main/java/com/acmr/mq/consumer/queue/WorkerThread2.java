@@ -1,19 +1,28 @@
 package com.acmr.mq.consumer.queue;
 
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import acmr.excel.pojo.ExcelBook;
+import acmr.excel.pojo.ExcelCell;
+import acmr.excel.pojo.ExcelCellStyle;
+import acmr.excel.pojo.ExcelColumn;
+import acmr.excel.pojo.ExcelRow;
+import acmr.excel.pojo.ExcelSheet;
+import acmr.util.ListHashMap;
 
 import com.acmr.excel.model.AddLine;
 import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
 import com.acmr.excel.model.ColWidth;
+import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
+import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.RowHeight;
 import com.acmr.excel.model.RowLine;
 import com.acmr.excel.model.CellFormate.CellFormate;
@@ -28,6 +37,8 @@ import com.acmr.excel.service.HandleExcelService.CellUpdateType;
 import com.acmr.excel.service.PasteService;
 import com.acmr.excel.service.SheetService;
 import com.acmr.excel.service.StoreService;
+import com.acmr.excel.util.ExcelUtil;
+import com.acmr.excel.util.ProtectValidateUtil;
 import com.acmr.mq.Model;
 
 public class WorkerThread2 implements Runnable{
@@ -88,6 +99,8 @@ public class WorkerThread2 implements Runnable{
 		String excelId = model.getExcelId();
 		int step = model.getStep();
 		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
+		if (!validate(model, excelBook))
+			return;
 		VersionHistory versionHistory = (VersionHistory) storeService.get(excelId+"_history");
 		Cell cell = null;
 		switch (reqPath) {
@@ -106,7 +119,7 @@ public class WorkerThread2 implements Runnable{
 			handleExcelService.updateCells(CellUpdateType.font_family, cell,excelBook,versionHistory,step);
 			storeService.set(excelId+"_history", versionHistory);
 			break;
-		case OperatorConstant.fontweight:
+		case OperatorConstant.fontweight: 
 			cell = (Cell) model.getObject();
 			handleExcelService.updateCells(CellUpdateType.font_weight, cell,excelBook,versionHistory,step);
 			storeService.set(excelId+"_history", versionHistory);
@@ -266,6 +279,14 @@ public class WorkerThread2 implements Runnable{
 			AreaSet areaDel= (AreaSet) model.getObject();
 			handleExcelService.areaSet(areaDel, excelBook,OperatorConstant.CLEANDATA);
 		break;
+		case OperatorConstant.CELLLOCK:
+			AreaSet cellLock= (AreaSet) model.getObject();
+			handleExcelService.areaSet(cellLock, excelBook,OperatorConstant.CELLLOCK);
+		break;
+		case OperatorConstant.PROTECT:
+			Protect protect= (Protect) model.getObject();
+			sheetService.protect(protect, excelBook);
+		break;
 		default:
 			break;
 		}
@@ -277,17 +298,146 @@ public class WorkerThread2 implements Runnable{
 	}
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+//    private boolean validate(Model model,ExcelBook excelBook){
+//    	int reqPath = model.getReqPath();
+//		ExcelSheet sheet = excelBook.getSheets().get(0);
+//		if(!sheet.isProtect()){
+//			return true;
+//		}
+//		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)sheet.getRows();
+//		ListHashMap<ExcelColumn> columnList = (ListHashMap<ExcelColumn>)sheet.getCols();
+//		switch (reqPath) {
+//		case OperatorConstant.textData:
+//		case OperatorConstant.fontsize:
+//		case OperatorConstant.fontfamily:
+//		case OperatorConstant.fontweight:
+//		case OperatorConstant.fontitalic:
+//		case OperatorConstant.UNDERLINE:
+//		case OperatorConstant.fontcolor:
+//		case OperatorConstant.wordWrap:
+//		case OperatorConstant.fillbgcolor:
+//		case OperatorConstant.merge:
+//		case OperatorConstant.mergedelete:
+//		case OperatorConstant.frame:
+//		case OperatorConstant.alignlevel:
+//		case OperatorConstant.alignvertical:
+//			Cell cell = (Cell) model.getObject();
+//			 int rowStartIndex = cell.getCoordinate().getStartRow();
+//			 int colStartIndex = cell.getCoordinate().getStartCol();
+//			 int rowEndIndex = cell.getCoordinate().getEndRow();
+//			 int colEndIndex = cell.getCoordinate().getEndCol();
+//			 if(!ProtectValidateUtil.validateOpr(colStartIndex, rowStartIndex, colEndIndex, rowEndIndex, sheet))
+//				 return false;
+//			break;
+//		case OperatorConstant.textDataformat:
+//			CellFormate cellFormate = (CellFormate) model.getObject();
+//			rowStartIndex = cellFormate.getCoordinate().getStartRow();
+//			rowEndIndex = cellFormate.getCoordinate().getEndRow();
+//			colStartIndex = cellFormate.getCoordinate().getStartCol();
+//			colEndIndex = cellFormate.getCoordinate().getEndCol();
+//			 if(!ProtectValidateUtil.validateOpr(colStartIndex, rowStartIndex, colEndIndex, rowEndIndex, sheet))
+//				 return false;
+//			break;
+//
+//		case OperatorConstant.commentset:
+//			Comment comment = (Comment) model.getObject();
+//			rowStartIndex = comment.getCoordinate().getStartRow();
+//			rowEndIndex = comment.getCoordinate().getEndRow();
+//			colStartIndex = comment.getCoordinate().getStartCol();
+//			colEndIndex = comment.getCoordinate().getEndCol();
+//			 return ProtectValidateUtil.validateOpr(colStartIndex, rowStartIndex, colEndIndex, rowEndIndex, sheet);
+//		case OperatorConstant.rowsinsert:
+//		case OperatorConstant.rowsdelete:
+//		case OperatorConstant.colsinsert:
+//		case OperatorConstant.colsdelete:
+//			return false;
+//		case OperatorConstant.paste:
+//			return ProtectValidateUtil.validatePaste(model, rowList);
+//		case OperatorConstant.copy:
+//		case OperatorConstant.cut:
+//			return ProtectValidateUtil.validateCopyOrCut(model, rowList);
+//		case OperatorConstant.frozen:
+//		case OperatorConstant.unFrozen:
+//			Frozen frozen = (Frozen) model.getObject();
+//			if (!ProtectValidateUtil.validateRow(frozen.getOprRow(), rowList))
+//				return false;
+//			if (!ProtectValidateUtil.validateCol(frozen.getOprCol(), columnList))
+//				return false;
+//			break;
+//		
+//		case OperatorConstant.colswidth:
+//			ColWidth colWidth = (ColWidth) model.getObject();
+//			return ProtectValidateUtil.validateCol(colWidth.getCol(), columnList);
+//		case OperatorConstant.colshide:
+//		case OperatorConstant.colhideCancel:	
+//			ColOperate colHide = (ColOperate) model.getObject();
+//			return ProtectValidateUtil.validateCol(colHide.getCol(), columnList);
+//		case OperatorConstant.rowshide:
+//		case OperatorConstant.rowhideCancel:
+//			RowOperate rowHide = (RowOperate) model.getObject();
+//			return ProtectValidateUtil.validateRow(rowHide.getRow(), rowList);
+//		case OperatorConstant.rowsheight:
+//			RowHeight rowHeight = (RowHeight) model.getObject();
+//			return ProtectValidateUtil.validateRow(rowHeight.getRow(), rowList);
+//		case OperatorConstant.addRowLine:
+//			return false;
+//		case OperatorConstant.addColLine:
+//			return false;
+//		case OperatorConstant.undo:
+//		case OperatorConstant.redo:
+//		   return false;
+//		case OperatorConstant.batchcolorset:
+//		case OperatorConstant.CLEANDATA:
+//			AreaSet areaSet= (AreaSet) model.getObject();
+//			List<Coordinate> coordinateList = areaSet.getCoordinate();
+//			for (Coordinate coordinate : coordinateList) {
+//				colStartIndex = coordinate.getStartCol();
+//				rowStartIndex = coordinate.getStartRow();
+//				colEndIndex = coordinate.getEndCol();
+//				rowEndIndex = coordinate.getEndRow();
+//				if (!ProtectValidateUtil.validateOpr(colStartIndex, rowStartIndex, colEndIndex, rowEndIndex, sheet))
+//					return false;
+//			}
+//		break;
+//		default:
+//			break;
+//		}
+//		return true;
+//    }
+    /**
+     * 保护校验
+     * @param model
+     * @param excelBook
+     * @return
+     */
+	private boolean validate(Model model, ExcelBook excelBook) {
+		int reqPath = model.getReqPath();
+		ExcelSheet sheet = excelBook.getSheets().get(0);
+		if (!sheet.isProtect())
+			return true;
+		if (reqPath == OperatorConstant.PROTECT)
+			return true;
+		if (!ProtectValidateUtil.validateStatus(sheet, reqPath))
+			return false;
+		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>) sheet.getRows();
+		switch (reqPath) {
+		case OperatorConstant.textData:
+			Cell cell = (Cell) model.getObject();
+			int rowStartIndex = cell.getCoordinate().getStartRow();
+			int colStartIndex = cell.getCoordinate().getStartCol();
+			int rowEndIndex = cell.getCoordinate().getEndRow();
+			int colEndIndex = cell.getCoordinate().getEndCol();
+			return ProtectValidateUtil.validateOpr(colStartIndex, rowStartIndex, colEndIndex, rowEndIndex, sheet);
+		case OperatorConstant.paste:
+			return ProtectValidateUtil.validatePaste(model, rowList);
+		case OperatorConstant.copy:
+		case OperatorConstant.cut:
+			return ProtectValidateUtil.validateCopyOrCut(model, rowList);
+		default:
+			break;
+		}
+		return true;
+	}
     
     
 }

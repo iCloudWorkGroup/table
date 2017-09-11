@@ -123,5 +123,5 @@ public class Content implements Serializable {
 	public void setUnderline(Integer underline) {
 		this.underline = underline;
 	}
-		
+
 }

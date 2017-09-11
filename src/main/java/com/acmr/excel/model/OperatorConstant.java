@@ -55,4 +55,14 @@ public class OperatorConstant {
 	 * 下划线
 	 */
 	public static final int UNDERLINE = 37;
+	/**
+	 * 单元格锁定
+	 */
+	public static final int CELLLOCK = 38;
+	/**
+	 * 保护
+	 */
+	public static final int PROTECT = 39;
+	
+	
 }

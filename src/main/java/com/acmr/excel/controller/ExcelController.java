@@ -422,6 +422,7 @@ public class ExcelController extends BaseController {
 			spreadSheet = excelService.positionExcel(excelSheet, spreadSheet,height, returnParam);
 			data.setAliasColCounter(excelSheet.getMaxcol()+1+"");
 			data.setAliasRowCounter(excelSheet.getMaxrow()+1+"");
+			data.setProtect(excelSheet.isProtect());
 		}
 		excel.getSpreadSheet().add(spreadSheet);
 		data.setReturncode(200);
