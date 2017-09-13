@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/main.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/toolbar.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/widget.css"/>
-		<link rel="stylesheet" type="text/css" href="/${frontName}/css/siderbar.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/sidebar.css"/>
 	</head>
 	<body>
 		<input type="hidden" id="build" value=${build}>
@@ -287,6 +287,30 @@
 									<div class="fui-cf-extend-ico ico-frozencustomized fui-cf-alone"></div>
 									<div class="fui-cf-desc">
 										<div class="fui-cf-text">取消隐藏</div>
+									</div>
+								</div>
+							</span>
+						</div>
+						<div class="fui-title">隐藏</div>
+					</span>
+					<span class="fui-separator"></span>
+				</li>
+				<li class="fui-group" id="protectContainer">
+					<span class="fui-container">
+						<div class="fui-body" >
+							<span class="fui-layout" >
+								<div class="fui-section fui-transverse" data-toolbar="lock">
+									<div class="ico-lock fui-cf-alone"></div>
+									<div class="fui-cf-desc">
+										<div class="fui-cf-text">锁定工作簿</div>
+									</div>
+								</div>
+							</span>
+							<span class="fui-layout">
+								<div class="fui-section fui-transverse" data-toolbar="protect">
+									<div class="ico-lock fui-cf-alone"></div>
+									<div class="fui-cf-desc">
+										<div class="fui-cf-text">保护工作簿</div>
 									</div>
 								</div>
 							</span>
