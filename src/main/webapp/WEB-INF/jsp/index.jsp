@@ -10,6 +10,7 @@
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/toolbar.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/widget.css"/>
 		<link rel="stylesheet" type="text/css" href="/${frontName}/css/sidebar.css"/>
+		<link rel="stylesheet" type="text/css" href="/${frontName}/css/msg.css"/>
 	</head>
 	<body>
 		<input type="hidden" id="build" value=${build}>

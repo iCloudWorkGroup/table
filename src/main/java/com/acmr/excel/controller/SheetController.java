@@ -133,16 +133,14 @@ public class SheetController extends BaseController {
 		Paste paste = getJsonDataParameter(req, Paste.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isAblePaste(paste, excelBook);
-		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
+		JsonReturn data = new JsonReturn("");
 		if(isAblePasteResult){
 			this.assembleData(req, resp, paste, OperatorConstant.paste);
-			ansycDataReturn.setIsLegal(true);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(true);
 		}else{
-			ansycDataReturn.setIsLegal(false);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(false);
 		}
-		
+		this.sendJson(resp, data);
 	}
 	/**
 	 * 内部复制粘贴
@@ -158,16 +156,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
-		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
+		JsonReturn data = new JsonReturn("");
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.copy);
-			ansycDataReturn.setIsLegal(true);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(true);
 		}else{
-			ansycDataReturn.setIsLegal(false);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(false);
 		}
-		
+		this.sendJson(resp, data);
 	}
 	/**
 	 * 剪切粘贴
@@ -183,15 +179,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
-		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
+		JsonReturn data = new JsonReturn("");
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.cut);
-			ansycDataReturn.setIsLegal(true);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(true);
 		}else{
-			ansycDataReturn.setIsLegal(false);
-			this.sendJson(resp, ansycDataReturn);
+			data.setReturndata(false);
 		}
+		this.sendJson(resp, data);
 	}
 	
 	
