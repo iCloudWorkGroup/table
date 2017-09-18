@@ -26,7 +26,6 @@ import com.acmr.excel.model.complete.CompleteExcel;
 import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
 import com.acmr.excel.model.copy.Copy;
-import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
@@ -133,14 +132,14 @@ public class SheetController extends BaseController {
 		Paste paste = getJsonDataParameter(req, Paste.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isAblePaste(paste, excelBook);
-		JsonReturn data = new JsonReturn("");
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, paste, OperatorConstant.paste);
-			data.setReturndata(true);
+			ansycDataReturn.setIsLegal(true);
 		}else{
-			data.setReturndata(false);
+			ansycDataReturn.setIsLegal(false);
 		}
-		this.sendJson(resp, data);
+		this.sendJson(resp, ansycDataReturn);
 	}
 	/**
 	 * 内部复制粘贴
@@ -156,14 +155,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
-		JsonReturn data = new JsonReturn("");
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.copy);
-			data.setReturndata(true);
+			ansycDataReturn.setIsLegal(true);
 		}else{
-			data.setReturndata(false);
+			ansycDataReturn.setIsLegal(false);
 		}
-		this.sendJson(resp, data);
+		this.sendJson(resp, ansycDataReturn);
 	}
 	/**
 	 * 剪切粘贴
@@ -179,14 +178,14 @@ public class SheetController extends BaseController {
 		Copy copy = getJsonDataParameter(req, Copy.class);
 		ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
 		boolean isAblePasteResult = pasteService.isCopyPaste(copy, excelBook);
-		JsonReturn data = new JsonReturn("");
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(isAblePasteResult){
 			this.assembleData(req, resp, copy, OperatorConstant.cut);
-			data.setReturndata(true);
+			ansycDataReturn.setIsLegal(true);
 		}else{
-			data.setReturndata(false);
+			ansycDataReturn.setIsLegal(false);
 		}
-		this.sendJson(resp, data);
+		this.sendJson(resp, ansycDataReturn);
 	}
 	
 	
@@ -273,19 +272,18 @@ public class SheetController extends BaseController {
 	@RequestMapping("/protect")
 	public void protect(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String excelId = req.getHeader("excelId");
-		String step = req.getHeader("step");
 		Protect protect = getJsonDataParameter(req, Protect.class);
 		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
-		JsonReturn data = new JsonReturn("");
+		AnsycDataReturn ansycDataReturn = new AnsycDataReturn();
 		if(!protect.isProtect()){
 			if (excelBook.getSheets().get(0).getPassword() == null || 
 					excelBook.getSheets().get(0).getPassword().equals(protect.getPassword())) {
-				data.setReturndata(true);
+				ansycDataReturn.setIsLegal(true);
 				this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
 			}else{
-				data.setReturndata(false);
+				ansycDataReturn.setIsLegal(false);
 			}
-			this.sendJson(resp, data);
+			this.sendJson(resp, ansycDataReturn);
 		}else{
 			this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
 		}
