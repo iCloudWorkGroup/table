@@ -45,7 +45,7 @@ public class CellService {
 	 * @param cell
 	 *            Cell对象
 	 */
-	public void mergeCell(ExcelSheet excelSheet, Cell cell,VersionHistory versionHistory,int step) {
+	public void mergeCell(ExcelSheet excelSheet, Cell cell,String excelId,VersionHistory versionHistory,int step) {
 		versionHistory.getVersion().put(step, step);
 		History history = new History();
 		history.setOperatorType(OperatorConstant.merge);
@@ -86,7 +86,7 @@ public class CellService {
 	 *            Cell对象
 	 */
 
-	public void splitCell(ExcelSheet excelSheet, Cell cell,VersionHistory versionHistory,int step) {
+	public void splitCell(ExcelSheet excelSheet, Cell cell,String excelId,VersionHistory versionHistory,int step) {
 		versionHistory.getVersion().put(step, step);
 		History history = new History();
 		history.setOperatorType(OperatorConstant.mergedelete);
@@ -124,7 +124,7 @@ public class CellService {
 	 * @param cell
 	 *            Cell对象
 	 */
-	public void addRow(ExcelSheet excelSheet, RowOperate rowOperate) {
+	public void addRow(ExcelSheet excelSheet, RowOperate rowOperate,String excelId) {
 		excelSheet.insertRow(rowOperate.getRow());
 	}
 
@@ -136,7 +136,7 @@ public class CellService {
 	 * @param cell
 	 *            Cell对象
 	 */
-	public void deleteRow(ExcelSheet excelSheet, RowOperate rowOperate) {
+	public void deleteRow(ExcelSheet excelSheet, RowOperate rowOperate,String excelId) {
 		excelSheet.delRow(rowOperate.getRow());
 	}
 
@@ -148,7 +148,7 @@ public class CellService {
 	 * @param cell
 	 *            Cell对象
 	 */
-	public void addCol(ExcelSheet excelSheet, ColOperate colOperate) {
+	public void addCol(ExcelSheet excelSheet, ColOperate colOperate,String excelId) {
 		excelSheet.insertColumn(colOperate.getCol());
 		List<ExcelColumn> colList = excelSheet.getCols();
 		excelSheet.delColumn(colList.size()-1);
@@ -162,7 +162,7 @@ public class CellService {
 	 * @param cell
 	 *            Cell对象
 	 */
-	public void deleteCol(ExcelSheet excelSheet, ColOperate colOperate) {
+	public void deleteCol(ExcelSheet excelSheet, ColOperate colOperate,String excelId) {
 		excelSheet.delColumn(colOperate.getCol());
 		List<ExcelColumn> excelColumns = excelSheet.getCols();
 		if(excelColumns.size() < 26){

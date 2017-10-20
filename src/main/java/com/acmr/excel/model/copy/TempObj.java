@@ -6,6 +6,7 @@ public class TempObj {
 	private int row;
 	private int col;
 	private ExcelCell excelCell;
+	private int rule;
 
 	public int getRow() {
 		return row;
@@ -31,4 +32,12 @@ public class TempObj {
 		this.excelCell = excelCell;
 	}
 
+	public int getRule() {
+		return rule;
+	}
+
+	public void setRule(int rule) {
+		this.rule = rule;
+	}
+	
 }

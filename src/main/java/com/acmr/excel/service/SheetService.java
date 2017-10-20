@@ -2,7 +2,11 @@ package com.acmr.excel.service;
 
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -15,14 +19,20 @@ import acmr.excel.pojo.ExcelSheet;
 import acmr.excel.pojo.ExcelSheetFreeze;
 import acmr.util.ListHashMap;
 
+import com.acmr.cache.MemoryUtil;
+import com.acmr.excel.model.AreaSet;
+import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
+import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.model.history.ChangeArea;
 import com.acmr.excel.model.history.History;
 import com.acmr.excel.model.history.VersionHistory;
+import com.acmr.excel.util.ExcelUtil;
 @Service
 public class SheetService {
 	/**
@@ -440,5 +450,91 @@ public class SheetService {
 		excelBook.getSheets().get(0).setProtect(protect.isProtect());
 		excelBook.getSheets().get(0).setPassword(protect.getPassword());
 	}
+	public void dataValidate(AreaSet areaSet, ExcelBook excelBook,String excelId) {
+		List<Coordinate> coordinateList = areaSet.getCoordinate();
+		ExcelSheet sheet = excelBook.getSheets().get(0);
+		Data data = MemoryUtil.getDataValidateMap().get(excelId);
+		if(data == null){
+			data = new Data();
+			MemoryUtil.getDataValidateMap().put(excelId, data);
+		}
+		Rule rule = new Rule();
+		rule.setValidationType(areaSet.getRule().getValidationType());
+		rule.setFormula1(areaSet.getRule().getFormula1());
+		rule.setFormula2(areaSet.getRule().getFormula2());
+		int index = data.getRuleList().indexOf(rule);
+		if(index == -1){
+			data.getRuleList().add(rule);
+			index = data.getRuleList().size() -1 ;
+		}
+		for(Coordinate coordinate : coordinateList){
+			int colStartIndex = coordinate.getStartCol();
+			int rowStartIndex = coordinate.getStartRow();
+			int colEndIndex = coordinate.getEndCol();
+			int rowEndIndex = coordinate.getEndRow();
+			
+			ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)sheet.getRows();
+			ListHashMap<ExcelColumn> columnList = (ListHashMap<ExcelColumn>)sheet.getCols();
+			for (int i = rowList.size() - 1; i <= rowEndIndex; i++) {
+				sheet.addRow();
+			}
+			for (int i = columnList.size() - 1; i < colEndIndex; i++) {
+				sheet.addColumn();
+			}
+			//整列
+			if (rowEndIndex == -1) {
+				for (int i = colStartIndex; i <= colEndIndex; i++) {
+					Map<String, Integer> colMap = data.getColMap();
+					String colCode = columnList.get(i).getCode();
+					colMap.put(colCode, index);
+					Map<String, Integer> rowMap = data.getRowMap();
+					Set<String> keys = rowMap.keySet();
+					for(String rowCode : keys){
+						setCellMap(data, rowCode, colCode, index);
+					}
+				}
+			}
+			//整行
+			else if (colEndIndex == -1 ) {
+				for (int i = rowStartIndex; i <= rowEndIndex; i++) {
+					Map<String, Integer> rowMap = data.getRowMap();
+					String rowCode = rowList.get(i).getCode();
+					rowMap.put(rowCode, index);
+					Map<String, Integer> colMap = data.getColMap();
+					Set<String> keys = colMap.keySet();
+					for(String colCode : keys){
+						setCellMap(data, rowCode, colCode, index);
+					}
+				}
+			} else {
+				//单元格
+				for (int i = rowStartIndex; i <= rowEndIndex; i++) {
+					ExcelRow excelRow = rowList.get(i);
+					for (int j = colStartIndex; j <= colEndIndex; j++) {
+						String rowCode = excelRow.getCode();
+						String colCode = columnList.get(j).getCode();
+						setCellMap(data, rowCode, colCode, index);
+					}
+				}
+			}
+		}
+	}
 	
+	
+	/**
+	 * 处理单元格验证
+	 * @param data
+	 * @param rowCode
+	 * @param colCode
+	 * @param index
+	 */
+	
+	private void setCellMap(Data data,String rowCode,String colCode,int index){
+		Map<String, Integer> colRuleMap = data.getCellMap().get(rowCode);
+		if (colRuleMap == null) {
+			colRuleMap = new HashMap<String, Integer>();
+			data.getCellMap().put(rowCode, colRuleMap);
+		}
+		colRuleMap.put(colCode, index);
+	}
 }

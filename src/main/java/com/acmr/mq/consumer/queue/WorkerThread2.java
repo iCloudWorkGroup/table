@@ -1,6 +1,7 @@
 package com.acmr.mq.consumer.queue;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +11,12 @@ import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelCellStyle;
 import acmr.excel.pojo.ExcelColumn;
+import acmr.excel.pojo.ExcelDataValidation;
 import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
 import acmr.util.ListHashMap;
 
+import com.acmr.cache.MemoryUtil;
 import com.acmr.excel.model.AddLine;
 import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Cell;
@@ -30,6 +33,7 @@ import com.acmr.excel.model.comment.Comment;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.model.copy.Copy;
+import com.acmr.excel.model.datavalidate.Data;
 import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.service.CellService;
 import com.acmr.excel.service.HandleExcelService;
@@ -37,9 +41,11 @@ import com.acmr.excel.service.HandleExcelService.CellUpdateType;
 import com.acmr.excel.service.PasteService;
 import com.acmr.excel.service.SheetService;
 import com.acmr.excel.service.StoreService;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.ProtectValidateUtil;
 import com.acmr.mq.Model;
+import com.alibaba.fastjson.JSON;
 
 public class WorkerThread2 implements Runnable{
 	private static Logger logger = Logger.getLogger(QueueReceiver.class);
@@ -163,12 +169,12 @@ public class WorkerThread2 implements Runnable{
 			break;
 		case OperatorConstant.merge:
 			cell = (Cell) model.getObject();
-			cellService.mergeCell(excelBook.getSheets().get(0), cell,versionHistory,step);
+			cellService.mergeCell(excelBook.getSheets().get(0), cell,excelId,versionHistory,step);
 			storeService.set(excelId+"_history",versionHistory);
 			break;
 		case OperatorConstant.mergedelete:
 			cell = (Cell) model.getObject();
-			cellService.splitCell(excelBook.getSheets().get(0), cell,versionHistory,step);
+			cellService.splitCell(excelBook.getSheets().get(0), cell,excelId,versionHistory,step);
 			storeService.set(excelId+"_history", versionHistory);
 			break;
 		case OperatorConstant.frame:
@@ -187,19 +193,19 @@ public class WorkerThread2 implements Runnable{
 			break;
 		case OperatorConstant.rowsinsert:
 			RowOperate rowOperate = (RowOperate) model.getObject();
-			cellService.addRow(excelBook.getSheets().get(0), rowOperate);
+			cellService.addRow(excelBook.getSheets().get(0), rowOperate,excelId);
 			break;
 		case OperatorConstant.rowsdelete:
 			RowOperate rowOperate2 = (RowOperate) model.getObject();
-			cellService.deleteRow(excelBook.getSheets().get(0), rowOperate2);
+			cellService.deleteRow(excelBook.getSheets().get(0), rowOperate2,excelId);
 			break;
 		case OperatorConstant.colsinsert:
 			ColOperate colOperate = (ColOperate) model.getObject();
-			cellService.addCol(excelBook.getSheets().get(0), colOperate);
+			cellService.addCol(excelBook.getSheets().get(0), colOperate,excelId);
 			break;
 		case OperatorConstant.colsdelete:
 			ColOperate colOperate2 = (ColOperate) model.getObject();
-			cellService.deleteCol(excelBook.getSheets().get(0), colOperate2);
+			cellService.deleteCol(excelBook.getSheets().get(0), colOperate2,excelId);
 			break;
 		case OperatorConstant.paste:
 			Paste paste = (Paste) model.getObject();
@@ -208,12 +214,12 @@ public class WorkerThread2 implements Runnable{
 			break;
 		case OperatorConstant.copy:
 			Copy copy = (Copy) model.getObject();
-			pasteService.copy(copy, excelBook,versionHistory,step);
+			pasteService.copy(copy, excelBook,excelId,versionHistory,step);
 			storeService.set(excelId+"_history", versionHistory);
 			break;
 		case OperatorConstant.cut:
 			Copy copy2 = (Copy) model.getObject();
-			pasteService.cut(copy2, excelBook,versionHistory,step);
+			pasteService.cut(copy2, excelBook,excelId,versionHistory,step);
 			storeService.set(excelId+"_history",versionHistory);
 			break;
 		case OperatorConstant.frozen:
@@ -286,6 +292,18 @@ public class WorkerThread2 implements Runnable{
 		case OperatorConstant.PROTECT:
 			Protect protect= (Protect) model.getObject();
 			sheetService.protect(protect, excelBook);
+		break;
+		case OperatorConstant.DATAVALIDATE:
+			AreaSet validate = (AreaSet) model.getObject();
+			sheetService.dataValidate(validate, excelBook, excelId);
+//			Data data = MemoryUtil.getDataValidateMap().get(excelId);
+//			System.out.println(JSON.toJSONString(data));
+//			List<ExcelDataValidation> excelDataValidations = new ArrayList<ExcelDataValidation>();
+//			DataValidateUtil.map2List(data, excelDataValidations, excelBook.getSheets().get(0));
+//			System.out.println(JSON.toJSONString(excelDataValidations));
+//			Data data2 = new Data();
+//			DataValidateUtil.list2Map(data2, excelDataValidations, excelBook.getSheets().get(0));
+//			System.out.println(JSON.toJSONString(data2));
 		break;
 		default:
 			break;

@@ -63,7 +63,7 @@ public class PositionTest {
 		ExcelCell excelCell = new ExcelCell();
 		excelCell.getCellstyle().setLocked(false);
 		excelBook.getSheets().get(0).getRows().get(0).set(0, excelCell);
-		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam);
+		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam,"1");
 		Assert.assertEquals(Boolean.valueOf(false), sheet.getSheet().getCells().get(0).getLocked());
 	}
 	/**
@@ -72,7 +72,7 @@ public class PositionTest {
 	@Test
 	public void testRowLockPosition(){
 		excelBook.getSheets().get(0).getRows().get(0).getCellstyle().setLocked(false);
-		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam);
+		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam,"1");
 		Assert.assertEquals(Boolean.valueOf(false), sheet.getSheet().getGlY().get(0).getOperProp().getLocked());
 	}
 	/**
@@ -81,7 +81,7 @@ public class PositionTest {
 	@Test
 	public void testColLockPosition(){
 		excelBook.getSheets().get(0).getCols().get(0).getCellstyle().setLocked(false);
-		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam);
+		SpreadSheet sheet = excelService.positionExcel(excelBook.getSheets().get(0), spreadSheet, 200, returnParam,"1");
 		Assert.assertEquals(Boolean.valueOf(false), sheet.getSheet().getGlX().get(0).getOperProp().getLocked());
 	}
 

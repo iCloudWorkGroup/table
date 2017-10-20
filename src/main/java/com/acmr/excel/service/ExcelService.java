@@ -11,20 +11,23 @@ import org.springframework.stereotype.Service;
 
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
+import acmr.excel.pojo.ExcelCellRangeAddress;
 import acmr.excel.pojo.ExcelCellStyle;
 import acmr.excel.pojo.ExcelColor;
 import acmr.excel.pojo.ExcelColumn;
+import acmr.excel.pojo.ExcelDataValidation;
 import acmr.excel.pojo.ExcelFont;
-import acmr.excel.pojo.ExcelFormat;
 import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
 import acmr.excel.pojo.ExcelSheetFreeze;
 import acmr.excel.pojo.Excelborder;
 
+import com.acmr.cache.MemoryUtil;
 import com.acmr.excel.dao.ExcelDao;
+import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Constant;
+import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.OnlineExcel;
-import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.complete.Border;
 import com.acmr.excel.model.complete.Content;
 import com.acmr.excel.model.complete.CustomProp;
@@ -37,8 +40,11 @@ import com.acmr.excel.model.complete.OneCell;
 import com.acmr.excel.model.complete.OperProp;
 import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
+import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.util.BinarySearch;
 import com.acmr.excel.util.CellFormateUtil;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.StringUtil;
 
@@ -710,7 +716,9 @@ public class ExcelService {
 	 * @return
 	 */
 
-	public SpreadSheet positionExcel(ExcelSheet excelSheet, SpreadSheet spreadSheet, int height,ReturnParam returnParam) {
+	public SpreadSheet positionExcel(ExcelSheet excelSheet, SpreadSheet spreadSheet, int height,ReturnParam returnParam,String excelId) {
+		excelSheet.resetRowCode();
+		excelSheet.resetColCode();
 		spreadSheet.setName(excelSheet.getName());
 		List<Gly> glyList = spreadSheet.getSheet().getGlY();
 		List<Glx> glxList = spreadSheet.getSheet().getGlX();
@@ -775,6 +783,30 @@ public class ExcelService {
 //			frozen.setViewCol(excelfrozen.getFirstcol());
 //			frozen.setViewRow(excelfrozen.getFirstrow());
 		}
+		List<ExcelDataValidation> validations = excelSheet.getExcelDataValidations();
+		for(ExcelDataValidation validation : validations){
+			AreaSet areaSet = new AreaSet();
+			List<ExcelCellRangeAddress> cellRange = validation.getExcelCellRangeAddresses();
+			List<Coordinate> coordinates = new ArrayList<Coordinate>();
+			areaSet.setCoordinate(coordinates);
+			for(ExcelCellRangeAddress excelCellRangeAddress : cellRange){
+				Coordinate coordinate = new Coordinate();
+				coordinate.setEndCol(excelCellRangeAddress.getLastColumn() == 16383 ? -1 : excelCellRangeAddress.getLastColumn());
+				coordinate.setEndRow(excelCellRangeAddress.getLastRow() == 1048575 ? -1 : excelCellRangeAddress.getLastRow());
+				coordinate.setStartCol(excelCellRangeAddress.getFirstColumn());
+				coordinate.setStartRow(excelCellRangeAddress.getFirstRow());
+				coordinates.add(coordinate);
+			}
+			Rule rule = new Rule();
+			rule.setFormula1(validation.getFormula1());
+			rule.setFormula2(validation.getFormula2());
+			rule.setValidationType(validation.getValidationType());
+			areaSet.setRule(rule);
+			spreadSheet.getValidate().add(areaSet);
+		}
+		Data newData = new Data();
+		DataValidateUtil.list2Map(newData, excelSheet.getExcelDataValidations(), excelSheet);
+		MemoryUtil.getDataValidateMap().put(excelId, newData);
 		return spreadSheet;
 	}
 

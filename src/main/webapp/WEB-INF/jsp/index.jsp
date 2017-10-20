@@ -316,7 +316,23 @@
 								</div>
 							</span>
 						</div>
-						<div class="fui-title">隐藏</div>
+						<div class="fui-title">锁定</div>
+					</span>
+					<span class="fui-separator"></span>
+				</li>
+				<li class="fui-group" id="validateContainer">
+					<span class="fui-container">
+						<div class="fui-body" >
+							<span class="fui-layout" >
+								<div class="fui-section fui-transverse">
+									<div class="ico-lock fui-cf-alone"></div>
+									<div class="fui-cf-desc">
+										<div class="fui-cf-text">数据验证</div>
+									</div>
+								</div>
+							</span>
+						</div>
+						<div class="fui-title">数据</div>
 					</span>
 					<span class="fui-separator"></span>
 				</li>

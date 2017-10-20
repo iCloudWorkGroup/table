@@ -151,7 +151,7 @@ public class PasteService {
 	 * @param copy
 	 * @param excelBook
 	 */
-	public void copy(Copy copy, ExcelBook excelBook,VersionHistory versionHistory,int step) {
+	public void copy(Copy copy, ExcelBook excelBook,String excelId,VersionHistory versionHistory,int step) {
 		Integer version = versionHistory.getVersion().get(step-1);
 		if(version == null){
 			version = 0;
@@ -160,7 +160,7 @@ public class PasteService {
 		versionHistory.getVersion().put(step, version);
 		History history = new History();
 		history.setOperatorType(OperatorConstant.copy);
-		copyOrCut(copy, excelBook, null,history);
+		copyOrCut(copy, excelBook, null,excelId,history);
 		versionHistory.getMap().put(version, history);
 	}
 
@@ -171,7 +171,7 @@ public class PasteService {
 	 * @param excelBook
 	 */
 
-	public void cut(Copy copy, ExcelBook excelBook,VersionHistory versionHistory,int step) {
+	public void cut(Copy copy, ExcelBook excelBook,String excelId,VersionHistory versionHistory,int step) {
 		Integer version = versionHistory.getVersion().get(step-1);
 		if(version == null){
 			version = 0;
@@ -180,7 +180,7 @@ public class PasteService {
 		versionHistory.getVersion().put(step, version);
 		History history = new History();
 		history.setOperatorType(OperatorConstant.cut);
-		copyOrCut(copy, excelBook, "cut",history);
+		copyOrCut(copy, excelBook, "cut",excelId,history);
 		versionHistory.getMap().put(version, history);
 	}
 
@@ -193,7 +193,7 @@ public class PasteService {
 	 *            copy:复制 cut:剪切
 	 */
 
-	private void copyOrCut(Copy copy, ExcelBook excelBook, String flag,History history) {
+	private void copyOrCut(Copy copy, ExcelBook excelBook, String flag,String excelId,History history) {
 		ExcelSheet excelSheet = excelBook.getSheets().get(0);
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>) excelSheet.getRows();
 		int startRowIndex = copy.getOrignal().getStartRow();
@@ -215,6 +215,12 @@ public class PasteService {
 			int tempColIndex = targetColIndex;
 			for (int j = startColIndex; j <= endColIndex; j++) {
 				ExcelCell excelCell = excelRow.getCells().get(j);
+				int[] rj = excelSheet.getMergFirstCell(i, j);
+				if(rj != null){
+					if(rj[0] != i || rj[1] != j){
+						continue;
+					}
+				}
 				ChangeArea changeArea = new ChangeArea();
 				changeArea.setColIndex(tempColIndex);
 				changeArea.setRowIndex(targetRowIndex);
@@ -246,12 +252,18 @@ public class PasteService {
 			}
 			targetRowIndex++;
 		}
-
 		for (TempObj tempObj : temList) {
-			rowList.get(tempObj.getRow()).set(tempObj.getCol(),tempObj.getExcelCell());
+			ExcelCell excelCell = tempObj.getExcelCell();
+			int rs = excelCell.getRowspan();
+			int cs = excelCell.getColspan();
+			int r = tempObj.getRow();
+			int c = tempObj.getCol();
+			for (int i = r; i < r + rs; i++) {
+				for (int j = c; j < c + cs; j++) {
+					rowList.get(i).set(j, tempObj.getExcelCell());
+				}
+			}
 		}
-		
-		
 	}
 
 	/**
@@ -325,7 +337,7 @@ public class PasteService {
 					continue;
 				}
 				//锁定
-				if (excelCell.getCellstyle().isLocked()) {
+				if (excelCell.getCellstyle().isLocked() && excelSheet.isProtect()) {
 					canPaste = false;
 					break;
 				}

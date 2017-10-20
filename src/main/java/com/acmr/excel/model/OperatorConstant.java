@@ -63,6 +63,10 @@ public class OperatorConstant {
 	 * 保护
 	 */
 	public static final int PROTECT = 39;
+	/**
+	 * 数据验证
+	 */
+	public static final int DATAVALIDATE = 40;
 	
 	
 }

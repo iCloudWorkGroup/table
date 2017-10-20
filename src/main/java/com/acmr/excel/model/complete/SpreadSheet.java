@@ -1,6 +1,12 @@
 package com.acmr.excel.model.complete;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.acmr.excel.model.AreaSet;
+
+import acmr.excel.pojo.ExcelDataValidation;
 
 public class SpreadSheet implements Serializable {
 
@@ -8,6 +14,7 @@ public class SpreadSheet implements Serializable {
 	private String name;
 	private int sort;
 	private String tempHTML;
+	private List<AreaSet> validate = new ArrayList<AreaSet>();
 
 	public SheetElement getSheet() {
 		return sheet;
@@ -40,4 +47,13 @@ public class SpreadSheet implements Serializable {
 	public void setTempHTML(String tempHTML) {
 		this.tempHTML = tempHTML;
 	}
+
+	public List<AreaSet> getValidate() {
+		return validate;
+	}
+
+	public void setValidate(List<AreaSet> validate) {
+		this.validate = validate;
+	}
+
 }

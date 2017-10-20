@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,6 +18,7 @@ import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelSheet;
 
 import com.acmr.excel.controller.excelbase.BaseController;
+import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Constant;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
@@ -288,5 +290,10 @@ public class SheetController extends BaseController {
 			this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
 		}
 		
+	}
+	@RequestMapping("/validate")
+	public void lock(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
+		this.assembleData(req, resp, cell, OperatorConstant.DATAVALIDATE);
 	}
 }

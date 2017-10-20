@@ -3,6 +3,8 @@ package com.acmr.rmi.service.impl;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -16,9 +18,13 @@ import net.spy.memcached.internal.OperationFuture;
 import org.springframework.stereotype.Service;
 
 import acmr.excel.pojo.ExcelBook;
+import acmr.excel.pojo.ExcelDataValidation;
 
+import com.acmr.cache.MemoryUtil;
 import com.acmr.excel.model.Constant;
+import com.acmr.excel.model.datavalidate.Data;
 import com.acmr.excel.service.StoreService;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.rmi.service.RmiService;
 
 public class RmiServiceImpl extends UnicastRemoteObject implements RmiService {
@@ -66,6 +72,14 @@ public class RmiServiceImpl extends UnicastRemoteObject implements RmiService {
 						e.printStackTrace();
 					}
 				}
+			}
+		}
+		List<ExcelDataValidation> excelDataValidations = new ArrayList<ExcelDataValidation>();
+		Data data = MemoryUtil.getDataValidateMap().get(excelId);
+		if(data != null){
+			DataValidateUtil.map2List(data, excelDataValidations, excelBook.getSheets().get(0));
+			if(excelDataValidations.size() >0){
+				excelBook.getSheets().get(0).setExcelDataValidations(excelDataValidations);
 			}
 		}
 		return excelBook;

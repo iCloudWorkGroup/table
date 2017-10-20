@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,6 +19,10 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+
+
+
 
 
 import org.apache.log4j.Logger;
@@ -35,6 +40,7 @@ import acmr.excel.pojo.Constants.XLSTYPE;
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelColumn;
+import acmr.excel.pojo.ExcelDataValidation;
 import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
 
@@ -45,12 +51,14 @@ import com.acmr.excel.model.OnlineExcel;
 import com.acmr.excel.model.complete.CompleteExcel;
 import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
+import com.acmr.excel.model.datavalidate.Data;
 import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.model.position.Position;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.HandleExcelService;
 import com.acmr.excel.service.StoreService;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.excel.util.ExcelConst;
 import com.acmr.excel.util.ExcelUtil;
 import com.acmr.excel.util.FileUtil;
@@ -84,7 +92,9 @@ public class ExcelController extends BaseController {
 	public void download(@PathVariable String excelId,HttpServletRequest req, HttpServletResponse resp) {
 		ExcelBook excelBook = (ExcelBook) storeService.get(excelId);
 		if (excelBook != null) {
-			//excelService.changeHeightOrWidth(excelBook);
+			List<ExcelDataValidation> excelDataValidations = new ArrayList<ExcelDataValidation>();
+			DataValidateUtil.map2List(MemoryUtil.getData(excelId), excelDataValidations, excelBook.getSheets().get(0));
+			excelBook.getSheets().get(0).setExcelDataValidations(excelDataValidations);
 			try {
 				OutputStream out = resp.getOutputStream();
 				resp.setContentType("application/octet-stream");
@@ -128,28 +138,30 @@ public class ExcelController extends BaseController {
 	 * @param resp
 	 * @throws InterruptedException 
 	 */
-
+	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test(HttpServletRequest req, HttpServletResponse resp) throws InterruptedException {
 		String flag = req.getParameter("flag");
 		String excelId = UUIDUtil.getUUID();
 		ExcelBook excelBook = createTestExcel(excelId);
 		ExcelSheet excelsheet = excelBook.getSheets().get(0);
 		List<ExcelRow> rowList = excelsheet.getRows();
-		for (int i = 0; i < 200; i++) {
-			List<ExcelCell> excelList = rowList.get(i).getCells();
-			for (int j = 0; j < 25; j++) {
-				ExcelCell excelCell = excelList.get(j);
-				if (excelCell == null) {
-					excelCell = new ExcelCell();
-				}
-				excelCell.setText("回fff的痕迹卡的很金卡号地块和电视剧阿卡");
-				excelCell.setValue("回到fffff的痕迹卡的很金卡号地块和电视剧阿卡");
-				excelList.set(j, excelCell);
-			}
-		}
+//		for (int i = 0; i < 200; i++) {
+//			List<ExcelCell> excelList = rowList.get(i).getCells();
+//			for (int j = 0; j < 25; j++) {
+//				ExcelCell excelCell = excelList.get(j);
+//				if (excelCell == null) {
+//					excelCell = new ExcelCell();
+//				}
+//				excelCell.setText("回fff的痕迹卡的很金卡号地块和电视剧阿卡");
+//				excelCell.setValue("回到fffff的痕迹卡的很金卡号地块和电视剧阿卡");
+//				excelList.set(j, excelCell);
+//			}
+//		}
 		//excelsheet.MergedRegions(4, 4, 6, 6);
 		storeService.set(excelId, excelBook);
 		storeService.set(excelId+"_ope", 0);
+		VersionHistory versionHistory = new VersionHistory();
+		storeService.set(excelId+"_history", versionHistory);
 		JsonReturn data = new JsonReturn("");
 		data.setReturndata(excelId);
 		this.sendJson(resp, data);
@@ -278,6 +290,15 @@ public class ExcelController extends BaseController {
 		//String excelId = req.getParameter("excelId");
 		VersionHistory versionHistory = new VersionHistory();
 		storeService.set(excelId+"_history",  versionHistory);
+		Object o = storeService.get(excelId);
+		ExcelBook excelBook = (ExcelBook)o ;
+		List<ExcelDataValidation> excelDataValidations = new ArrayList<ExcelDataValidation>();
+		Data data = MemoryUtil.getData(excelId);
+		DataValidateUtil.map2List(data, excelDataValidations, excelBook.getSheets().get(0));
+		if(excelDataValidations.size() >0){
+			excelBook.getSheets().get(0).setExcelDataValidations(excelDataValidations);
+			storeService.set(excelId, excelBook);
+		}
 		return new ModelAndView("/index").addObject("excelId", excelId).addObject("sheetId", "1")
 				.addObject("build", false).addObject("frontName",Constant.frontName);
 	}
@@ -419,7 +440,7 @@ public class ExcelController extends BaseController {
 		SpreadSheet spreadSheet = new SpreadSheet();
 		if (excelBook != null) {
 			ExcelSheet excelSheet = excelBook.getSheets().get(0);
-			spreadSheet = excelService.positionExcel(excelSheet, spreadSheet,height, returnParam);
+			spreadSheet = excelService.positionExcel(excelSheet, spreadSheet,height, returnParam,excelId);
 			data.setAliasColCounter(excelSheet.getMaxcol()+1+"");
 			data.setAliasRowCounter(excelSheet.getMaxrow()+1+"");
 			data.setProtect(excelSheet.isProtect());
