@@ -1,77 +1,47 @@
-<a name="0.10.0"></a>
-# [0.10.0](https://github.com/iCloudWorkGroup/table/compare/v0.9.0...v0.10.0) (2016-09-13)
+<a name="0.11.0"></a>
+# 0.11.0 (2017-10-24)
 
 
 ### Bug Fixes
 
-* **.gitignore.bak:** 上传错误的文件删除 ([b8a7621](https://github.com/iCloudWorkGroup/table/commit/b8a7621))
-* **FunctionBoard:** cell hide function ([a185542](https://github.com/iCloudWorkGroup/table/commit/a185542))
-* **FunctionBoard:** column hide operate and reduction ([a8cdae3](https://github.com/iCloudWorkGroup/table/commit/a8cdae3))
-* **src/main/webapp:** 删除所有前端文件，因为java把代码上传的位置弄错了 ([9e5c867](https://github.com/iCloudWorkGroup/table/commit/9e5c867))
+* **core-book:** ([#12](https://github.com/iCloudWorkGroup/table/issues/12)) ([cb9e0fc](https://github.com/iCloudWorkGroup/table/commit/cb9e0fc))
+* **core-book:** 修改下载问题 ([#14](https://github.com/iCloudWorkGroup/table/issues/14)) ([b13a4f6](https://github.com/iCloudWorkGroup/table/commit/b13a4f6))
+* **core-book:** 读取本地路径 ([#13](https://github.com/iCloudWorkGroup/table/issues/13)) ([734998c](https://github.com/iCloudWorkGroup/table/commit/734998c))
+* **core-cell:** 修改删除备注，删除列，设置合并单元格背景颜色的问题 ([#32](https://github.com/iCloudWorkGroup/table/issues/32)) ([04041be](https://github.com/iCloudWorkGroup/table/commit/04041be)), closes [#30](https://github.com/iCloudWorkGroup/table/issues/30) [#25](https://github.com/iCloudWorkGroup/table/issues/25) [#26](https://github.com/iCloudWorkGroup/table/issues/26)
+* **core-cell:** 修改区域删除的问题 ([#53](https://github.com/iCloudWorkGroup/table/issues/53)) ([f3b28b3](https://github.com/iCloudWorkGroup/table/commit/f3b28b3))
+* **core-cell:** 修改单元格下划线的问题 ([#52](https://github.com/iCloudWorkGroup/table/issues/52)) ([e4c33a5](https://github.com/iCloudWorkGroup/table/commit/e4c33a5))
+* **core-cell:** 修改单元格为空时单元格格式后，不能正确返回的问题 ([b052434](https://github.com/iCloudWorkGroup/table/commit/b052434))
+* **core-cell:** 修改备注 ([#19](https://github.com/iCloudWorkGroup/table/issues/19)) ([65ce621](https://github.com/iCloudWorkGroup/table/commit/65ce621)), closes [#18](https://github.com/iCloudWorkGroup/table/issues/18)
+* **core-cell:** 修改整列设置颜色的问题 ([#54](https://github.com/iCloudWorkGroup/table/issues/54)) ([7712131](https://github.com/iCloudWorkGroup/table/commit/7712131))
+* **core-cell:** 单元格格式的问题修改 ([#51](https://github.com/iCloudWorkGroup/table/issues/51)) ([cca5ba8](https://github.com/iCloudWorkGroup/table/commit/cca5ba8)), closes [iCloudWorkGroup/fengniao#312](https://github.com/iCloudWorkGroup/fengniao/issues/312) [iCloudWorkGroup/fengniao#310](https://github.com/iCloudWorkGroup/fengniao/issues/310) [iCloudWorkGroup/fengniao#309](https://github.com/iCloudWorkGroup/fengniao/issues/309) [iCloudWorkGroup/fengniao#308](https://github.com/iCloudWorkGroup/fengniao/issues/308)
+* **core-cell:** 去掉测试按钮 ([17d8973](https://github.com/iCloudWorkGroup/table/commit/17d8973))
+* **core-cell:** 复制粘贴修改 ([#22](https://github.com/iCloudWorkGroup/table/issues/22)) ([9f27a69](https://github.com/iCloudWorkGroup/table/commit/9f27a69))
+* **core-cell:** 数值内存储问题 ([8ce8f9d](https://github.com/iCloudWorkGroup/table/commit/8ce8f9d))
+* **core-excel:** 修改粘贴的返回值，首页 ([ca84ff6](https://github.com/iCloudWorkGroup/table/commit/ca84ff6))
+* **core-sheet:** 修改外部粘贴bug ([#40](https://github.com/iCloudWorkGroup/table/issues/40)) ([56c43b6](https://github.com/iCloudWorkGroup/table/commit/56c43b6))
+* **core-sheet:** 修改行列调整 ([d8628d1](https://github.com/iCloudWorkGroup/table/commit/d8628d1))
+* **core-sheet:** 删除列,单元格合并后的后退，重新打开返回值属性,日期格式 ([#36](https://github.com/iCloudWorkGroup/table/issues/36)) ([df5c167](https://github.com/iCloudWorkGroup/table/commit/df5c167)), closes [#31](https://github.com/iCloudWorkGroup/table/issues/31) [iCloudWorkGroup/fengniao#252](https://github.com/iCloudWorkGroup/fengniao/issues/252)
+* **core-sheet:** 合并单元格操作不能正确回退处理 ([#33](https://github.com/iCloudWorkGroup/table/issues/33)) ([637ccc9](https://github.com/iCloudWorkGroup/table/commit/637ccc9))
+* **core-sheet:** 返回值修改 ([17ceb73](https://github.com/iCloudWorkGroup/table/commit/17ceb73))
+* **core-sheet:** 首行首列冻结问题修改 ([#15](https://github.com/iCloudWorkGroup/table/issues/15)) ([34b8ce9](https://github.com/iCloudWorkGroup/table/commit/34b8ce9))
+* **excel-core:** 修复参数合法性校首行首列冻结 ([0214676](https://github.com/iCloudWorkGroup/table/commit/0214676))
+* **excel-core:** 修改冻结，memcached客户端等问题 ([e185b00](https://github.com/iCloudWorkGroup/table/commit/e185b00))
+* **excel-core:** 修改参数合法性校验 ([47d5a47](https://github.com/iCloudWorkGroup/table/commit/47d5a47))
+* **index.jsp:** 修改jsp页面重新打开，下载路径 ([#5](https://github.com/iCloudWorkGroup/table/issues/5)) ([6e46542](https://github.com/iCloudWorkGroup/table/commit/6e46542))
+* **index.jsp:** 指定favicon路径 ([#9](https://github.com/iCloudWorkGroup/table/issues/9)) ([5e6ff94](https://github.com/iCloudWorkGroup/table/commit/5e6ff94))
+* **interface:** 修改接口header传递 ([#4](https://github.com/iCloudWorkGroup/table/issues/4)) ([bc86e9b](https://github.com/iCloudWorkGroup/table/commit/bc86e9b))
+* **interface:** 修改接口不能操作 ([#3](https://github.com/iCloudWorkGroup/table/issues/3)) ([4c0580f](https://github.com/iCloudWorkGroup/table/commit/4c0580f))
+* **other:** 增加代码覆盖率情况到readme文件 ([4e4c19c](https://github.com/iCloudWorkGroup/table/commit/4e4c19c))
+* **tool:** commit功能，跟fengniao项目发布效果统一 ([#34](https://github.com/iCloudWorkGroup/table/issues/34)) ([5adf6a6](https://github.com/iCloudWorkGroup/table/commit/5adf6a6))
 
 
 ### Features
 
-* **docs:** 增加travis加密信任，每次提交可以进行CI检测，并自动推送仓库进行预览 ([0914b50](https://github.com/iCloudWorkGroup/table/commit/0914b50))
-
-
-
-<a name="0.9.0"></a>
-# [0.9.0](https://github.com/iCloudWorkGroup/table/compare/v0.8.2...v0.9.0) (2016-09-05)
-
-
-### Bug Fixes
-
-* **FunctionBoard:** add persistent jar dependcy ([35b50e4](https://github.com/iCloudWorkGroup/table/commit/35b50e4))
-* **FunctionBoard:** changwsochange to sort valuert value ([3833077](https://github.com/iCloudWorkGroup/table/commit/3833077))
-* **FunctionBoard:** persistence struct ([ad96094](https://github.com/iCloudWorkGroup/table/commit/ad96094))
-
-
-
-<a name="0.8.2"></a>
-## [0.8.2](https://github.com/iCloudWorkGroup/table/compare/v0.8.1...v0.8.2) (2016-08-30)
-
-
-### Bug Fixes
-
-* **Cell:** area change color ([370844d](https://github.com/iCloudWorkGroup/table/commit/370844d))
-
-
-
-<a name="0.8.1"></a>
-## [0.8.1](https://github.com/iCloudWorkGroup/table/compare/v0.6.1...v0.8.1) (2016-08-15)
-
-
-### Bug Fixes
-
-* **book:** cell foodermate ([a98f896](https://github.com/iCloudWorkGroup/table/commit/a98f896))
-* **Cell:** fix bgcolor function bugcolor ([f3e8c2b](https://github.com/iCloudWorkGroup/table/commit/f3e8c2b))
-* **Cell:** fix showText display bug ([6cfae75](https://github.com/iCloudWorkGroup/table/commit/6cfae75))
-* **FunctionBoard:** impl seri ([f225745](https://github.com/iCloudWorkGroup/table/commit/f225745))
-* **FunctionBoard:** paste function fix bug ([d08c2e8](https://github.com/iCloudWorkGroup/table/commit/d08c2e8))
-* **Infrastructure:** CI ([b709720](https://github.com/iCloudWorkGroup/table/commit/b709720))
-* **Infrastructure:** modify queue param ([344d077](https://github.com/iCloudWorkGroup/table/commit/344d077))
-
-
-### Features
-
-* **[CFufc FunctionBoardtion:** add rmi get excelbook function ([52e1ed2](https://github.com/iCloudWorkGroup/table/commit/52e1ed2))
-* **FunctionBoard:** col opreator ([262075e](https://github.com/iCloudWorkGroup/table/commit/262075e))
-
-
-
-<a name="0.6.1"></a>
-## [0.6.1](https://github.com/iCloudWorkGroup/table/compare/v0.6.0...v0.6.1) (2016-06-28)
-
-
-
-<a name="0.6.0"></a>
-# [0.6.0](https://github.com/iCloudWorkGroup/table/compare/v0.5.0...v0.6.0) (2016-06-16)
-
-
-
-<a name="0.5.0"></a>
-# 0.5.0 (2016-06-08)
+* **core-cell:** 单元格批量设置颜色问题修改 ([560dbaf](https://github.com/iCloudWorkGroup/table/commit/560dbaf))
+* **core-cell:** 批量设置单元格颜色 ([#41](https://github.com/iCloudWorkGroup/table/issues/41)) ([086e6c5](https://github.com/iCloudWorkGroup/table/commit/086e6c5))
+* **core-excel:** 修改首页 ([8bb1482](https://github.com/iCloudWorkGroup/table/commit/8bb1482))
+* **core-sheet:** 添加数据有效性功能 ([#58](https://github.com/iCloudWorkGroup/table/issues/58)) ([e59ab47](https://github.com/iCloudWorkGroup/table/commit/e59ab47))
+* **excel-core:** 单元格保护和sheet锁定 ([#55](https://github.com/iCloudWorkGroup/table/issues/55)) ([23be356](https://github.com/iCloudWorkGroup/table/commit/23be356)), closes [iCloudWorkGroup/fengniao#318](https://github.com/iCloudWorkGroup/fengniao/issues/318)
 
 
 
