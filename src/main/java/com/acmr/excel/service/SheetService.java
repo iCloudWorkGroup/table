@@ -2,6 +2,7 @@ package com.acmr.excel.service;
 
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import acmr.excel.ExcelHelper;
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelCellStyle;
@@ -28,11 +30,14 @@ import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Model;
 import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.model.history.ChangeArea;
 import com.acmr.excel.model.history.History;
 import com.acmr.excel.model.history.VersionHistory;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.excel.util.ExcelUtil;
+import com.acmr.excel.util.StringUtil;
 @Service
 public class SheetService {
 	/**
@@ -460,13 +465,22 @@ public class SheetService {
 		}
 		Rule rule = new Rule();
 		rule.setValidationType(areaSet.getRule().getValidationType());
-		rule.setFormula1(areaSet.getRule().getFormula1());
-		rule.setFormula2(areaSet.getRule().getFormula2());
 		int index = data.getRuleList().indexOf(rule);
 		if(index == -1){
 			data.getRuleList().add(rule);
 			index = data.getRuleList().size() -1 ;
 		}
+		String formal1 = areaSet.getRule().getFormula1();
+		String formal2 = areaSet.getRule().getFormula2();
+		if (areaSet.getRule().getValidationType() == 3) {
+			formal1 = DataValidateUtil.display2Alias(formal1, sheet);
+			if(formal1.contains("R") || formal1.contains("C")){
+				setAffectRule(formal1, sheet, index);
+			}
+			formal2 = null;
+		}
+		rule.setFormula1(formal1);
+		rule.setFormula2(formal2);
 		for(Coordinate coordinate : coordinateList){
 			int colStartIndex = coordinate.getStartCol();
 			int rowStartIndex = coordinate.getStartRow();
@@ -519,8 +533,35 @@ public class SheetService {
 			}
 		}
 	}
-	
-	
+	private void setAffectRule(String formal1,ExcelSheet excelSheet,int rule){
+		String[] position = formal1.split(":");
+		String start = position[0];
+		String end = position[1];
+		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
+		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
+		if (start.contains("R") && start.contains("C") && end.contains("R") && end.contains("C")) {
+			String aliasColStart = start.substring(1, start.lastIndexOf("R"));
+			String aliasRowStart = start.substring(start.lastIndexOf("R")+1);
+			String aliasColEnd = end.substring(1, end.lastIndexOf("R"));
+			String aliasRowEnd = end.substring(end.lastIndexOf("R")+1);
+			if(aliasColStart.equals(aliasColEnd)){
+				setExps(rowList.get(rowList.getMaps().get(aliasRowStart)).getExps(), rule);
+				setExps(rowList.get(rowList.getMaps().get(aliasRowEnd)).getExps(), rule);
+			}else if(aliasRowStart.equals(aliasRowEnd)){
+				setExps(colList.get(colList.getMaps().get(aliasColStart)).getExps(), rule);
+				setExps(colList.get(colList.getMaps().get(aliasColEnd)).getExps(), rule);
+			}
+		}
+	}
+
+	private void setExps(Map<String, String> map, int rule) {
+		String ruleList = map.get("rule");
+		if (ruleList == null) {
+			ruleList = "";
+		}
+		ruleList += rule + ",";
+		map.put("rule", ruleList);
+	}
 	/**
 	 * 处理单元格验证
 	 * @param data
@@ -537,4 +578,75 @@ public class SheetService {
 		}
 		colRuleMap.put(colCode, index);
 	}
+	
+	
+	public List<String> findSeq(String formal,ExcelSheet excelSheet) {
+		if(formal == null || "".equals(formal)) return new ArrayList<String>();
+		String[] position = formal.split(":");
+		String start = position[0];
+		String end = position[1];
+		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
+		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
+		List<String> seqList = new ArrayList<String>();
+		if (start.contains("R") && start.contains("C") && end.contains("R") && end.contains("C")) {
+			String aliasColStart = start.substring(1, start.lastIndexOf("R"));
+			String aliasRowStart = start.substring(start.lastIndexOf("R")+1);
+			int colStart = colList.getMaps().get(aliasColStart);
+			int rowStart = rowList.getMaps().get(aliasRowStart);
+
+			String aliasColEnd = end.substring(1, end.lastIndexOf("R"));
+			String aliasRowEnd = end.substring(end.lastIndexOf("R")+1);
+			int colEnd = colList.getMaps().get(aliasColEnd);
+			int rowEnd = rowList.getMaps().get(aliasRowEnd);
+			for (int i = rowStart; i <= rowEnd; i++) {
+				ExcelRow excelRow = rowList.get(i);
+				if(excelRow == null) break;
+				List<ExcelCell> cellList = excelRow.getCells();
+				for (int j = colStart; j <= colEnd; j++) {
+					ExcelCell excelCell = cellList.get(j);
+					if(excelCell == null) continue;
+					seqList.add(excelCell.getText());
+				}
+			}
+		}else {
+			String aliasCode = start.substring(1);
+			if(start.contains("R")){ 
+				int row = rowList.getMaps().get(aliasCode);
+				ExcelRow excelRow = rowList.get(row);
+				for(int i = 0;i<excelRow.getCells().size();i++){
+					ExcelCell excelCell = excelRow.getCells().get(i);
+					if(excelCell == null) continue;
+					seqList.add(excelCell.getText());
+				}
+			}else{
+				int col = colList.getMaps().get(aliasCode);
+				for(int i = 0; i<excelSheet.getMaxrow();i++){
+					ExcelCell excelCell = rowList.get(i).getCells().get(col);
+					if(excelCell == null) continue;
+					seqList.add(excelCell.getText());
+				}
+			}
+		}
+		return seqList;
+	}
+	public int getRule(Data data,Frozen frozen,ExcelSheet excelSheet){
+		int col = frozen.getOprCol();
+		int row = frozen.getOprRow();
+		if(col == -1){
+			return data.getRowMap().get(excelSheet.getRows().get(row).getCode());
+		}else if(row == -1){
+			return data.getColMap().get(excelSheet.getCols().get(col).getCode());
+		}else{
+			Map<String, Map<String, Integer>> cellMap = data.getCellMap();
+			Map<String, Integer> colRuleMap = cellMap.get(excelSheet.getRows().get(row).getCode());
+			if(colRuleMap == null){
+				Integer rRule = data.getRowMap().get(excelSheet.getRows().get(row).getCode());
+				return (rRule == null) ? data.getColMap().get(excelSheet.getCols().get(col).getCode()) : rRule;
+			}else{
+				return colRuleMap.get(excelSheet.getCols().get(col).getCode());
+			}
+		}
+	}
+	
+	
 }

@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import acmr.excel.ExcelHelper;
+import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelCellRangeAddress;
 import acmr.excel.pojo.ExcelColumn;
@@ -17,8 +21,10 @@ import acmr.util.ListHashMap;
 
 import com.acmr.excel.model.datavalidate.CellList;
 import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Model;
 import com.acmr.excel.model.datavalidate.RowColList;
 import com.acmr.excel.model.datavalidate.Rule;
+import com.acmr.excel.test.TestUtil;
 
 public class DataValidateUtil {
 	private static final int MIN = 0; 
@@ -39,6 +45,11 @@ public class DataValidateUtil {
 		setRowValidation(row, excelDataValidations,data.getRuleList());
 		setColValidation(col, excelDataValidations,data.getRuleList());
 		setCellValidation(cell, excelDataValidations,data.getRuleList());
+		for(ExcelDataValidation excelDataValidation : excelDataValidations){
+			if(excelDataValidation.getValidationType() == 3){
+				excelDataValidation.setFormula1(alias2Display(excelDataValidation.getFormula1(), excelSheet));
+			}
+		}
 	}
 	/**
 	 * list转map
@@ -53,9 +64,12 @@ public class DataValidateUtil {
 		List<Rule> ruleList = data.getRuleList();
 		for(ExcelDataValidation excelDataValidation : excelDataValidations){
 			Rule rule = new Rule();
-			rule.setFormula1(excelDataValidation.getFormula1());
-			rule.setFormula2(excelDataValidation.getFormula2());
 			rule.setValidationType(excelDataValidation.getValidationType());
+			rule.setFormula1(excelDataValidation.getFormula1());
+			if(excelDataValidation.getValidationType() == 3){
+				rule.setFormula1(display2Alias(excelDataValidation.getFormula1(), excelSheet));
+			}
+			rule.setFormula2(excelDataValidation.getFormula2());
 			int ruleIndex = ruleList.indexOf(rule);
 			if (ruleIndex == -1) {
 				ruleList.add(rule);
@@ -284,4 +298,126 @@ public class DataValidateUtil {
 			excelDataValidations.add(excelDataValidation);
 		}
 	}
+	
+	
+	public static String display2Alias(String text,ExcelSheet excelSheet){
+		if(text == null || "".equals(text)) return null;
+		if(text.indexOf("=") == -1){
+			return text;
+		}
+		String[] position = text.split(":");
+		String start = position[0];
+		String end = position[1];
+		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
+		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
+		String newText = null;
+		if (start.indexOf("$") != start.lastIndexOf("$") && end.indexOf("$") != end.lastIndexOf("$")) {
+			String displayColStart = start.substring(1, start.lastIndexOf("$"));
+			String displayRowStart = start.substring(start.lastIndexOf("$")+1);
+			String aliasColStart = colList.get(ExcelHelper.getColIndex(displayColStart)).getCode();
+			String aliasRowStart = rowList.get(Integer.valueOf(displayRowStart)-1).getCode();
+
+			String displayColEnd = end.substring(1, end.lastIndexOf("$"));
+			String displayRowEnd = end.substring(end.lastIndexOf("$")+1);
+			String aliasColEnd = colList.get(ExcelHelper.getColIndex(displayColEnd)).getCode();
+			String aliasRowEnd = rowList.get(Integer.valueOf(displayRowEnd)-1).getCode();
+			newText = "C" + aliasColStart + "R" + aliasRowStart + ":C" + aliasColEnd + "R" + aliasRowEnd;
+		}else {
+			String displayStart = start.substring(2);
+			//String displayEnd = end.substring(1);
+			if(isNumeric(displayStart)){ 
+				//newText = "$"+rowList.get(Integer.valueOf(displayStart)-1).getCode() + ":$" + rowList.get(Integer.valueOf(displayEnd)-1).getCode();
+				int value = rowList.getMaps().get(displayStart) + 1;
+				newText = "R" + value + ":R" + value;
+			}else{
+				//newText = "$" + colList.get(ExcelHelper.getColIndex(displayStart)).getCode() + ":$" + colList.get(ExcelHelper.getColIndex(displayEnd)).getCode();
+				String value = colList.get(ExcelHelper.getColIndex(displayStart)).getCode();
+				newText = "C" + value + ":C" + value;
+			}
+		}
+		return newText;
+	} 
+	public static String alias2Display(String text,ExcelSheet excelSheet){
+		if (text == null || "".equals(text))
+			return null;
+		if (!text.contains("R") && !text.contains("C")) return text;
+		String[] position = text.split(":");
+		String start = position[0];
+		String end = position[1];
+		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
+		ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
+		String newText = null;
+		if (start.contains("R") && start.contains("C") && end.contains("R") && end.contains("C")) {
+			String aliasColStart = start.substring(1, start.lastIndexOf("R"));
+			String aliasRowStart = start.substring(start.lastIndexOf("R")+1);
+			String displayColStart = ExcelHelper.getColCode(colList.getMaps().get(aliasColStart));
+			String displayRowStart = rowList.getMaps().get(aliasRowStart) + 1 +"";
+
+			String aliasColEnd = end.substring(1, end.lastIndexOf("R"));
+			String aliasRowEnd = end.substring(end.lastIndexOf("R")+1);
+			String displayColEnd = ExcelHelper.getColCode(colList.getMaps().get(aliasColEnd));
+			String displayRowEnd = rowList.getMaps().get(aliasRowEnd) + 1 +"";
+			newText = "$" + displayColStart + "$" + displayRowStart + ":$" + displayColEnd + "$" + displayRowEnd;
+		}else {
+			String aliasCode = start.substring(1);
+			String display = null;
+			if(start.contains("R")){ 
+				display = rowList.getMaps().get(aliasCode) + 1 + "";
+			}else{
+				display = ExcelHelper.getColCode(colList.getMaps().get(aliasCode));
+			}
+			newText = "$"+display + ":$" + display; 
+		}
+		newText = "="+newText;
+		return newText;
+	} 
+
+	public static boolean isNumeric(String str) {
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches()) {
+			return false;
+		}
+		return true;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static ExcelBook createNewExcel() {
+		ExcelBook excelBook = new ExcelBook();
+		ExcelSheet sheet = new ExcelSheet();
+		for (int i = 1; i < 27; i++) {
+			ExcelColumn column = sheet.addColumn();
+			column.setWidth(69);
+		}
+		for (int i = 1; i < 101; i++) {
+			ExcelRow row = sheet.addRow();
+			row.setHeight(19);
+		}
+		excelBook.getSheets().add(sheet);
+		return excelBook;
+	}
+	public static void main(String[] args) {
+		
+		System.out.println(display2Alias("=$A$1:$A$6", createNewExcel().getSheets().get(0)));
+		System.out.println(display2Alias("=$C:$C", createNewExcel().getSheets().get(0)));
+		System.out.println(display2Alias("=$3:$3", createNewExcel().getSheets().get(0)));
+		System.out.println(alias2Display("C1R1:C1R6", createNewExcel().getSheets().get(0)));
+		System.out.println(alias2Display("R3:R3", createNewExcel().getSheets().get(0)));
+		System.out.println(alias2Display("C3:C3", createNewExcel().getSheets().get(0)));
+	}
+	
+	
+	
 }

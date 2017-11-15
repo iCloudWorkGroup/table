@@ -1,6 +1,8 @@
 package com.acmr.excel.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,29 +13,43 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
+
+
+
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import acmr.excel.pojo.ExcelBook;
+import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
+import acmr.util.returnData;
 
+import com.acmr.cache.MemoryUtil;
 import com.acmr.excel.controller.excelbase.BaseController;
 import com.acmr.excel.model.AreaSet;
 import com.acmr.excel.model.Constant;
+import com.acmr.excel.model.Coordinate;
 import com.acmr.excel.model.Frozen;
 import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.Paste;
 import com.acmr.excel.model.Protect;
 import com.acmr.excel.model.complete.CompleteExcel;
+import com.acmr.excel.model.complete.ReturnData;
 import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
 import com.acmr.excel.model.copy.Copy;
+import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.model.position.OpenExcel;
 import com.acmr.excel.service.ExcelService;
 import com.acmr.excel.service.PasteService;
 import com.acmr.excel.service.SheetService;
 import com.acmr.excel.service.StoreService;
 import com.acmr.excel.util.AnsycDataReturn;
+import com.acmr.excel.util.DataValidateUtil;
 import com.acmr.excel.util.JsonReturn;
 import com.acmr.excel.util.StringUtil;
 
@@ -220,7 +236,7 @@ public class SheetController extends BaseController {
 				CompleteExcel excel = new CompleteExcel();
 				SpreadSheet spreadSheet = new SpreadSheet();
 				excel.getSpreadSheet().add(spreadSheet);
-				spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
+				spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam,excelId);
 				data.setReturncode(Constant.SUCCESS_CODE);
 				data.setReturndata(excel);
 				data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
@@ -240,7 +256,7 @@ public class SheetController extends BaseController {
 						CompleteExcel excel = new CompleteExcel();
 						SpreadSheet spreadSheet = new SpreadSheet();
 						excel.getSpreadSheet().add(spreadSheet);
-						spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam);
+						spreadSheet = excelService.openExcel(spreadSheet, excelSheet,rowBegin, rowEnd,returnParam,excelId);
 						data.setReturncode(Constant.SUCCESS_CODE);
 						data.setReturndata(excel);
 						data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
@@ -289,11 +305,36 @@ public class SheetController extends BaseController {
 		}else{
 			this.assembleData(req, resp,protect,OperatorConstant.PROTECT);
 		}
-		
 	}
-	@RequestMapping("/validate")
+	/**
+	 * sheet保护
+	 * @param req
+	 * @param resp
+	 * @throws IOException
+	 */
+	@RequestMapping("/validate-set")
 	public void lock(HttpServletRequest req, HttpServletResponse resp) throws Exception {
     	AreaSet cell = getJsonDataParameter(req, AreaSet.class);
 		this.assembleData(req, resp, cell, OperatorConstant.DATAVALIDATE);
+	}
+	@RequestMapping("/validate-full")
+	public void validateFull(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		String excelId = req.getHeader("excelId");
+    	Frozen frozen = getJsonDataParameter(req, Frozen.class);
+    	ExcelBook excelBook = (ExcelBook)storeService.get(excelId);
+    	ExcelSheet excelSheet = excelBook.getSheets().get(0);
+		Data data = MemoryUtil.getDataValidateMap().get(excelId);
+		int ruleIndex = sheetService.getRule(data, frozen, excelSheet);
+		Rule rule = data.getRuleList().get(ruleIndex);
+		ReturnData ReturnData = new ReturnData();
+		List<String> seqList = sheetService.findSeq(rule.getFormula1(), excelBook.getSheets().get(0));
+		Rule newRule = new Rule();
+		final String formal = rule.getFormula1();
+		newRule.setFormula1(DataValidateUtil.alias2Display(formal, excelSheet));
+		newRule.setValidationType(rule.getValidationType());
+		ReturnData.setRule(newRule);
+		ReturnData.setIndex(ruleIndex);
+		ReturnData.setExpResult(seqList);
+		this.sendJson(resp, ReturnData);
 	}
 }

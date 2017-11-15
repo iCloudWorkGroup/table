@@ -13,6 +13,15 @@ public class Data {
 	private Map<String, Map<String, Integer>> cellMap = new HashMap<String, Map<String, Integer>>();
 	private List<Rule> ruleList = new ArrayList<Rule>();
 
+
+	public List<Rule> getRuleList() {
+		return ruleList;
+	}
+
+	public void setRuleList(List<Rule> ruleList) {
+		this.ruleList = ruleList;
+	}
+
 	public Map<String, Integer> getRowMap() {
 		return rowMap;
 	}
@@ -35,14 +44,6 @@ public class Data {
 
 	public void setCellMap(Map<String, Map<String, Integer>> cellMap) {
 		this.cellMap = cellMap;
-	}
-
-	public List<Rule> getRuleList() {
-		return ruleList;
-	}
-
-	public void setRuleList(List<Rule> ruleList) {
-		this.ruleList = ruleList;
 	}
 	
 }

@@ -42,6 +42,7 @@ import com.acmr.excel.model.complete.ReturnParam;
 import com.acmr.excel.model.complete.SpreadSheet;
 import com.acmr.excel.model.datavalidate.Data;
 import com.acmr.excel.model.datavalidate.Rule;
+import com.acmr.excel.model.datavalidate.Validate;
 import com.acmr.excel.util.BinarySearch;
 import com.acmr.excel.util.CellFormateUtil;
 import com.acmr.excel.util.DataValidateUtil;
@@ -74,7 +75,8 @@ public class ExcelService {
 	 * @return CompleteExcel对象
 	 */
 
-	public SpreadSheet openExcel(SpreadSheet spreadSheet,ExcelSheet excelSheet, int rowBegin, int rowEnd,ReturnParam returnParam) {
+	public SpreadSheet openExcel(SpreadSheet spreadSheet,ExcelSheet excelSheet, int rowBegin, int rowEnd,ReturnParam returnParam,
+			String excelId) {
 		List<Gly> glyList = spreadSheet.getSheet().getGlY();
 		List<Glx> glxList = spreadSheet.getSheet().getGlX();
 		bookToOlExcelGlyList(excelSheet, glyList);
@@ -93,6 +95,11 @@ public class ExcelService {
 		returnParam.setDataRowStartIndex(rowBeginIndex);
 		Gly maxGly = glyList.get(glyList.size()-1);
 		returnParam.setMaxRowPixel(maxGly.getTop()+maxGly.getHeight());
+		List<ExcelDataValidation> validations = excelSheet.getExcelDataValidations();
+		if (validations != null) {
+			Data data = MemoryUtil.getDataValidateMap().get(excelId);
+			setAddValidate(validations, spreadSheet.getValidate(), rowBeginIndex, rowEndIndex,data.getRuleList(),excelSheet);
+		}
 		return spreadSheet;
 	}
 	
@@ -526,6 +533,7 @@ public class ExcelService {
 		}
 	}
 	private void setStyle(ExcelCellStyle style,OperProp operProp){
+		if(style == null) return;
 		operProp.setLocked(style.isLocked() ? null : false);
 	}
 
@@ -694,16 +702,6 @@ public class ExcelService {
 				occupy.getX().add(glxList.get(m).getAliasX());
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 
 	/**
@@ -784,12 +782,30 @@ public class ExcelService {
 //			frozen.setViewRow(excelfrozen.getFirstrow());
 		}
 		List<ExcelDataValidation> validations = excelSheet.getExcelDataValidations();
+		if(validations != null){
+			Data newData = new Data();
+			DataValidateUtil.list2Map(newData, excelSheet.getExcelDataValidations(), excelSheet);
+			MemoryUtil.getDataValidateMap().put(excelId, newData);
+			setAddValidate(validations, spreadSheet.getValidate(),rowBeginIndex,rowEndIndex,newData.getRuleList(),excelSheet);
+		}
+		return spreadSheet;
+	}
+	
+	
+	private void setAddValidate(List<ExcelDataValidation> validations,Validate validate,int begin,int end,List<Rule> ruleList,
+			ExcelSheet excelSheet){
 		for(ExcelDataValidation validation : validations){
 			AreaSet areaSet = new AreaSet();
 			List<ExcelCellRangeAddress> cellRange = validation.getExcelCellRangeAddresses();
 			List<Coordinate> coordinates = new ArrayList<Coordinate>();
 			areaSet.setCoordinate(coordinates);
 			for(ExcelCellRangeAddress excelCellRangeAddress : cellRange){
+				if(excelCellRangeAddress.getFirstRow() < begin && excelCellRangeAddress.getLastRow() != 1048575){
+					continue;
+				}
+				if(excelCellRangeAddress.getLastRow() > end && excelCellRangeAddress.getLastRow() != 1048575){
+					continue;
+				}
 				Coordinate coordinate = new Coordinate();
 				coordinate.setEndCol(excelCellRangeAddress.getLastColumn() == 16383 ? -1 : excelCellRangeAddress.getLastColumn());
 				coordinate.setEndRow(excelCellRangeAddress.getLastRow() == 1048575 ? -1 : excelCellRangeAddress.getLastRow());
@@ -797,20 +813,22 @@ public class ExcelService {
 				coordinate.setStartRow(excelCellRangeAddress.getFirstRow());
 				coordinates.add(coordinate);
 			}
+			if(coordinates.size() == 0) continue;
 			Rule rule = new Rule();
 			rule.setFormula1(validation.getFormula1());
 			rule.setFormula2(validation.getFormula2());
 			rule.setValidationType(validation.getValidationType());
+			if(validation.getValidationType() == 3){
+				rule.setFormula1(DataValidateUtil.display2Alias(validation.getFormula1(), excelSheet));
+				rule.setFormula2(null);
+			}
+			rule.setIndex(ruleList.indexOf(rule));
+			rule.setFormula1(validation.getFormula1());
 			areaSet.setRule(rule);
-			spreadSheet.getValidate().add(areaSet);
+			validate.getRules().add(areaSet);
 		}
-		Data newData = new Data();
-		DataValidateUtil.list2Map(newData, excelSheet.getExcelDataValidations(), excelSheet);
-		MemoryUtil.getDataValidateMap().put(excelId, newData);
-		return spreadSheet;
+		validate.setTotal(ruleList.size());
 	}
-
-
 	/**
 	 * 通过id获得OnlineExcel对象
 	 * 
@@ -834,7 +852,7 @@ public class ExcelService {
 	 * 
 	 * @param excelBook
 	 */
-
+ 
 	public void changeHeightOrWidth(ExcelBook excelBook) {
 		ExcelSheet excelSheet = excelBook.getSheets().get(0);
 		List<ExcelColumn> colList = excelSheet.getCols();

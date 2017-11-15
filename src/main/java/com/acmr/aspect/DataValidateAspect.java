@@ -18,13 +18,17 @@ import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.model.copy.Copy;
 import com.acmr.excel.model.copy.TempObj;
 import com.acmr.excel.model.datavalidate.Data;
+import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.model.history.ChangeArea;
+import com.acmr.excel.util.StringUtil;
 
+import acmr.excel.ExcelHelper;
 import acmr.excel.pojo.ExcelBook;
 import acmr.excel.pojo.ExcelCell;
 import acmr.excel.pojo.ExcelColumn;
 import acmr.excel.pojo.ExcelRow;
 import acmr.excel.pojo.ExcelSheet;
+import acmr.util.ListHashMap;
 
 @Aspect
 @Component
@@ -54,7 +58,7 @@ public class DataValidateAspect {
 			}
 		}
 	}
-	@After("execution(public void com.acmr.excel.service.CellService.deleteRow(..))")
+	@Before("execution(public void com.acmr.excel.service.CellService.deleteRow(..))")
 	public void deleteRow(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
 		ExcelSheet excelSheet = (ExcelSheet) args[0];
@@ -62,10 +66,71 @@ public class DataValidateAspect {
 		String excelId = (String) args[2];
 		Data data = getData(excelId);
 		Map<String, Integer> rowMap = data.getRowMap();
-		String rowCode = excelSheet.getRows().get(rowOperate.getRow()).getCode();
+		ExcelRow excelRow = excelSheet.getRows().get(rowOperate.getRow());
+		String rowCode = excelRow.getCode();
 		rowMap.remove(rowCode);
 		data.getCellMap().remove(rowCode);
+		updateRule(excelRow.getExps(), data.getRuleList(), excelSheet, rowCode);
 	}
+	
+	
+	private void updateRule(Map<String,String> exps,List<Rule> rules,ExcelSheet excelSheet,String code){
+		String rule = exps.get("rule");
+		if (!StringUtil.isEmpty(rule)) {
+			String[] ruleList = rule.split(",");
+			for(String rl : ruleList){
+				Rule r = rules.get(Integer.valueOf(rl));
+				String[] position = r.getFormula1().split(":");
+				String start = position[0];
+				String end = position[1];
+				ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
+				ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
+				if (start.contains("R") && start.contains("C") && end.contains("R") && end.contains("C")) {
+					String aliasColStart = start.substring(1, start.lastIndexOf("R"));
+					String aliasRowStart = start.substring(start.lastIndexOf("R")+1);
+					int colStart = colList.getMaps().get(aliasColStart);
+					int rowStart = rowList.getMaps().get(aliasRowStart);
+					String aliasColEnd = end.substring(1, end.lastIndexOf("R"));
+					String aliasRowEnd = end.substring(end.lastIndexOf("R")+1);
+					int colEnd = colList.getMaps().get(aliasColEnd);
+					int rowEnd = rowList.getMaps().get(aliasRowEnd);
+					if(code.equals(aliasRowStart)){
+						Map<String,String> map = rowList.get(rowStart+1).getExps();
+						String rList = map.get("rule");
+						if(!StringUtil.isEmpty(rList)){
+							map.put("rule", ruleList.toString()+rList);
+						}
+						r.setFormula1("C"+aliasColStart+"R"+rowList.get(rowStart+1).getCode()+":C"+aliasColEnd+"R"+aliasRowEnd);
+					}else if(code.equals(aliasRowEnd)){
+						Map<String,String> map = rowList.get(rowEnd-1).getExps();
+						String rList = map.get("rule");
+						map.put("rule", ruleList+rList);
+						r.setFormula1("C"+aliasColStart+"R"+aliasRowStart+":C"+aliasColEnd+"R"+rowList.get(rowEnd-1).getCode());
+					}else if(code.equals(aliasColStart)){
+						Map<String,String> map = colList.get(colStart+1).getExps();
+						String rList = map.get("rule");
+						map.put("rule", ruleList+rList);
+						r.setFormula1("C"+colList.get(colStart+1).getCode()+"R"+aliasRowStart+":C"+aliasColEnd+"R"+aliasRowEnd);
+					}else if(code.equals(aliasColEnd)){
+						Map<String,String> map = colList.get(colEnd-1).getExps();
+						String rList = map.get("rule");
+						map.put("rule", ruleList+rList);
+						r.setFormula1("C"+aliasColStart+"R"+aliasRowStart+":C"+colList.get(colEnd-1).getCode()+"R"+aliasRowEnd);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@After("execution(public void com.acmr.excel.service.CellService.addCol(..))")
 	public void addCol(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
@@ -88,7 +153,7 @@ public class DataValidateAspect {
 			}
 		}
 	}
-	@After("execution(public void com.acmr.excel.service.CellService.deleteCol(..))")
+	@Before("execution(public void com.acmr.excel.service.CellService.deleteCol(..))")
 	public void deleteCol(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
 		ExcelSheet excelSheet = (ExcelSheet) args[0];
@@ -105,6 +170,7 @@ public class DataValidateAspect {
 				colRuleMap.remove(colCode);
 			}
 		}
+		updateRule(excelSheet.getCols().get(colOperate.getCol()).getExps(), data.getRuleList(), excelSheet, colCode);
 	}
 	
 	@Before("execution(public void com.acmr.excel.service.CellService.mergeCell(..))")
@@ -265,6 +331,5 @@ public class DataValidateAspect {
 		}
 		return data;
 	}
-	
 	
 }

@@ -43,4 +43,5 @@ public class AreaSet implements Serializable {
 		this.rule = rule;
 	}
 
+
 }

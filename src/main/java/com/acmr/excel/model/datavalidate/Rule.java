@@ -6,6 +6,7 @@ public class Rule implements Serializable {
 	private int validationType;
 	private String formula1;
 	private String formula2;
+	private Integer index;
 
 	public int getValidationType() {
 		return validationType;
@@ -67,5 +68,13 @@ public class Rule implements Serializable {
 		return true;
 	}
 
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+	
 	
 }
