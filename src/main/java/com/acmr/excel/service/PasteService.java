@@ -103,19 +103,19 @@ public class PasteService {
 			changeArea.setColIndex(colIndex);
 			changeArea.setRowIndex(rowIndex);
 			if (excelCell == null) {
-				changeArea.setOriginalValue(null);
+				changeArea.getOriginalValues().set(0, null);
 //				excelCell = new ExcelCell();
 //				excelCell.getCellstyle().setBgcolor(new ExcelColor(255, 255, 255));
 //				cellList.set(colIndex, excelCell);
 			}else{
-				changeArea.setOriginalValue(excelCell.clone());
+				changeArea.getOriginalValues().set(0, excelCell.clone());
 			}
 //			String text = outerPasteData.getContent();
 //				//text = java.net.URLDecoder.decode(text, "utf-8");
 //			excelCell.setText(text);
 //			excelCell.setType(CELLTYPE.STRING);
 //			excelCell.setValue(text);
-			changeArea.setUpdateValue(excelCell);
+			changeArea.getUpdateValues().set(0, excelCell);
 			history.getChangeAreaList().add(changeArea);
 		}
 		versionHistory.getMap().put(version, history);
@@ -225,10 +225,10 @@ public class PasteService {
 				changeArea.setColIndex(tempColIndex);
 				changeArea.setRowIndex(targetRowIndex);
 				if(excelCell == null){
-					changeArea.setOriginalValue(null);
+					changeArea.getOriginalValues().set(0, null);
 					excelCell = new ExcelCell();
 				}else{
-					changeArea.setOriginalValue(rowList.get(targetRowIndex).getCells().get(tempColIndex));
+					changeArea.getOriginalValues().set(0, rowList.get(targetRowIndex).getCells().get(tempColIndex));
 				}
 				ExcelCell newExcelCell = excelCell.clone();
 				//rowList.get(targetRowIndex).set(tempColIndex, newExcelCell);
@@ -237,15 +237,15 @@ public class PasteService {
 				tempObj.setCol(tempColIndex);
 				tempObj.setExcelCell(newExcelCell);
 				temList.add(tempObj);
-				changeArea.setUpdateValue(newExcelCell);
+				changeArea.getUpdateValues().set(0, newExcelCell);
 				history.getChangeAreaList().add(changeArea);
 				if ("cut".equals(flag)) {
 					rowList.get(i).set(j, null);
 					ChangeArea changeArea2 = new ChangeArea();
-					changeArea2.setColIndex(i);
-					changeArea2.setRowIndex(j);
-					changeArea2.setOriginalValue(excelCell.clone());
-					changeArea2.setUpdateValue(null);
+					changeArea2.setColIndex(j);
+					changeArea2.setRowIndex(i);
+					changeArea2.getOriginalValues().set(0, excelCell.clone());
+					changeArea2.getUpdateValues().set(0, null);
 					history.getChangeAreaList().add(changeArea2);
 				}
 				tempColIndex++;

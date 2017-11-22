@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.acmr.cache.MemoryUtil;
 import com.acmr.excel.model.Cell;
+import com.acmr.excel.model.OperatorConstant;
 import com.acmr.excel.model.complete.rows.ColOperate;
 import com.acmr.excel.model.complete.rows.RowOperate;
 import com.acmr.excel.model.copy.Copy;
@@ -20,6 +21,8 @@ import com.acmr.excel.model.copy.TempObj;
 import com.acmr.excel.model.datavalidate.Data;
 import com.acmr.excel.model.datavalidate.Rule;
 import com.acmr.excel.model.history.ChangeArea;
+import com.acmr.excel.model.history.History;
+import com.acmr.excel.model.history.VersionHistory;
 import com.acmr.excel.util.StringUtil;
 
 import acmr.excel.ExcelHelper;
@@ -86,43 +89,47 @@ public class DataValidateAspect {
 				ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)excelSheet.getRows();
 				ListHashMap<ExcelColumn> colList = (ListHashMap<ExcelColumn>)excelSheet.getCols();
 				if (start.contains("R") && start.contains("C") && end.contains("R") && end.contains("C")) {
-					String aliasColStart = start.substring(1, start.lastIndexOf("R"));
-					String aliasRowStart = start.substring(start.lastIndexOf("R")+1);
+					String aliasColStart = start.substring(1,start.lastIndexOf("R"));
+					String aliasRowStart = start.substring(start.lastIndexOf("R") + 1);
 					int colStart = colList.getMaps().get(aliasColStart);
 					int rowStart = rowList.getMaps().get(aliasRowStart);
 					String aliasColEnd = end.substring(1, end.lastIndexOf("R"));
-					String aliasRowEnd = end.substring(end.lastIndexOf("R")+1);
+					String aliasRowEnd = end.substring(end.lastIndexOf("R") + 1);
 					int colEnd = colList.getMaps().get(aliasColEnd);
 					int rowEnd = rowList.getMaps().get(aliasRowEnd);
 					if(code.equals(aliasRowStart)){
-						Map<String,String> map = rowList.get(rowStart+1).getExps();
-						String rList = map.get("rule");
-						if(!StringUtil.isEmpty(rList)){
-							map.put("rule", ruleList.toString()+rList);
-						}
-						r.setFormula1("C"+aliasColStart+"R"+rowList.get(rowStart+1).getCode()+":C"+aliasColEnd+"R"+aliasRowEnd);
+						updateExpress(rowList.get(rowStart + 1).getExps(), rl, 
+								"C"+aliasColStart+"R"+rowList.get(rowStart+1).getCode()+":C"+aliasColEnd+"R"+aliasRowEnd,r);
 					}else if(code.equals(aliasRowEnd)){
-						Map<String,String> map = rowList.get(rowEnd-1).getExps();
-						String rList = map.get("rule");
-						map.put("rule", ruleList+rList);
-						r.setFormula1("C"+aliasColStart+"R"+aliasRowStart+":C"+aliasColEnd+"R"+rowList.get(rowEnd-1).getCode());
+						updateExpress(rowList.get(rowEnd-1).getExps(), rl, "C"+aliasColStart+"R"+aliasRowStart+":C"+aliasColEnd+
+								"R"+rowList.get(rowEnd-1).getCode(), r);
 					}else if(code.equals(aliasColStart)){
-						Map<String,String> map = colList.get(colStart+1).getExps();
-						String rList = map.get("rule");
-						map.put("rule", ruleList+rList);
-						r.setFormula1("C"+colList.get(colStart+1).getCode()+"R"+aliasRowStart+":C"+aliasColEnd+"R"+aliasRowEnd);
+						updateExpress(colList.get(colStart+1).getExps(), rl, "C"+colList.get(colStart+1).getCode()+"R"+
+									aliasRowStart+":C"+aliasColEnd+"R"+aliasRowEnd, r);
 					}else if(code.equals(aliasColEnd)){
-						Map<String,String> map = colList.get(colEnd-1).getExps();
-						String rList = map.get("rule");
-						map.put("rule", ruleList+rList);
-						r.setFormula1("C"+aliasColStart+"R"+aliasRowStart+":C"+colList.get(colEnd-1).getCode()+"R"+aliasRowEnd);
+						updateExpress(colList.get(colEnd-1).getExps(), rl, "C"+aliasColStart+"R"+aliasRowStart+":C"+
+						       colList.get(colEnd-1).getCode()+"R"+aliasRowEnd, r);
 					}
 				}
 			}
 		}
 	}
-	
-	
+	/**
+	 * 更新表达式
+	 * @param map
+	 * @param rl
+	 * @param express
+	 * @param r
+	 */
+	private void updateExpress(Map<String, String> map,String rl,String express,Rule r){
+		String rList = map.get("rule");
+		if (StringUtil.isEmpty(rList)) {
+			rList = "";
+		}
+		String newList = rl+ "," + rList;
+		map.put("rule", newList);
+		r.setFormula1(express);
+	}
 	
 	
 	
@@ -179,6 +186,11 @@ public class DataValidateAspect {
 		ExcelSheet excelSheet = (ExcelSheet) args[0];
 		Cell cell = (Cell) args[1];
 		String excelId = (String) args[2];
+		VersionHistory versionHistory = (VersionHistory)args[3];
+		int step = (int)args[4];
+		versionHistory.getVersion().put(step, step);
+		History history = new History();
+		history.setOperatorType(OperatorConstant.merge);
 		Data data = getData(excelId);
 		Map<String, Map<String, Integer>> cellMap = data.getCellMap();
 		int firstRow = cell.getCoordinate().getStartRow();
@@ -194,7 +206,14 @@ public class DataValidateAspect {
 				cMap = new HashMap<String, Integer>();
 				cellMap.put(rowCode, cMap);
 			}
+			ChangeArea changeArea = new ChangeArea();
+			changeArea.setRowIndex(firstRow);
+			changeArea.setColIndex(firstCol);
+			changeArea.setType(1);
+			changeArea.getOriginalValues().set(1, cMap.get(colCode));
 			cMap.put(colCode,rule);
+			changeArea.getUpdateValues().set(1, cMap.get(colCode));
+			history.getChangeAreaList().add(changeArea);
 		}
 		for (int i = firstRow; i <= lastRow; i++) {
 			String rCode = excelSheet.getRows().get(i).getCode();
@@ -202,11 +221,18 @@ public class DataValidateAspect {
 			if(colRuleMap == null) continue;
 			for (int j = firstCol; j <= lastCol; j++) {
 				if(i == 0 && j==0) continue;
+				ChangeArea changeArea = new ChangeArea();
+				changeArea.setRowIndex(i);
+				changeArea.setColIndex(j);
+				changeArea.setType(1);
 				String cCode = excelSheet.getCols().get(j).getCode();
+				changeArea.getOriginalValues().set(1, colRuleMap.get(cCode));
 				colRuleMap.remove(cCode);
+				changeArea.getUpdateValues().set(1, null);
+				history.getChangeAreaList().add(changeArea);
 			}
 		}
-		
+		versionHistory.getMap().put(step, history);
 	}
 	
 	private int getRuleIndex(int firstRow,int lastRow,int firstCol,int lastCol,ExcelSheet excelSheet,Map<String, Map<String, Integer>> cellMap){
@@ -228,12 +254,17 @@ public class DataValidateAspect {
 	}
 	
 	
-	@After("execution(public void com.acmr.excel.service.CellService.splitCell(..))")
+	@Before("execution(public void com.acmr.excel.service.CellService.splitCell(..))")
 	public void split(JoinPoint joinPoint){
 		Object[] args = joinPoint.getArgs();
 		ExcelSheet excelSheet = (ExcelSheet) args[0];
 		Cell cell = (Cell) args[1];
 		String excelId = (String) args[2];
+		VersionHistory versionHistory = (VersionHistory)args[3];
+		int step = (int)args[4];
+		versionHistory.getVersion().put(step, step);
+		History history = new History();
+		history.setOperatorType(OperatorConstant.mergedelete);
 		Data data = getData(excelId);
 		Map<String, Map<String, Integer>> cellMap = data.getCellMap();
 		int firstRow = cell.getCoordinate().getStartRow();
@@ -243,6 +274,7 @@ public class DataValidateAspect {
 		String fRowCode = excelSheet.getRows().get(firstRow).getCode();
 		String fColCode = excelSheet.getCols().get(firstCol).getCode();
 		Map<String, Integer> colRuleMap = cellMap.get(fRowCode);
+		versionHistory.getMap().put(step, history);
 		if(colRuleMap == null) return;
 		Integer rule = colRuleMap.get(fColCode);
 		if(rule == null) return;
@@ -255,9 +287,17 @@ public class DataValidateAspect {
 			}
 			for (int j = firstCol; j <= lastCol; j++) {
 				String colCode = excelSheet.getCols().get(j).getCode();
+				ChangeArea changeArea = new ChangeArea();
+				changeArea.setRowIndex(i);
+				changeArea.setColIndex(j);
+				changeArea.setType(1);
+				changeArea.getOriginalValues().set(1, colRuleMap.get(colCode));
 				colRuleMap.put(colCode, rule);
+				changeArea.getUpdateValues().set(1, rule);
+				history.getChangeAreaList().add(changeArea);
 			}
 		}
+		versionHistory.getMap().put(step, history);
 	}
 	@After("execution(public void com.acmr.excel.service.PasteService.copy(..))")
 	public void copy(JoinPoint joinPoint){
@@ -265,7 +305,16 @@ public class DataValidateAspect {
 		Copy copy = (Copy) args[0];
 		ExcelBook excelBook = (ExcelBook) args[1];
 		String excelId = (String) args[2];
-		copyOrCut(copy, excelBook, null, excelId);
+		VersionHistory versionHistory = (VersionHistory)args[3];
+		int step = (int)args[4];
+		Integer version = versionHistory.getVersion().get(step-1);
+		if(version == null){
+			version = 0;
+		}
+		version += 1;
+		History history = versionHistory.getMap().get(version);
+		history.setOperatorType(OperatorConstant.copy);
+		copyOrCut(copy, excelBook, null, excelId,history);
 		
 	}
 	@After("execution(public void com.acmr.excel.service.PasteService.cut(..))")
@@ -274,10 +323,19 @@ public class DataValidateAspect {
 		Copy copy = (Copy) args[0];
 		ExcelBook excelBook = (ExcelBook) args[1];
 		String excelId = (String) args[2];
-		copyOrCut(copy, excelBook, "cut", excelId);
+		VersionHistory versionHistory = (VersionHistory)args[3];
+		int step = (int)args[4];
+		Integer version = versionHistory.getVersion().get(step-1);
+		if(version == null){
+			version = 0;
+		}
+		version += 1;
+		History history = versionHistory.getMap().get(version);
+		history.setOperatorType(OperatorConstant.cut);
+		copyOrCut(copy, excelBook, "cut", excelId,history);
 		
 	}
-	private void copyOrCut(Copy copy,ExcelBook excelBook,String flag,String excelId){
+	private void copyOrCut(Copy copy,ExcelBook excelBook,String flag,String excelId,History history){
 		int startRowIndex = copy.getOrignal().getStartRow();
 		int endRowIndex = copy.getOrignal().getEndRow();
 		int startColIndex = copy.getOrignal().getStartCol();
@@ -304,7 +362,14 @@ public class DataValidateAspect {
 				tempObj.setRule(rule);
 				temList.add(tempObj);
 				if ("cut".equals(flag)) {
+					ChangeArea changeArea = new ChangeArea();
+					changeArea.setColIndex(i);
+					changeArea.setRowIndex(j);
+					changeArea.setType(1);
+					changeArea.getOriginalValues().set(1, rule);
 					colRuleMap.remove(colCode);
+					changeArea.getUpdateValues().set(1, null);
+					history.getChangeAreaList().add(changeArea);
 				}
 				tempColIndex++;
 			}
@@ -319,7 +384,14 @@ public class DataValidateAspect {
 				cellMap.put(rowCode, colRuleMap);
 			}
 			String colCode = colList.get(tempObj.getCol()).getCode();
+			ChangeArea changeArea = new ChangeArea();
+			changeArea.setColIndex(tempObj.getCol());
+			changeArea.setRowIndex(tempObj.getRow());
+			changeArea.setType(1);
+			changeArea.getOriginalValues().set(1, colRuleMap.get(colCode));
 			colRuleMap.put(colCode, tempObj.getRule());
+			changeArea.getUpdateValues().set(1, tempObj.getRule());
+			history.getChangeAreaList().add(changeArea);
 		}
 	}
 	

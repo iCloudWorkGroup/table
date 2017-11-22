@@ -1,13 +1,24 @@
 package com.acmr.excel.model.history;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ChangeArea implements Serializable{
+public class ChangeArea implements Serializable {
 	private int colIndex;
 	private int rowIndex;
-	private Object originalValue;
-	private Object updateValue;
+	private List<Object> originalValues = new ArrayList<Object>();
+	private List<Object> updateValues = new ArrayList<Object>();
 	private boolean isExist = true;
+	private int type = 0;
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
 
 	public int getColIndex() {
 		return colIndex;
@@ -25,20 +36,20 @@ public class ChangeArea implements Serializable{
 		this.rowIndex = rowIndex;
 	}
 
-	public Object getOriginalValue() {
-		return originalValue;
+	public List<Object> getOriginalValues() {
+		return originalValues;
 	}
 
-	public void setOriginalValue(Object originalValue) {
-		this.originalValue = originalValue;
+	public void setOriginalValues(List<Object> originalValues) {
+		this.originalValues = originalValues;
 	}
 
-	public Object getUpdateValue() {
-		return updateValue;
+	public List<Object> getUpdateValues() {
+		return updateValues;
 	}
 
-	public void setUpdateValue(Object updateValue) {
-		this.updateValue = updateValue;
+	public void setUpdateValues(List<Object> updateValues) {
+		this.updateValues = updateValues;
 	}
 
 	public boolean isExist() {
@@ -48,5 +59,11 @@ public class ChangeArea implements Serializable{
 	public void setExist(boolean isExist) {
 		this.isExist = isExist;
 	}
-	
+
+	public ChangeArea() {
+		this.originalValues.add(null);
+		this.originalValues.add(null);
+		this.updateValues.add(null);
+		this.updateValues.add(null);
+	}
 }

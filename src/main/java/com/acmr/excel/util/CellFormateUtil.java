@@ -570,6 +570,18 @@ public class CellFormateUtil {
 			formate.setType("number");
 			formate.setDecimal(0);
 			break;
+		case "0.0":
+			String d0 = setNumber(excelCell, 1, false);
+			formate.setType("number");
+			formate.setDecimal(1);
+			formate.setThousands(false);
+			content.setDisplayTexts(d0);
+			content.setTexts(excelCell.getValue()+"");
+			if(CELLTYPE.STRING == excelCell.getType()){
+				formate.setIsValid(false);
+				content.setDisplayTexts(excelCell.getText());
+			}
+			break;
 		default:
 			if (dataFormate.startsWith("0.0") && dataFormate.endsWith("0\\)") && !dataFormate.contains(";[Red]")) {
 				// 小数

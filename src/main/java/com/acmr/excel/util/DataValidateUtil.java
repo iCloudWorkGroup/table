@@ -408,15 +408,15 @@ public class DataValidateUtil {
 		excelBook.getSheets().add(sheet);
 		return excelBook;
 	}
-	public static void main(String[] args) {
-		
-		System.out.println(display2Alias("=$A$1:$A$6", createNewExcel().getSheets().get(0)));
-		System.out.println(display2Alias("=$C:$C", createNewExcel().getSheets().get(0)));
-		System.out.println(display2Alias("=$3:$3", createNewExcel().getSheets().get(0)));
-		System.out.println(alias2Display("C1R1:C1R6", createNewExcel().getSheets().get(0)));
-		System.out.println(alias2Display("R3:R3", createNewExcel().getSheets().get(0)));
-		System.out.println(alias2Display("C3:C3", createNewExcel().getSheets().get(0)));
-	}
+//	public static void main(String[] args) {
+//		
+//		System.out.println(display2Alias("=$A$1:$A$6", createNewExcel().getSheets().get(0)));
+//		System.out.println(display2Alias("=$C:$C", createNewExcel().getSheets().get(0)));
+//		System.out.println(display2Alias("=$3:$3", createNewExcel().getSheets().get(0)));
+//		System.out.println(alias2Display("C1R1:C1R6", createNewExcel().getSheets().get(0)));
+//		System.out.println(alias2Display("R3:R3", createNewExcel().getSheets().get(0)));
+//		System.out.println(alias2Display("C3:C3", createNewExcel().getSheets().get(0)));
+//	}
 	
 	
 	

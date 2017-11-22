@@ -349,12 +349,12 @@ public class HandleExcelService {
 		changeArea.setColIndex(colIndex);
 		changeArea.setRowIndex(rowIndex);
 		if (excelCell == null) {
-			changeArea.setOriginalValue(excelCell);
+			changeArea.getOriginalValues().set(0,excelCell);
 			excelCell = new ExcelCell();
 			excelCell.getCellstyle().setBgcolor(new ExcelColor(255, 255, 255));
 			cellList.set(colIndex, excelCell);
 		}else{
-			changeArea.setOriginalValue(excelCell.clone());
+			changeArea.getOriginalValues().add(excelCell.clone());
 		}
 		String content = cell.getContent();
 		try {
@@ -363,7 +363,7 @@ public class HandleExcelService {
 			excelCell.setText(content);
 			excelCell.setValue(content);
 			CellFormateUtil.autoRecognise(content, excelCell);
-			changeArea.setUpdateValue(excelCell);
+			changeArea.getUpdateValues().set(0,excelCell);
 			history.getChangeAreaList().add(changeArea);
 			versionHistory.getMap().put(version, history);
 		} catch (UnsupportedEncodingException e) {
@@ -564,11 +564,11 @@ public class HandleExcelService {
 					changeArea.setRowIndex(i);
 					changeArea.setColIndex(j);
 					if (excelCell == null) {
-						changeArea.setOriginalValue(new ExcelCellStyle());
+						changeArea.getOriginalValues().set(0,new ExcelCellStyle());
 						excelCell = new ExcelCell();
 						excelCellList.set(j, excelCell);
 					}else{
-						changeArea.setOriginalValue(excelCell.getCellstyle().clone());
+						changeArea.getOriginalValues().set(0,excelCell.getCellstyle().clone());
 					}
 					int rowSpan = excelCell.getRowspan();
 					int colSpan = excelCell.getColspan();
@@ -722,7 +722,7 @@ public class HandleExcelService {
 						history.setOperatorType(OperatorConstant.wordWrap);
 						excelCellStyle.setWraptext(Boolean.valueOf(cell.getWordWrap()));
 					}
-					changeArea.setUpdateValue(excelCellStyle);
+					changeArea.getUpdateValues().set(0,excelCellStyle);
 					history.getChangeAreaList().add(changeArea);
 				}
 			}
@@ -878,11 +878,11 @@ public class HandleExcelService {
 				changeArea.setRowIndex(i);
 				ExcelCell excelCell = cellList.get(j);
 				if(excelCell == null){
-					changeArea.setOriginalValue(null);
+					changeArea.getOriginalValues().set(0,null);
 					excelCell = new ExcelCell();
 					cellList.set(j, excelCell);
 				}else{
-					changeArea.setOriginalValue(excelCell.clone());
+					changeArea.getOriginalValues().set(0,excelCell.clone());
 				}
 				switch (formate) {
 				case "normal":
@@ -906,7 +906,7 @@ public class HandleExcelService {
 				default:
 					break;
 				}
-				changeArea.setUpdateValue(excelCell);
+				changeArea.getUpdateValues().set(0,excelCell);
 				history.getChangeAreaList().add(changeArea);
 				versionHistory.getMap().put(version,history);
 				excelCell.getExps().put("format", formate);
@@ -974,14 +974,14 @@ public class HandleExcelService {
 				changeArea.setColIndex(j);
 				changeArea.setRowIndex(i);
 				if(excelCell == null){
-					changeArea.setOriginalValue(null);
+					changeArea.getOriginalValues().set(0,null);
 					excelCell = new ExcelCell();
 					cellList.set(j, excelCell);
 				}else{
-					changeArea.setOriginalValue(excelCell.getMemo());
+					changeArea.getOriginalValues().set(0,excelCell.getMemo());
 				}
 				excelCell.setMemo(com);
-				changeArea.setUpdateValue(com);
+				changeArea.getUpdateValues().set(0,com);
 				history.getChangeAreaList().add(changeArea);
 			}
 		}

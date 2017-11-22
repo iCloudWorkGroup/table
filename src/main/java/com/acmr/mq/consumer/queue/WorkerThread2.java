@@ -270,11 +270,11 @@ public class WorkerThread2 implements Runnable{
 			cell = (Cell) model.getObject();
 			handleExcelService.colorSet(cell, excelBook);	
 		case OperatorConstant.undo:
-		    sheetService.undo(versionHistory, step, excelBook.getSheets().get(0));
+		    sheetService.undo(versionHistory, step, excelBook.getSheets().get(0),excelId);
 		    storeService.set(excelId+"_history", versionHistory);
 		break;
 		case OperatorConstant.redo:
-		    sheetService.redo(versionHistory, step, excelBook.getSheets().get(0));
+		    sheetService.redo(versionHistory, step, excelBook.getSheets().get(0),excelId);
 		    storeService.set(excelId+"_history",  versionHistory);
 		break;
 		case OperatorConstant.batchcolorset:
@@ -295,7 +295,8 @@ public class WorkerThread2 implements Runnable{
 		break;
 		case OperatorConstant.DATAVALIDATE:
 			AreaSet validate = (AreaSet) model.getObject();
-			sheetService.dataValidate(validate, excelBook, excelId);
+			sheetService.dataValidate(validate, excelBook, excelId,versionHistory,step);
+			storeService.set(excelId+"_history",  versionHistory);
 //			Data data = MemoryUtil.getDataValidateMap().get(excelId);
 //			System.out.println(JSON.toJSONString(data));
 //			List<ExcelDataValidation> excelDataValidations = new ArrayList<ExcelDataValidation>();

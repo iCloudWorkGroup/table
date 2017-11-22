@@ -123,28 +123,27 @@ public class SheetService {
 	
 	
 	
-	public void undo(VersionHistory versionHistory,int step,ExcelSheet sheet){
+	public void undo(VersionHistory versionHistory,int step,ExcelSheet sheet,String excelId){
 		int version = versionHistory.getVersion().get(step-1);
 		History hisory= versionHistory.getMap().get(version);
 		int operatorType = hisory.getOperatorType();
 		List<ChangeArea> changeAreaList = hisory.getChangeAreaList();
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)sheet.getRows();
 		versionHistory.getVersion().put(step, version-1);
+		List<ExcelColumn> colList = sheet.getCols();
+		Data data = MemoryUtil.getDataValidateMap().get(excelId);
 		switch (operatorType) {
 		case OperatorConstant.textData:
 		case OperatorConstant.merge:
-			for (ChangeArea changeArea : changeAreaList) {
-				int colIndex = changeArea.getColIndex();
-				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValue());
-			}
+			setOriginAffect(changeAreaList, rowList, colList, data);
+			setOriginalMergeRule(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.fontsize:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.fontfamily:
@@ -152,7 +151,7 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.fontweight:
@@ -160,7 +159,7 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.fontitalic:
@@ -168,7 +167,7 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.fontcolor:
@@ -176,7 +175,7 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.wordWrap:
@@ -184,18 +183,18 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 			}
 			break;
 		case OperatorConstant.fillbgcolor:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
+				if(changeArea.getOriginalValues().get(0) == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
 					ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
@@ -203,10 +202,10 @@ public class SheetService {
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
+				if(changeArea.getOriginalValues().get(0) == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
-					rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValue());
+					rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
@@ -219,23 +218,24 @@ public class SheetService {
 				if(excelCell == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
-					excelCell.setMemo((String)changeArea.getOriginalValue());
+					excelCell.setMemo((String)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
 		case OperatorConstant.mergedelete:
 			sheet.MergedRegions(hisory.getMergerRowStart(), hisory.getMergerColStart(), hisory.getMergerRowEnd(),
 					hisory.getMergerColEnd());
+			setOriginalMergeRule(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.frame:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
+				if(changeArea.getOriginalValues().get(0) == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
 					ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
@@ -243,11 +243,11 @@ public class SheetService {
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
+				if(changeArea.getOriginalValues().get(0) == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
 					ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
@@ -255,11 +255,11 @@ public class SheetService {
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
+				if(changeArea.getOriginalValues().get(0) == null){
 					rowList.get(rowIndex).getCells().set(colIndex, null);
 				}else{
 					ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValue());
+					excelCell.setCellstyle((ExcelCellStyle)changeArea.getOriginalValues().get(0));
 				}
 			}
 			break;
@@ -272,78 +272,46 @@ public class SheetService {
 //		case OperatorConstant.colsdelete:
 //			break;
 		case OperatorConstant.paste:
-			for (ChangeArea changeArea : changeAreaList) {
-				int colIndex = changeArea.getColIndex();
-				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
-					rowList.get(rowIndex).getCells().set(colIndex, null);
-				}else{
-					rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValue());
-				}
-			}
+			setOriginAffect(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.copy:
-			for (ChangeArea changeArea : changeAreaList) {
-				int colIndex = changeArea.getColIndex();
-				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
-					rowList.get(rowIndex).getCells().set(colIndex, null);
-				}else{
-					rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValue());
-				}
-			}
+			setOriginAffect(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.cut:
+			setOriginAffect(changeAreaList, rowList, colList, data);
+			break;
+		case OperatorConstant.DATAVALIDATE:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				if(changeArea.getOriginalValue() == null){
-					rowList.get(rowIndex).getCells().set(colIndex, null);
+				if(changeArea.getOriginalValues().get(1) == null){
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).remove(colList.get(colIndex).getCode());
 				}else{
-					rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getOriginalValue());
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getOriginalValues().get(1));
 				}
 			}
-			break;
-//		case OperatorConstant.frozen:
-//			break;
-//		case OperatorConstant.unFrozen:
-//			break;
-//		case OperatorConstant.colswidth:
-//			break;
-//		case OperatorConstant.colshide:
-//			break;	
-//		case OperatorConstant.rowshide:
-//			break;	
-//		case OperatorConstant.colhideCancel:
-//			break;	
-//		case OperatorConstant.rowhideCancel:
-//			break;	
-//		case OperatorConstant.rowsheight:
-//			break;
-//		case OperatorConstant.addRowLine:
-//			break;
-//		case OperatorConstant.addColLine:
-//			break;	
-//		case OperatorConstant.colorset:
-//		break;
+		break;	
 		default:
 			break;
 		}
 	}
 	
-	public void redo(VersionHistory versionHistory,int step,ExcelSheet sheet){
+	public void redo(VersionHistory versionHistory,int step,ExcelSheet sheet,String excelId){
 		int version = versionHistory.getVersion().get(step-1);
 		History hisory= versionHistory.getMap().get(version+1);
 		int operatorType = hisory.getOperatorType();
 		List<ChangeArea> changeAreaList = hisory.getChangeAreaList();
 		ListHashMap<ExcelRow> rowList = (ListHashMap<ExcelRow>)sheet.getRows();
 		versionHistory.getVersion().put(step, version+1);
+		Data data = MemoryUtil.getDataValidateMap().get(excelId);
+		List<ExcelColumn> colList = sheet.getCols();
 		switch (operatorType) {
 		case OperatorConstant.textData:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValue());
+				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValues().get(0));
 			}
 			break;
 		case OperatorConstant.fontsize:
@@ -363,14 +331,14 @@ public class SheetService {
 					excelCell = new ExcelCell();
 					rowList.get(rowIndex).getCells().set(colIndex, excelCell);
 				}
-				excelCell.setCellstyle((ExcelCellStyle)changeArea.getUpdateValue());
+				excelCell.setCellstyle((ExcelCellStyle)changeArea.getUpdateValues().get(0));
 			}
 			break;
 		case OperatorConstant.textDataformat:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValue());
+				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValues().get(0));
 			}
 			break;
 
@@ -379,16 +347,18 @@ public class SheetService {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
 				ExcelCell excelCell = rowList.get(rowIndex).getCells().get(colIndex);
-				excelCell.setMemo(changeArea.getUpdateValue().toString());
+				excelCell.setMemo(changeArea.getUpdateValues().get(0).toString());
 			}
 			break;
 		case OperatorConstant.merge:
 			sheet.MergedRegions(hisory.getMergerRowStart(), hisory.getMergerColStart(), hisory.getMergerRowEnd(),
 					hisory.getMergerColEnd());
+			setUpdateMergeRule(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.mergedelete:
 			sheet.SplitRegions(hisory.getMergerRowStart(), hisory.getMergerColStart(), hisory.getMergerRowEnd(),
 					hisory.getMergerColEnd());
+			setUpdateMergeRule(changeAreaList, rowList, colList, data);
 			break;
 		
 //		case OperatorConstant.rowsinsert:
@@ -400,52 +370,126 @@ public class SheetService {
 //		case OperatorConstant.colsdelete:
 //			break;
 		case OperatorConstant.paste:
-			for (ChangeArea changeArea : changeAreaList) {
-				int colIndex = changeArea.getColIndex();
-				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValue());
-			}
+			setUpdateAffect(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.copy:
-			for (ChangeArea changeArea : changeAreaList) {
-				int colIndex = changeArea.getColIndex();
-				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValue());
-			}
+			setUpdateAffect(changeAreaList, rowList, colList, data);
 			break;
 		case OperatorConstant.cut:
+			setUpdateAffect(changeAreaList, rowList, colList, data);
+			break;
+		case OperatorConstant.DATAVALIDATE:
 			for (ChangeArea changeArea : changeAreaList) {
 				int colIndex = changeArea.getColIndex();
 				int rowIndex = changeArea.getRowIndex();
-				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValue());
+				if(changeArea.getUpdateValues().get(1) == null){
+					rowList.get(rowIndex).getCells().set(colIndex, null);
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), null);
+				}else{
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getUpdateValues().get(1));
+				}
 			}
-			break;
-//		case OperatorConstant.frozen:
-//			break;
-//		case OperatorConstant.unFrozen:
-//			break;
-//		case OperatorConstant.colswidth:
-//			break;
-//		case OperatorConstant.colshide:
-//			break;	
-//		case OperatorConstant.rowshide:
-//			break;	
-//		case OperatorConstant.colhideCancel:
-//			break;	
-//		case OperatorConstant.rowhideCancel:
-//			break;	
-//		case OperatorConstant.rowsheight:
-//			break;
-//		case OperatorConstant.addRowLine:
-//			break;
-//		case OperatorConstant.addColLine:
-//			break;	
-//		case OperatorConstant.colorset:
-//		break;
+		break;
 		default:
 			break;
 		}
 	}
+	
+	/**
+	 * 设置合并和拆分的后退规则
+	 * @param changeAreaList
+	 * @param rowList
+	 * @param colList
+	 * @param data
+	 */
+	
+	private void setOriginalMergeRule(List<ChangeArea> changeAreaList,List<ExcelRow> rowList,List<ExcelColumn> colList,Data data){
+		for (ChangeArea changeArea : changeAreaList) {
+			int colIndex = changeArea.getColIndex();
+			int rowIndex = changeArea.getRowIndex();
+			if(changeArea.getType() == 1){
+				if(changeArea.getOriginalValues().get(1) == null){
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).remove(colList.get(colIndex).getCode());
+				}else {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getOriginalValues().get(1));
+				}
+			}
+		}
+	}
+	/**
+	 * 设置合并和拆分的前进规则
+	 * @param changeAreaList
+	 * @param rowList
+	 * @param colList
+	 * @param data
+	 */
+	
+	private void setUpdateMergeRule(List<ChangeArea> changeAreaList,List<ExcelRow> rowList,List<ExcelColumn> colList,Data data){
+		for (ChangeArea changeArea : changeAreaList) {
+			int colIndex = changeArea.getColIndex();
+			int rowIndex = changeArea.getRowIndex();
+			if(changeArea.getType() == 1){
+				if(changeArea.getUpdateValues().get(1) == null){
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).remove(colList.get(colIndex).getCode());
+				}else {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getUpdateValues().get(1));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 后退后的操作
+	 * @param changeAreaList
+	 * @param rowList
+	 * @param colList
+	 * @param data
+	 */
+	private void setOriginAffect(List<ChangeArea> changeAreaList,List<ExcelRow> rowList,List<ExcelColumn> colList,Data data){
+		for (ChangeArea changeArea : changeAreaList) {
+			int colIndex = changeArea.getColIndex();
+			int rowIndex = changeArea.getRowIndex();
+			if(changeArea.getType() == 1){
+				if(changeArea.getOriginalValues().get(1) == null) {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).remove(colList.get(colIndex).getCode());
+				} else {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getOriginalValues().get(1));
+				}	
+				
+			}else{
+				rowList.get(rowIndex).getCells().set(colIndex,(ExcelCell) changeArea.getOriginalValues().get(0));
+			}
+		}
+	}
+	/**
+	 * 前进后的操作
+	 * @param changeAreaList
+	 * @param rowList
+	 * @param colList
+	 * @param data
+	 */
+	
+	private void setUpdateAffect(List<ChangeArea> changeAreaList,List<ExcelRow> rowList,List<ExcelColumn> colList,Data data){
+		for (ChangeArea changeArea : changeAreaList) {
+			int colIndex = changeArea.getColIndex();
+			int rowIndex = changeArea.getRowIndex();
+			if(changeArea.getType() == 1){
+				if(changeArea.getUpdateValues().get(1) == null) {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).remove(colList.get(colIndex).getCode());
+				}else {
+					data.getCellMap().get(rowList.get(rowIndex).getCode()).put(colList.get(colIndex).getCode(), 
+							(Integer)changeArea.getUpdateValues().get(1));
+				}
+			}else{
+				rowList.get(rowIndex).getCells().set(colIndex, (ExcelCell)changeArea.getUpdateValues().get(0));
+			}
+		}
+	}
+	
 	/**
 	 * sheet保护
 	 * @param protect
@@ -455,7 +499,7 @@ public class SheetService {
 		excelBook.getSheets().get(0).setProtect(protect.isProtect());
 		excelBook.getSheets().get(0).setPassword(protect.getPassword());
 	}
-	public void dataValidate(AreaSet areaSet, ExcelBook excelBook,String excelId) {
+	public void dataValidate(AreaSet areaSet, ExcelBook excelBook,String excelId,VersionHistory versionHistory,int step) {
 		List<Coordinate> coordinateList = areaSet.getCoordinate();
 		ExcelSheet sheet = excelBook.getSheets().get(0);
 		Data data = MemoryUtil.getDataValidateMap().get(excelId);
@@ -481,6 +525,15 @@ public class SheetService {
 		}
 		rule.setFormula1(formal1);
 		rule.setFormula2(formal2);
+		Integer version = versionHistory.getVersion().get(step-1);
+		if(version == null){
+			version = 0;
+			
+		}
+		version += 1;
+		versionHistory.getVersion().put(step, version);
+		History history = new History();
+		history.setOperatorType(OperatorConstant.DATAVALIDATE);
 		for(Coordinate coordinate : coordinateList){
 			int colStartIndex = coordinate.getStartCol();
 			int rowStartIndex = coordinate.getStartRow();
@@ -504,7 +557,7 @@ public class SheetService {
 					Map<String, Integer> rowMap = data.getRowMap();
 					Set<String> keys = rowMap.keySet();
 					for(String rowCode : keys){
-						setCellMap(data, rowCode, colCode, index);
+						setCellMap(data, rowCode, colCode, index,rowList.getMaps().get(rowCode),i,history);
 					}
 				}
 			}
@@ -517,7 +570,7 @@ public class SheetService {
 					Map<String, Integer> colMap = data.getColMap();
 					Set<String> keys = colMap.keySet();
 					for(String colCode : keys){
-						setCellMap(data, rowCode, colCode, index);
+						setCellMap(data, rowCode, colCode, index,i,columnList.getMaps().get(colCode),history);
 					}
 				}
 			} else {
@@ -527,11 +580,13 @@ public class SheetService {
 					for (int j = colStartIndex; j <= colEndIndex; j++) {
 						String rowCode = excelRow.getCode();
 						String colCode = columnList.get(j).getCode();
-						setCellMap(data, rowCode, colCode, index);
+						setCellMap(data, rowCode, colCode, index,i,j,history);
 					}
 				}
 			}
 		}
+		versionHistory.getMap().put(version, history);
+		
 	}
 	private void setAffectRule(String formal1,ExcelSheet excelSheet,int rule){
 		String[] position = formal1.split(":");
@@ -570,13 +625,19 @@ public class SheetService {
 	 * @param index
 	 */
 	
-	private void setCellMap(Data data,String rowCode,String colCode,int index){
+	private void setCellMap(Data data,String rowCode,String colCode,int index,int i,int j,History history){
 		Map<String, Integer> colRuleMap = data.getCellMap().get(rowCode);
 		if (colRuleMap == null) {
 			colRuleMap = new HashMap<String, Integer>();
 			data.getCellMap().put(rowCode, colRuleMap);
 		}
+		ChangeArea changeArea = new ChangeArea();
+		changeArea.setRowIndex(i);
+		changeArea.setColIndex(j);
+		changeArea.getOriginalValues().set(1, colRuleMap.get(colCode));
 		colRuleMap.put(colCode, index);
+		changeArea.getUpdateValues().set(1, index);
+		history.getChangeAreaList().add(changeArea);
 	}
 	
 	

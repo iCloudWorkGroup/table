@@ -634,7 +634,7 @@ public class ExcelService {
 		//if ("true".equals(excelSheet.getExps().get("ifUpload"))) {
 		//if (excelCell.getExps().get("format") == null || "normal".equals(excelCell.getExps().get("format")) ) {
 		//if (("".equals(excelCell.getShowText())|| excelCell.getShowText() == null) && !"".equals(excelCell.getText())) {
-			CellFormateUtil.setShowText(excelCell, content,formate);
+		CellFormateUtil.setShowText(excelCell, content,formate);
 //			System.out.println(excelCell.getText());
 //			String displayText = ExcelFormat.getShowText(excelCell);
 //			content.setDisplayTexts(displayText);

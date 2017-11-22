@@ -46,9 +46,7 @@ public class CellService {
 	 *            Cell对象
 	 */
 	public void mergeCell(ExcelSheet excelSheet, Cell cell,String excelId,VersionHistory versionHistory,int step) {
-		versionHistory.getVersion().put(step, step);
-		History history = new History();
-		history.setOperatorType(OperatorConstant.merge);
+		History history = versionHistory.getMap().get(step);
 		int firstRow = cell.getCoordinate().getStartRow();
 		int firstCol = cell.getCoordinate().getStartCol();
 		int lastRow = cell.getCoordinate().getEndRow();
@@ -60,9 +58,9 @@ public class CellService {
 				changeArea.setColIndex(j);
 				ExcelCell excelCell = excelSheet.getRows().get(i).getCells().get(j);
 				if (excelCell == null) {
-					changeArea.setOriginalValue(null);
+					changeArea.getOriginalValues().set(0,null);
 				} else {
-					changeArea.setOriginalValue(excelCell.clone());
+					changeArea.getOriginalValues().set(0,excelCell.clone());
 				}
 				history.getChangeAreaList().add(changeArea);
 			}
@@ -71,7 +69,6 @@ public class CellService {
 		history.setMergerRowEnd(lastRow);
 		history.setMergerColStart(firstCol);
 		history.setMergerColEnd(lastCol);
-		versionHistory.getMap().put(step, history);
 		excelSheet.MergedRegions(firstRow, firstCol, lastRow, lastCol);
 		
 		
@@ -87,9 +84,7 @@ public class CellService {
 	 */
 
 	public void splitCell(ExcelSheet excelSheet, Cell cell,String excelId,VersionHistory versionHistory,int step) {
-		versionHistory.getVersion().put(step, step);
-		History history = new History();
-		history.setOperatorType(OperatorConstant.mergedelete);
+		History history = versionHistory.getMap().get(step);
 		int firstRow = cell.getCoordinate().getStartRow();
 		int firstCol = cell.getCoordinate().getStartCol();
 		int lastRow = cell.getCoordinate().getEndRow();
@@ -101,9 +96,9 @@ public class CellService {
 				changeArea.setColIndex(j);
 				ExcelCell excelCell = excelSheet.getRows().get(i).getCells().get(j);
 				if (excelCell == null) {
-					changeArea.setOriginalValue(null);
+					changeArea.getOriginalValues().set(0,null);
 				} else {
-					changeArea.setOriginalValue(excelCell.clone());
+					changeArea.getOriginalValues().set(0,excelCell.clone());
 				}
 				history.getChangeAreaList().add(changeArea);
 			}
@@ -113,7 +108,6 @@ public class CellService {
 		history.setMergerColStart(firstCol);
 		history.setMergerColEnd(lastCol);
 		excelSheet.SplitRegions(firstRow, firstCol, lastRow, lastCol);
-		versionHistory.getMap().put(step, history);
 	}
 
 	/**
