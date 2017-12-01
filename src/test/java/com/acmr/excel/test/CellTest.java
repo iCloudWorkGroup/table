@@ -264,7 +264,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "1");
+		sheetService.dataValidate(areaSet, excelBook, "1",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("1");
 		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
 		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
@@ -298,7 +298,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "2");
+		sheetService.dataValidate(areaSet, excelBook, "2",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("2");
 		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
 		Map<String, Integer> rowMap = data.getRowMap();
@@ -329,7 +329,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "3");
+		sheetService.dataValidate(areaSet, excelBook, "3",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("3");
 		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
 		Map<String, Integer> colMap = data.getColMap();
@@ -360,7 +360,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "4");
+		sheetService.dataValidate(areaSet, excelBook, "4",new VersionHistory(),1);
 		coordinate1 = new Coordinate();
 		coordinate1.setEndRow(2);
 		coordinate1.setStartRow(0);
@@ -373,7 +373,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "4");
+		sheetService.dataValidate(areaSet, excelBook, "4",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("4");
 		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
 		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
@@ -407,7 +407,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "4");
+		sheetService.dataValidate(areaSet, excelBook, "4",new VersionHistory(),1);
 		coordinate1 = new Coordinate();
 		coordinate1.setEndRow(-1);
 		coordinate1.setStartRow(0);
@@ -420,7 +420,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "4");
+		sheetService.dataValidate(areaSet, excelBook, "4",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("4");
 		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
 		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
@@ -454,7 +454,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "2");
+		sheetService.dataValidate(areaSet, excelBook, "2",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("2");
 		List<ExcelRow> rowList = excelBook.getSheets().get(0).getRows();
 		Map<String, Integer> rowMap = data.getRowMap();
@@ -485,7 +485,7 @@ public class CellTest {
 		rule.setFormula1("4");
 		rule.setValidationType(1);
 		areaSet.setRule(rule);
-		sheetService.dataValidate(areaSet, excelBook, "3");
+		sheetService.dataValidate(areaSet, excelBook, "3",new VersionHistory(),1);
 		Data data = MemoryUtil.getDataValidateMap().get("3");
 		List<ExcelColumn> colList = excelBook.getSheets().get(0).getCols();
 		Map<String, Integer> colMap = data.getColMap();

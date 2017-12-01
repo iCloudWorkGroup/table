@@ -599,16 +599,20 @@ public class HandleExcelService {
 						excelBorder.setColor(new ExcelColor(0, 0, 0));
 						switch (frameStyle) {
 						case "left":
-							excelCellStyle.setLeftborder(excelBorder);
+							if (j == colBeginIndex)
+								excelCellStyle.setLeftborder(excelBorder);
 							break;
 						case "right":
-							excelCellStyle.setRightborder(excelBorder);
+							if (j == colEndIndex)
+								excelCellStyle.setRightborder(excelBorder);
 							break;
 						case "top":
-							excelCellStyle.setTopborder(excelBorder);
+							if (i == rowBeginIndex)
+								excelCellStyle.setTopborder(excelBorder);
 							break;
 						case "bottom":
-							excelCellStyle.setBottomborder(excelBorder);
+							if (i == rowEndIndex)
+								excelCellStyle.setBottomborder(excelBorder);
 							break;
 						case "all":
 							excelCellStyle.setLeftborder(excelBorder);
