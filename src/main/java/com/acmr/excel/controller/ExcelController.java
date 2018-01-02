@@ -125,7 +125,7 @@ public class ExcelController extends BaseController {
 		storeService.set(excelId+"_ope", 0);
 		VersionHistory versionHistory = new VersionHistory();
 		storeService.set(excelId+"_history", versionHistory);
-		log.info("初始化excel");
+		//log.info("初始化excel");
 		// ExcelBook e = (ExcelBook)memcachedClient.get(excelId);
 		// } <input type="hidden" id="excelId" value="(.*)"/>
 		return new ModelAndView("/index").addObject("sheetId", "1").addObject("build", true).addObject("excelId", excelId).

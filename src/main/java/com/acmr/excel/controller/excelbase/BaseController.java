@@ -156,7 +156,7 @@ public class BaseController extends MultiActionController {
 		model.setReqPath(reqPath);
 		model.setObject(object);
 		model.setExcelId(excelId);
-		logger.info("**********发送excelId:"+excelId+"====step:"+step+"===reqPath:"+reqPath);	
+		//logger.info("**********发送excelId:"+excelId+"====step:"+step+"===reqPath:"+reqPath);	
 		queueSender.send(Constant.queueName, model);
 		data.setReturncode(Constant.SUCCESS_CODE);
 		data.setReturndata(true);

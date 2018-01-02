@@ -78,7 +78,7 @@ public class WorkerThread2 implements Runnable{
     		int memStep = (Integer) storeService.get(key);
     		if(memStep + 1 == step){
     			System.out.println(step + "开始执行");
-    			logger.info("**********begin excelId : "+model.getExcelId() + " === step : " + step + "== reqPath : "+ model.getReqPath());
+    			//logger.info("**********begin excelId : "+model.getExcelId() + " === step : " + step + "== reqPath : "+ model.getReqPath());
     			handleMessage(model);
     			return;
     		}else{
@@ -312,7 +312,7 @@ public class WorkerThread2 implements Runnable{
 		//System.out.println(JSON.toJSONString(versionHistory));
 		storeService.set(excelId,excelBook);
 		System.out.println(step + "结束执行");
-		logger.info("**********end excelId : "+excelId + " === step : " + step + "== reqPath : "+ reqPath);
+		//logger.info("**********end excelId : "+excelId + " === step : " + step + "== reqPath : "+ reqPath);
 		storeService.set(excelId + "_ope",  step);
 	}
     
