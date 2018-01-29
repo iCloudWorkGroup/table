@@ -341,6 +341,9 @@ public class CellFormateUtil {
 		}else{
 			numberFormat.setGroupingUsed(false);
 		}
+		if(StringUtil.isEmpty(text)){
+			return null;
+		}
 		if(text.indexOf(".") < 0){
 			//整数
 			retVal = numberFormat.format(Long.valueOf(text));
