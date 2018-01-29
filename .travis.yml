@@ -13,7 +13,7 @@
   ],
   "after_script": [
     "git remote add deploy root@spreadsheet:/usr/local/codelib/table.git",
-    "git push deploy $TRAVIS_BRANCH"
+    "git push deploy $TRAVIS_BRANCH --force"
   ],
   "after_success": [
     "mvn clean test jacoco:report coveralls:report"
