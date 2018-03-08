@@ -20,7 +20,7 @@
 				<property name="compressionThreshold" value="1024"/>
 			</bean>
 		</property>
-		<property name="opTimeout" value="5000"/>
+		<property name="opTimeout" value="50000"/>
 		<property name="timeoutExceptionThreshold" value="1998"/>
 		<!--<property name="hashAlg">
 				<value type="net.spy.memcached.DefaultHashAlgorithm">KETAMA_HASH</value>

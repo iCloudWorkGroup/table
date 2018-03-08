@@ -363,7 +363,9 @@ public class ExcelController extends BaseController {
 	 */
 	@RequestMapping("/upload")
 	public void upload(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		long b1 = System.currentTimeMillis();
 		List<MultipartFile> files = ((MultipartHttpServletRequest) req).getFiles("file");
+		System.out.println("已经接收到");
 		ExcelBook excel = new ExcelBook();
 		InputStream is = files.get(0).getInputStream();
 		if (ExcelUtil.isExcel2003(is)) {
@@ -403,6 +405,8 @@ public class ExcelController extends BaseController {
 		
 		// ExcelBook excelBook = (ExcelBook)memcachedClient.get(excelId);
 		// System.out.println("upload========================="+JSON.toJSONString(excelBook));
+		long b2 = System.currentTimeMillis();
+		System.out.println("上传时间 ====" +(b2-b1));
 		this.sendJson(resp, data);
 	}
 	
@@ -460,7 +464,7 @@ public class ExcelController extends BaseController {
 		
 		//long mset1 = System.currentTimeMillis();
 		storeService.set(excelId+"_ope",  0);
-		storeService.set(excelId,  excelBook);
+	//	storeService.set(excelId,  excelBook);
 		//long mset2 = System.currentTimeMillis();
 		//long b2 = System.currentTimeMillis();
 //		System.out.println("position =====================" +(b2-b1));

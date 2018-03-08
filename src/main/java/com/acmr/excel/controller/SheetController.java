@@ -241,7 +241,7 @@ public class SheetController extends BaseController {
 				data.setReturndata(excel);
 				data.setDataRowStartIndex(returnParam.getDataRowStartIndex());
 				data.setMaxRowPixel(returnParam.getMaxRowPixel());
-				storeService.set(excelId,excelBook);
+				//storeService.set(excelId,excelBook);
 			} else {
 				data.setReturncode(Constant.CACHE_INVALID_CODE);
 				data.setReturndata(Constant.CACHE_INVALID_MSG);
