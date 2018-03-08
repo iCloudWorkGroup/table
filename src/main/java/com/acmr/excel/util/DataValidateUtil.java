@@ -21,10 +21,8 @@ import acmr.util.ListHashMap;
 
 import com.acmr.excel.model.datavalidate.CellList;
 import com.acmr.excel.model.datavalidate.Data;
-import com.acmr.excel.model.datavalidate.Model;
 import com.acmr.excel.model.datavalidate.RowColList;
 import com.acmr.excel.model.datavalidate.Rule;
-import com.acmr.excel.test.TestUtil;
 
 public class DataValidateUtil {
 	private static final int MIN = 0; 
